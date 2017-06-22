@@ -1,15 +1,25 @@
 var harvester = require('harvester');
 var upgrader = require('upgrader');
+var builder = require('builder');
+var guard = require('guard');
+
+var sumCreeps = function(role) {
+    return _.sum(Game.creeps, (c) => c.memory.role == role);
+}
 
 module.exports.loop = function () {
 
+    var numberHarvesters = sumCreeps('harvester');
+    var numberBuilders = sumCreeps ('builder');
+    var numberUpgraders = sumCreeps ('upgraders');
+
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
-    if (source.pos.findInRange(FIND_MY_CREEPS,1).length == 0 && Game.spawns.Spawn1.pos.findInRange(FIND_MY_CREEPS,1).length < 1) {
-        if (Game.creeps.length < 2) {
-            Game.spawns.Spawn1.createCreep([WORK,CARRY,MOVE],null,{role: 'harvester'});
-        } else {
-            Game.spawns.Spawn1.createCreep([WORK,CARRY,CARRY,MOVE,MOVE],null,{role: 'upgrader'});
-        }
+    if (numberHarvesters < 3) {
+        Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,CARRY,MOVE],null,{role: 'harvester', gathering:true});
+    } else if (numberBuilders < 3){
+        Game.spawns.Spawn1.createCreep([WORK,CARRY,CARRY,MOVE,MOVE],null,{role: 'builder', gathering:true});
+    } else {
+        Game.spawns.Spawn1.createCreep([WORK,CARRY,CARRY,MOVE,MOVE],null,{role: 'upgrader', gathering:true});
     }
 
 	for(var name in Game.creeps) {
@@ -22,29 +32,7 @@ module.exports.loop = function () {
 		}
 
 
-		if(creep.memory.role == 'builder') {
 
-			if(creep.carry.energy == 0) {
-				if(Game.spawns.Spawn1.transfer(creep,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-					creep.moveTo(Game.spawns.Spawn1);
-				}
-			}
-			else {
-				var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-				if(targets.length) {
-					if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-						creep.moveTo(targets[0]);
-					}
-				}
-			}
-		}
-        if(creep.memory.role == 'guard') {
-        	var targets = creep.room.find(FIND_HOSTILE_CREEPS);
-        	if(targets.length) {
-        		if(creep.attack(targets[0]) == ERR_NOT_IN_RANGE) {
-        			creep.moveTo(targets[0]);
-        		}
-        	}
-        }
+        if(creep.memory.role == 'guard')
 	}
 }
