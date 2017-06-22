@@ -15,7 +15,7 @@ module.exports.loop = function () {
 
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
     if (numberHarvesters < 3) {
-        Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,CARRY,MOVE],null,{role: 'harvester', gathering:true});
+        Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,MOVE],null,{role: 'harvester', gathering:true});
     } else if (numberBuilders < 3) {
         Game.spawns.Spawn1.createCreep([WORK,CARRY,CARRY,MOVE,MOVE],null,{role: 'builder', gathering:true});
     } else {
