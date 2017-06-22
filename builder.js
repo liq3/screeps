@@ -1,19 +1,17 @@
 module.exports = function (creep) {
     if(creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
-        var sources = creep.room.find(FIND_SOURCES);
-        if(creep.harvest(sources[1]) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(sources[1]);
+        var source = creep.pos.findClosestByPath(FIND_SOURCES);
+        if(source != null && creep.harvest(source) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(source);
         } else if (creep.carry.energy == creep.carryCapacity) {
             creep.memory.gathering = false;
         }
     } else if (creep.carry.energy == 0) {
         creep.memory.gathering = true;
     } else {
-        var targets = creep.room.find(FIND_CONSTRUCTION_SITES);
-        if(targets.length) {
-            if(creep.build(targets[0]) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(targets[0]);
-            }
+        var target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+        if(target != null && creep.build(target) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target);
         }
     }
 }
