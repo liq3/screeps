@@ -16,7 +16,7 @@ module.exports.loop = function () {
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
     if (numberHarvesters < 3) {
         Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,CARRY,MOVE],null,{role: 'harvester', gathering:true});
-    } else if (numberBuilders < 3){
+    } else if (numberBuilders < 3) {
         Game.spawns.Spawn1.createCreep([WORK,CARRY,CARRY,MOVE,MOVE],null,{role: 'builder', gathering:true});
     } else {
         Game.spawns.Spawn1.createCreep([WORK,CARRY,CARRY,MOVE,MOVE],null,{role: 'upgrader', gathering:true});
@@ -29,10 +29,12 @@ module.exports.loop = function () {
 			harvester(creep);
 		} else if (creep.memory.role == 'upgrader') {
 		    upgrader(creep);
-		}
+		} else if (creep.memory.role == 'builder') {
+            builder(creep);
+        }
 
+        if(creep.memory.role == 'guard') {
 
-
-        if(creep.memory.role == 'guard')
+        }
 	}
 }
