@@ -48,8 +48,8 @@ var getName = function(name, num) {
 module.exports.loop = function () {
 
     for(var i in Memory.creeps) {
-    if(!Game.creeps[i]) {
-        delete Memory.creeps[i];
+        if(!Game.creeps[i]) {
+            delete Memory.creeps[i];
         }
     }
 
@@ -63,15 +63,15 @@ module.exports.loop = function () {
     var spawnMiners = false;
     var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES)
     var minerTaget = null;
-    for (let source_i in sources) {
-        let miners = sources[source_i].pos.findInRange(FIND_MY_CREEPS, 2, {filter:
+    for (let source of sources) {
+        let miners = source.pos.findInRange(FIND_MY_CREEPS, 2, {filter:
             c => c.memory.role == 'miner'});
         miners = miners.concat(Game.spawns.Spawn1.room.find(FIND_MY_CREEPS, {
             filter: c => c.memory.sourceId == sources[source_i].id }));
         let total = 0;
-        for (let miner_i in miners) {
-            for (let part_i in miners[miner_i].body) {
-                if (miners[miner_i].body[part_i].type == WORK) {
+        for (let minerC of miners) {
+            for (let part in minerC.body) {
+                if (part.type == WORK) {
                     total = total + 1;
                 }
             }
@@ -103,16 +103,15 @@ module.exports.loop = function () {
         let droppedEnergy = Game.spawns.Spawn1.room.find(FIND_DROPPED_RESOURCES,
             {filter: r => r.resourceType == RESOURCE_ENERGY});
         let total = 0;
-        for (let i in droppedEnergy) {
-            total = total + droppedEnergy[i].amount;
+        for (let r of droppedEnergy) {
+            total = total + r.amount;
         }
         if (total > 500) {
             createCreep('Upgrader ', 'upgrader');
         }
     }
 
-	for(var name in Game.creeps) {
-		var creep = Game.creeps[name];
+	for(var creep of Game.creeps) {
 
 		if(creep.memory.role == 'harvester') {
 			harvester(creep);
