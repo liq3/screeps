@@ -66,6 +66,9 @@ module.exports.loop = function () {
     for (let source_i in sources) {
         let miners = sources[source_i].pos.findInRange(FIND_MY_CREEPS, 2, {filter:
             c => c.memory.role == 'miner'});
+        miners = miners.concat(Game.spawns.Spawn1.room.find(FIND_MY_CREEPS, {
+            filter: c => c.memory.sourceId == sources[source_i].id;
+        });
         let total = 0;
         for (let miner_i in miners) {
             for (let part_i in miners[miner_i].body) {
