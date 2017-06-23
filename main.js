@@ -14,7 +14,7 @@ var createCreep = function(parts, name, roleStr) {
         var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 100) / 100);
         parts = Array(numberParts).fill(WORK);
         parts = parts.concat([CARRY,MOVE]);
-    } else if (roleStr == transporter) {
+    } else if (roleStr == 'transporter') {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
         parts = Array(numberParts).fill(CARRY);
         parts.concat(Array(numberParts).fill(MOVE));
@@ -25,7 +25,7 @@ var createCreep = function(parts, name, roleStr) {
         parts.concat(Array(numberParts).fill(MOVE));
     }
     var name = Game.spawns.Spawn1.createCreep(parts, name, {role: roleStr, gathering:true});
-    if (name != null) {
+    if (typeof(name) == 'string') {
         console.log("Spawned creep " + name);
     }
     return name;
