@@ -87,7 +87,7 @@ module.exports.loop = function () {
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
     if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
         createCreep('Harvester ', 'harvester');
-    } else if (spawnMiners) {
+    } else if (spawnMiners && false) {
         let name = createCreep('Miner ', 'miner');
         if (typeof(name) == 'string') {
             Game.creeps[name].memory.sourceId = minerTargetId;
@@ -135,4 +135,7 @@ module.exports.loop = function () {
 
         }
 	}
+
+    Game.spawns.Spawn1.recycle(Game.spawns.Spawn1.pos.findClosestByRange(
+        FIND_CREEPS, {filter: c => c.memory.role == 'recycle'}));
 }
