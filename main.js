@@ -4,6 +4,7 @@ var builder = require('builder');
 var guard = require('guard');
 var miner = require('miner');
 var transporter = require('transporter');
+var repairer = require('repairer');
 
 var sumCreeps = function(role) {
     return _.sum(Game.creeps, c => c.memory.role == role);
@@ -43,6 +44,8 @@ module.exports.loop = function () {
         createCreep([CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], getName('Transporter ', 0), 'transporter');
     } else if (numberBuilders < 2) {
         createCreep([WORK,WORK,CARRY,MOVE], getName('Builder ', 0), 'builder');
+    } else if (numberRepairers < 1) {
+        createCreep([WORK,CARRY,CARRY,MOVE,MOVE], getName('Repairer ', 0) 'repairer');
     } else if (numberUpgraders < 3){
         createCreep([WORK,WORK,CARRY,MOVE], getName('Upgrader ', 0), 'upgrader');
     } else {
@@ -62,6 +65,8 @@ module.exports.loop = function () {
             miner(creep);
         } else if (creep.memory.role == 'transporter') {
             transporter(creep);
+        } else if (creep.memory.role == 'repairer') {
+            repairer(creep);
         }
 
         if(creep.memory.role == 'guard') {
