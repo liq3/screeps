@@ -18,14 +18,14 @@ var createCreep = function(name, roleStr) {
     } else if (roleStr == 'transporter') {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
         parts = Array(numberParts).fill(CARRY);
-        parts.concat(Array(numberParts).fill(MOVE));
+        parts = parts.concat(Array(numberParts).fill(MOVE));
     } else if (roleStr == 'harvester') {
         parts = [WORK,CARRY,CARRY,CARRY,MOVE];
     } else {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
         parts = Array(numberParts).fill(WORK);
-        parts.concat(Array(numberParts).fill(CARRY));
-        parts.concat(Array(numberParts).fill(MOVE));
+        parts = parts.concat(Array(numberParts).fill(CARRY));
+        parts = parts.concat(Array(numberParts).fill(MOVE));
     }
     var name = Game.spawns.Spawn1.createCreep(parts, getName(name), {role: roleStr, gathering:true});
     if (typeof(name) == 'string') {
@@ -61,21 +61,24 @@ module.exports.loop = function () {
     var numberRepairers = sumCreeps('repairer');
 
     var spawnMiners = false;
-    for (let source in Game.spawns.Spawn1.room.sources) {
-        let miners = source.pos.findInRange(FIND_MY_CREEPS, 2, {filter:
-            c => c.memory.miner});
-        let total = 0;
-        for (let miner in miners) {
-            for (let part in miner.body) {
-                if (part.type == WORK) {
-                    total = total + 1;
+    var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
+    if (sources != undefined && false) {
+        for (let source in sources) {
+            let miners = source.pos.findInRange(FIND_MY_CREEPS, 2, {filter:
+                c => c.memory.miner});
+            let total = 0;
+            for (let minerCreep in miners) {
+                for (let part in minerCreep.body) {
+                    if (part.type == WORK) {
+                        total = total + 1;
+                    }
                 }
             }
+            if (total < 6) {
+                spawnMiners = true;
+            }
+            console.log("WORK parts at " + source.id + " is " + total);
         }
-        if (total < 6) {
-            spawnMiners = true;
-        }
-        console.log("WORK parts at " + source.id + " is " + total);
     }
 
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
