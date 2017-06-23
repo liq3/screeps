@@ -2,6 +2,8 @@ var harvester = require('harvester');
 var upgrader = require('upgrader');
 var builder = require('builder');
 var guard = require('guard');
+var miner = require('miner');
+var transporter = requie('transporter');
 
 var sumCreeps = function(role) {
     return _.sum(Game.creeps, (c) => c.memory.role == role);
@@ -20,11 +22,17 @@ module.exports.loop = function () {
 
     var numberHarvesters = sumCreeps('harvester');
     var numberBuilders = sumCreeps ('builder');
-    var numberUpgraders = sumCreeps ('upgraders');
+    var numberUpgraders = sumCreeps ('upgrader');
+    var numberMiners = sumCreeps('miner');
+    var numberTransporters = sumCreeps('transporter');
 
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
-    if (numberHarvesters < 3) {
+    if (numberHarvesters < 1) {
         createCreep([WORK,WORK,CARRY,MOVE], 'harvester');
+    } else if (numberMiners < 2) {
+        createCreep([WORK,WORK,CARRY,MOVE], 'miner');
+    } else if (numberTransporters < 1) {
+        createCreep([CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], 'transporter');
     } else if (numberBuilders < 3) {
         createCreep([WORK,WORK,CARRY,MOVE], 'builder');
     } else if (numberUpgraders < 3){
@@ -42,6 +50,10 @@ module.exports.loop = function () {
 		    upgrader(creep);
 		} else if (creep.memory.role == 'builder') {
             builder(creep);
+        } else if (crep.memory.role == 'miner') {
+            miner(creep);
+        } else if (crep.memory.role == 'transporter') {
+            transporter(creep);
         }
 
         if(creep.memory.role == 'guard') {
