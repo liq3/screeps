@@ -24,7 +24,11 @@ var createCreep = function(parts, name, roleStr) {
         parts.concat(Array(numberParts).fill(CARRY));
         parts.concat(Array(numberParts).fill(MOVE));
     }
-    return Game.spawns.Spawn1.createCreep(parts, name, {role: roleStr, gathering:true});
+    var name = Game.spawns.Spawn1.createCreep(parts, name, {role: roleStr, gathering:true});
+    if (name != null) {
+        console.log("Spawned creep " + name);
+    }
+    return name;
 }
 
 var getName = function(name, num) {
