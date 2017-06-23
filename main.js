@@ -61,24 +61,21 @@ module.exports.loop = function () {
     var numberRepairers = sumCreeps('repairer');
 
     var spawnMiners = false;
-    var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
-    if (sources != undefined && false) {
-        for (let source in sources) {
-            let miners = source.pos.findInRange(FIND_MY_CREEPS, 2, {filter:
-                c => c.memory.miner});
-            let total = 0;
-            for (let minerCreep in miners) {
-                for (let part in minerCreep.body) {
-                    if (part.type == WORK) {
-                        total = total + 1;
-                    }
+    for (let i in Game.spawns.Spawn1.room.find(FIND_SOURCES);) {
+        let miners = source[i].pos.findInRange(FIND_MY_CREEPS, 2, {filter:
+            c => c.memory.miner});
+        let total = 0;
+        for (let minerCreep in miners) {
+            for (let part in minerCreep.body) {
+                if (part.type == WORK) {
+                    total = total + 1;
                 }
             }
-            if (total < 6) {
-                spawnMiners = true;
-            }
-            console.log("WORK parts at " + source.id + " is " + total);
         }
+        if (total < 6) {
+            spawnMiners = true;
+        }
+        console.log("WORK parts at " + source.id + " is " + total);
     }
 
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
