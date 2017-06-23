@@ -60,6 +60,24 @@ module.exports.loop = function () {
     var numberTransporters = sumCreeps('transporter');
     var numberRepairers = sumCreeps('repairer');
 
+    var spawnMiners = false;
+    for (var source in Game.spawns.Spawn1.room.sources) {
+        var miners = source.pos.findInRange(FIND_MY_CREEPS, 2, {filter:
+            c => c.memory.miner});
+        var total = 0;
+        for (var miner in miners) {
+            for (var part in miner.body) {
+                if (part.type == WORK) {
+                    total = total + 1;
+                }
+            }
+        }
+        if (total < 6) {
+            spawnMiners = true;
+        }
+        console.log("WORK parts at " + source.id + " is " + total);
+    }
+
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
     if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
         createCreep('Harvester ', 'harvester');
