@@ -34,6 +34,7 @@ module.exports.loop = function () {
     var numberUpgraders = sumCreeps ('upgrader');
     var numberMiners = sumCreeps('miner');
     var numberTransporters = sumCreeps('transporter');
+    var numberRepairers = sumCreeps('repairer');
 
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
     if (numberHarvesters < 1 && (numberMiners == 0 || numberTransporters == 0)) {
