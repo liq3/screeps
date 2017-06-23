@@ -4,7 +4,7 @@ module.exports = function (creep) {
         creep.moveTo(source);
 	}
     if (creep.carry.energy > 0) {
-        var recievers = creep.pos.findInRange(Game.creeps, 1, {filter: c => c.memory.role != 'miner'});
+        var recievers = creep.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c => c.memory.role != 'miner'});
         for (var c in recievers) {
             if (creep.carry.energy == 0) {
                 break;
