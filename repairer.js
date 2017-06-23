@@ -10,7 +10,7 @@ module.exports = function (creep) {
     } else {
         var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter:
             s => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL});
-        if(target != null && creep.build(target) == ERR_NOT_IN_RANGE) {
+        if(target != null && creep.repair(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
         }
     }

@@ -10,6 +10,20 @@ var sumCreeps = function(role) {
     return _.sum(Game.creeps, c => c.memory.role == role);
 }
 var createCreep = function(parts, name, roleStr) {
+    if (roleStr == 'miner') {
+        var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 100) / 100);
+        parts = Array(numberParts).fill(WORK);
+        parts = parts.concat([CARRY,MOVE]);
+    } else if (roleStr == transporter) {
+        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
+        parts = Array(numberParts).fill(CARRY);
+        parts.concat(Array(numberParts).fill(MOVE));
+    } else {
+        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
+        parts = Array(numberParts).fill(WORK);
+        parts.concat(Array(numberParts).fill(CARRY));
+        parts.concat(Array(numberParts).fill(MOVE));
+    }
     return Game.spawns.Spawn1.createCreep(parts, name, {role: roleStr, gathering:true});
 }
 
@@ -49,7 +63,7 @@ module.exports.loop = function () {
         createCreep([WORK,CARRY,CARRY,MOVE,MOVE], getName('Repairer ', 0), 'repairer');
     } else if (numberUpgraders < 3){
         createCreep([WORK,WORK,CARRY,MOVE], getName('Upgrader ', 0), 'upgrader');
-    } 
+    }
 
 	for(var name in Game.creeps) {
 		var creep = Game.creeps[name];
