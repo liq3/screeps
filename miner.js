@@ -6,10 +6,10 @@ module.exports = function (creep) {
     if (creep.carry.energy > 0) {
         var recievers = creep.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c => c.memory.role != 'miner'});
         for (var c in recievers) {
+            creep.transfer(c, RESOURCE_ENERGY);
             if (creep.carry.energy == 0) {
                 break;
             }
-            creep.transfer(c, RESOURCE_ENERGY);
         }
     }
 }
