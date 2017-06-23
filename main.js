@@ -37,16 +37,16 @@ module.exports.loop = function () {
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
     if (numberHarvesters < 1 && (numberMiners == 0 || numberTransporters == 0)) {
         createCreep([WORK,WORK,CARRY,MOVE], getName('Harvester ', 0), 'harvester');
-    } else if (numberMiners < 2) {
+    } else if (numberMiners < 3) {
         createCreep([WORK,WORK,CARRY,MOVE], getName('Miner ', 0), 'miner');
     } else if (numberTransporters < 2) {
         createCreep([CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], getName('Transporter ', 0), 'transporter');
-    } else if (numberBuilders < 3) {
+    } else if (numberBuilders < 2) {
         createCreep([WORK,WORK,CARRY,MOVE], getName('Builder ', 0), 'builder');
     } else if (numberUpgraders < 3){
         createCreep([WORK,WORK,CARRY,MOVE], getName('Upgrader ', 0), 'upgrader');
     } else {
-        createCreep([WORK,WORK,CARRY,MOVE], getName('Builder ', 0), 'builder');
+        createCreep([WORK,WORK,CARRY,CARRY,MOVE], getName('Builder ', 0), 'builder');
     }
 
 	for(var name in Game.creeps) {
