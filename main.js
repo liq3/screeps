@@ -9,7 +9,8 @@ var repairer = require('repairer');
 var sumCreeps = function(role) {
     return _.sum(Game.creeps, c => c.memory.role == role);
 }
-var createCreep = function(parts, name, roleStr) {
+var createCreep = function(name, roleStr) {
+    var parts = [];
     if (roleStr == 'miner') {
         var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 100) / 100);
         parts = Array(numberParts).fill(WORK);
@@ -18,13 +19,15 @@ var createCreep = function(parts, name, roleStr) {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
         parts = Array(numberParts).fill(CARRY);
         parts.concat(Array(numberParts).fill(MOVE));
-    } else if (roleStr != 'harvester') {
+    } else if (roleStr == 'harvester') {
+        parts = [WORK,CARRY,CARRY,CARRY,MOVE];
+    } else {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
         parts = Array(numberParts).fill(WORK);
         parts.concat(Array(numberParts).fill(CARRY));
         parts.concat(Array(numberParts).fill(MOVE));
     }
-    var name = Game.spawns.Spawn1.createCreep(parts, name, {role: roleStr, gathering:true});
+    var name = Game.spawns.Spawn1.createCreep(parts, getName(name), {role: roleStr, gathering:true});
     if (typeof(name) == 'string') {
         console.log("Spawned creep " + name);
     }
@@ -32,6 +35,9 @@ var createCreep = function(parts, name, roleStr) {
 }
 
 var getName = function(name, num) {
+    if (num == undefined) {
+        num = 0;
+    }
     if (!((name + num) in Game.creeps)) {
         return name + num;
     } else {
@@ -55,18 +61,18 @@ module.exports.loop = function () {
     var numberRepairers = sumCreeps('repairer');
 
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
-    if (numberHarvesters < 1 && (numberMiners == 0 || numberTransporters == 0)) {
-        createCreep([WORK,WORK,CARRY,MOVE], getName('Harvester ', 0), 'harvester');
+    if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
+        createCreep('Harvester ', 'harvester');
     } else if (numberMiners < 3) {
-        createCreep([WORK,WORK,CARRY,MOVE], getName('Miner ', 0), 'miner');
+        createCreep('Miner ', 'miner');
     } else if (numberTransporters < 2) {
-        createCreep([CARRY,CARRY,CARRY,MOVE,MOVE,MOVE], getName('Transporter ', 0), 'transporter');
+        createCreep('Transporter ', 'transporter');
     } else if (numberBuilders < 2) {
-        createCreep([WORK,WORK,CARRY,MOVE], getName('Builder ', 0), 'builder');
+        createCreep('Builder ', 'builder');
     } else if (numberRepairers < 1) {
-        createCreep([WORK,CARRY,CARRY,MOVE,MOVE], getName('Repairer ', 0), 'repairer');
+        createCreep('Repairer ', 'repairer');
     } else if (numberUpgraders < 3){
-        createCreep([WORK,WORK,CARRY,MOVE], getName('Upgrader ', 0), 'upgrader');
+        createCreep('Upgrader ', 'upgrader');
     }
 
 	for(var name in Game.creeps) {
