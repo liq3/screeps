@@ -7,7 +7,7 @@ module.exports = function (creep) {
 		}
 	} else if (creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
 		creep.memory.gathering = false;
-	} else if (creep.energy.carry == 0) {
+	} else if (creep.carry.energy == 0) {
 		creep.memory.gathering = true;
 	} else {
 		if(creep.transfer(Game.spawns.Spawn1,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {

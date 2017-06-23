@@ -9,9 +9,8 @@ module.exports = function (creep) {
     } else if (creep.carry.energy == 0) {
         creep.memory.gathering = true;
     } else {
-        var target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
-        if(target != null && creep.build(target) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target);
-        }
+		if(creep.transfer(creep.room.controller,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+			creep.moveTo(creep.room.controller);
+		}
     }
 }
