@@ -10,8 +10,13 @@ module.exports = function (creep) {
     } else if (!creep.memory.gathering && creep.carry.energy == 0) {
         creep.memory.gathering = true;
     } else {
-		if(creep.transfer(Game.spawns.Spawn1,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-			creep.moveTo(Game.spawns.Spawn1);
-		}
+		var target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
+			s => s.structureType == STRUCTURE_EXTENSION && s.energy < s.energyCapacity})
+        if (target == null) {
+            target = Game.spawns.Spawn1;
+        }
+        if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+            creep.moveTo(target);
+        }
 	}
 }
