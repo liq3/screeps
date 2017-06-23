@@ -9,6 +9,12 @@ var sumCreeps = function(role) {
 
 module.exports.loop = function () {
 
+    for(var i in Memory.creeps) {
+    if(!Game.creeps[i]) {
+        delete Memory.creeps[i];
+        }
+    }
+
     var numberHarvesters = sumCreeps('harvester');
     var numberBuilders = sumCreeps ('builder');
     var numberUpgraders = sumCreeps ('upgraders');
