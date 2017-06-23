@@ -1,19 +1,8 @@
+var gatherEnergy = require("creepGatherEnergy");
 module.exports = function (creep) {
-    if(creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
-        var energy = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY);
-        if (energy != null) {
-            if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(energy);
-            }
-        } else {
-            var source = creep.pos.findClosestByPath(FIND_SOURCES);
-            if(source != null && creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
-            }
-        }
-        if (creep.carry.energy == creep.carryCapacity) {
-            creep.memory.gathering = false;
-        }
+
+	if(creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
+		gatherEnergy(creep);
     } else if (creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
         creep.memory.gathering = false;
     } else if (!creep.memory.gathering && creep.carry.energy == 0) {
