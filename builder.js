@@ -11,6 +11,9 @@ module.exports = function (creep) {
                 creep.moveTo(source);
             }
         }
+        if (creep.carry.energy == creep.carryCapacity) {
+            creep.memory.gathering = false;
+        }
     } else if (creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
         creep.memory.gathering = false;
     } else if (!creep.memory.gathering && creep.carry.energy == 0) {

@@ -9,7 +9,7 @@ var sumCreeps = function(role) {
     return _.sum(Game.creeps, c => c.memory.role == role);
 }
 var createCreep = function(parts, name, roleStr) {
-    return Game.spawns.Spawn1.createCreep(parts, null, {role: roleStr, gathering:true});
+    return Game.spawns.Spawn1.createCreep(parts, name, {role: roleStr, gathering:true});
 }
 
 var getName = function(name, num) {
