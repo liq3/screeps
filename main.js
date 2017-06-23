@@ -18,7 +18,7 @@ var createCreep = function(parts, name, roleStr) {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
         parts = Array(numberParts).fill(CARRY);
         parts.concat(Array(numberParts).fill(MOVE));
-    } else {
+    } else if (roleStr != 'harvester') {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
         parts = Array(numberParts).fill(WORK);
         parts.concat(Array(numberParts).fill(CARRY));
