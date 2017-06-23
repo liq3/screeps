@@ -61,12 +61,12 @@ module.exports.loop = function () {
     var numberRepairers = sumCreeps('repairer');
 
     var spawnMiners = false;
-    for (var source in Game.spawns.Spawn1.room.sources) {
-        var miners = source.pos.findInRange(FIND_MY_CREEPS, 2, {filter:
+    for (let source in Game.spawns.Spawn1.room.sources) {
+        let miners = source.pos.findInRange(FIND_MY_CREEPS, 2, {filter:
             c => c.memory.miner});
-        var total = 0;
-        for (var miner in miners) {
-            for (var part in miner.body) {
+        let total = 0;
+        for (let miner in miners) {
+            for (let part in miner.body) {
                 if (part.type == WORK) {
                     total = total + 1;
                 }
