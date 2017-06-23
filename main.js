@@ -62,28 +62,33 @@ module.exports.loop = function () {
 
     var spawnMiners = false;
     var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES)
+    var minerTaget = null;
     for (let source_i in sources) {
-        let miners = sources[i].pos.findInRange(FIND_MY_CREEPS, 2, {filter:
+        let miners = sources[source_i].pos.findInRange(FIND_MY_CREEPS, 2, {filter:
             c => c.memory.role == 'miner'});
         let total = 0;
         for (let miner_i in miners) {
-            for (let part_i in miners[i].body) {
-                if (miners[miner_i].part[part_i].type == WORK) {
+            for (let part_i in miners[miner_i].body) {
+                if (miners[miner_i].body[part_i].type == WORK) {
                     total = total + 1;
                 }
             }
         }
         if (total < 6) {
             spawnMiners = true;
+            minerTarget = sources[source_i];
         }
-        console.log("WORK parts at " + source.id + " is " + total);
+        //console.log("WORK parts at " + sources[source_i].id + " is " + total);
     }
 
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
     if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
         createCreep('Harvester ', 'harvester');
-    } else if (numberMiners < 3) {
-        createCreep('Miner ', 'miner');
+    } else if (spawnMiners) {
+        let name = createCreep('Miner ', 'miner');
+        if (typeof(name) == 'string') {
+            Game.creeps[name].memory.sourceId = minerTarget.id;
+        }
     } else if (numberTransporters < 2) {
         createCreep('Transporter ', 'transporter');
     } else if (numberBuilders < 2) {
