@@ -6,6 +6,9 @@ var guard = require('guard');
 var sumCreeps = function(role) {
     return _.sum(Game.creeps, (c) => c.memory.role == role);
 }
+var createCreep = function(parts, roleStr) {
+    return Game.spawns.Spawn1.createCreep(parts, null, {role: roleStr, gathering:true});
+}
 
 module.exports.loop = function () {
 
@@ -21,11 +24,13 @@ module.exports.loop = function () {
 
     var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
     if (numberHarvesters < 3) {
-        Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,MOVE],null,{role: 'harvester', gathering:true});
+        createCreep([WORK,WORK,CARRY,MOVE], 'harvester');
     } else if (numberBuilders < 3) {
-        Game.spawns.Spawn1.createCreep([WORK,CARRY,WORK,MOVE],null,{role: 'builder', gathering:true});
+        createCreep([WORK,WORK,CARRY,MOVE], 'builder');
+    } else if (numberUpgraders < 3){
+        createCreep([WORK,WORK,CARRY,MOVE], 'upgrader');
     } else {
-        Game.spawns.Spawn1.createCreep([WORK,CARRY,WORK,MOVE],null,{role: 'upgrader', gathering:true});
+        createCreep([WORK,WORK,CARRY,MOVE], 'builder');
     }
 
 	for(var name in Game.creeps) {
