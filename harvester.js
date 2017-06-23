@@ -6,10 +6,10 @@ module.exports = function (creep) {
             creep.moveTo(source);
 		}
 	} else if (creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
-		creep.memory.gathering = false;
-	} else if (creep.carry.energy == 0) {
-		creep.memory.gathering = true;
-	} else {
+        creep.memory.gathering = false;
+    } else if (!creep.memory.gathering && creep.carry.energy == 0) {
+        creep.memory.gathering = true;
+    } else {
 		if(creep.transfer(Game.spawns.Spawn1,RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 			creep.moveTo(Game.spawns.Spawn1);
 		}

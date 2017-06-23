@@ -23,9 +23,9 @@ module.exports.loop = function () {
     if (numberHarvesters < 3) {
         Game.spawns.Spawn1.createCreep([WORK,WORK,CARRY,MOVE],null,{role: 'harvester', gathering:true});
     } else if (numberBuilders < 3) {
-        Game.spawns.Spawn1.createCreep([WORK,CARRY,CARRY,MOVE,MOVE],null,{role: 'builder', gathering:true});
+        Game.spawns.Spawn1.createCreep([WORK,CARRY,WORK,MOVE],null,{role: 'builder', gathering:true});
     } else {
-        Game.spawns.Spawn1.createCreep([WORK,CARRY,CARRY,MOVE,MOVE],null,{role: 'upgrader', gathering:true});
+        Game.spawns.Spawn1.createCreep([WORK,CARRY,WORK,MOVE],null,{role: 'upgrader', gathering:true});
     }
 
 	for(var name in Game.creeps) {
