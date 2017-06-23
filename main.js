@@ -45,7 +45,7 @@ module.exports.loop = function () {
     } else if (numberBuilders < 2) {
         createCreep([WORK,WORK,CARRY,MOVE], getName('Builder ', 0), 'builder');
     } else if (numberRepairers < 1) {
-        createCreep([WORK,CARRY,CARRY,MOVE,MOVE], getName('Repairer ', 0) 'repairer');
+        createCreep([WORK,CARRY,CARRY,MOVE,MOVE], getName('Repairer ', 0), 'repairer');
     } else if (numberUpgraders < 3){
         createCreep([WORK,WORK,CARRY,MOVE], getName('Upgrader ', 0), 'upgrader');
     } else {
