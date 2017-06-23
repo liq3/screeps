@@ -67,8 +67,7 @@ module.exports.loop = function () {
         let miners = sources[source_i].pos.findInRange(FIND_MY_CREEPS, 2, {filter:
             c => c.memory.role == 'miner'});
         miners = miners.concat(Game.spawns.Spawn1.room.find(FIND_MY_CREEPS, {
-            filter: c => c.memory.sourceId == sources[source_i].id;
-        });
+            filter: c => c.memory.sourceId == sources[source_i].id }));
         let total = 0;
         for (let miner_i in miners) {
             for (let part_i in miners[miner_i].body) {
@@ -100,6 +99,16 @@ module.exports.loop = function () {
         createCreep('Repairer ', 'repairer');
     } else if (numberUpgraders < 3){
         createCreep('Upgrader ', 'upgrader');
+    } else {
+        let droppedEnergy = Game.spawns.Spawn1.room.find(FIND_DROPPED_RESOURCES,
+            {filter: r => r.resourceType == RESOURCE_ENERGY});
+        let total = 0;
+        for (let i in droppedEnergy) {
+            total = total + droppedEnergy[i].amount;
+        }
+        if (total > 500) {
+            createCreep('Upgrader ', 'upgrader');
+        }
     }
 
 	for(var name in Game.creeps) {
