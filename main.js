@@ -49,9 +49,7 @@ module.exports.loop = function () {
         createCreep([WORK,CARRY,CARRY,MOVE,MOVE], getName('Repairer ', 0), 'repairer');
     } else if (numberUpgraders < 3){
         createCreep([WORK,WORK,CARRY,MOVE], getName('Upgrader ', 0), 'upgrader');
-    } else {
-        createCreep([WORK,WORK,CARRY,CARRY,MOVE], getName('Builder ', 0), 'builder');
-    }
+    } 
 
 	for(var name in Game.creeps) {
 		var creep = Game.creeps[name];
