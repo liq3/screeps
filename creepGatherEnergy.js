@@ -1,5 +1,6 @@
 module.exports = function (creep) {
-    var energy = creep.pos.findClosestByPath(FIND_DROPPED_ENERGY);
+    var energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
+        r => r.resourceType == RESOURCE_ENERGY});
     if (energy != null) {
         if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {
             creep.moveTo(energy);
