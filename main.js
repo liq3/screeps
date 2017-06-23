@@ -62,12 +62,12 @@ module.exports.loop = function () {
 
     var spawnMiners = false;
     var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES)
-    var minerTaget = null;
+    var minerTagetId = null;
     for (let source of sources) {
         let miners = source.pos.findInRange(FIND_MY_CREEPS, 2, {filter:
             c => c.memory.role == 'miner'});
         miners = miners.concat(Game.spawns.Spawn1.room.find(FIND_MY_CREEPS, {
-            filter: c => c.memory.sourceId == sources[source_i].id }));
+            filter: c => c.memory.sourceId == source.id }));
         let total = 0;
         for (let minerC of miners) {
             for (let part in minerC.body) {
@@ -78,7 +78,8 @@ module.exports.loop = function () {
         }
         if (total < 6) {
             spawnMiners = true;
-            minerTarget = sources[source_i];
+            minerTargetId = source.id;
+            break;
         }
         //console.log("WORK parts at " + sources[source_i].id + " is " + total);
     }
@@ -89,7 +90,7 @@ module.exports.loop = function () {
     } else if (spawnMiners) {
         let name = createCreep('Miner ', 'miner');
         if (typeof(name) == 'string') {
-            Game.creeps[name].memory.sourceId = minerTarget.id;
+            Game.creeps[name].memory.sourceId = minerTargetId;
         }
     } else if (numberTransporters < 2) {
         createCreep('Transporter ', 'transporter');
@@ -111,7 +112,8 @@ module.exports.loop = function () {
         }
     }
 
-	for(var creep of Game.creeps) {
+	for(var name in Game.creeps) {
+	    var creep = Game.creeps[name];
 
 		if(creep.memory.role == 'harvester') {
 			harvester(creep);
@@ -125,6 +127,8 @@ module.exports.loop = function () {
             transporter(creep);
         } else if (creep.memory.role == 'repairer') {
             repairer(creep);
+        } else if (creep.memory.role == 'recycle') {
+            creep.moveTo(Game.spawns.Spawn1);
         }
 
         if(creep.memory.role == 'guard') {
