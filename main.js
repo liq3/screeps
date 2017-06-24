@@ -35,6 +35,9 @@ var createCreep = function(name, roleStr) {
         parts = parts.concat(Array(numberParts).fill(MOVE));
     }
     var name = Game.spawns.Spawn1.createCreep(parts, getName(name), {role: roleStr, gathering:true});
+    if (name < 0) {
+        console.log("Error spawning creep: " + name);
+    }
     if (typeof(name) == 'string') {
         console.log("Spawned creep " + name);
     }
@@ -100,17 +103,17 @@ module.exports.loop = function () {
             Game.creeps[name].memory.sourceId = minerTargetId;
         }
     } else if (numberTransporters < 2) {
-        createCreep('Transporter ', 'transporter');
+        createCreep('T', 'transporter');
     } else if (numberBuilders < 2) {
-        createCreep('Builder ', 'builder');
+        createCreep('B', 'builder');
     } else if (numberRepairers < 1) {
-        createCreep('Repairer ', 'repairer');
+        createCreep('R', 'repairer');
     } else if (numberUpgraders < 0){
-        createCreep('Upgrader ', 'upgrader');
+        createCreep('U', 'upgrader');
     } else if (numberTransporterUpgraders < 4 && numberStationaryUpgraders >= numberTransporterUpgraders) {
-        createCreep('TransportUpg ', 'transporterUpgrader');
+        createCreep('TU', 'transporterUpgrader');
     } else if (numberStationaryUpgraders < 4) {
-        createCreep('StaUpg ', 'stationaryUpgrader');
+        createCreep('SU', 'stationaryUpgrader');
     } else if (false) {
         let droppedEnergy = Game.spawns.Spawn1.room.find(FIND_DROPPED_RESOURCES,
             {filter: r => r.resourceType == RESOURCE_ENERGY});
