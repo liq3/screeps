@@ -107,9 +107,9 @@ module.exports.loop = function () {
         createCreep('Repairer ', 'repairer');
     } else if (numberUpgraders < 0){
         createCreep('Upgrader ', 'upgrader');
-    } else if (numberTransporterUpgraders < 4) {
+    } else if (numberTransporterUpgraders < 4 && numberStationaryUpgraders >= numberTransporterUpgraders) {
         createCreep('TransportUpg ', 'transporterUpgrader');
-    } else if (numberStationaryUpgraders < 4 && numberStationaryUpgraders <= numberTransporterUpgraders) {
+    } else if (numberStationaryUpgraders < 4) {
         createCreep('StaUpg ', 'stationaryUpgrader');
     } else if (false) {
         let droppedEnergy = Game.spawns.Spawn1.room.find(FIND_DROPPED_RESOURCES,
