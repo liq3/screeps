@@ -21,7 +21,7 @@ var createCreep = function(name, roleStr) {
         var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 50) / 150);
         parts = Array(numberParts).fill(WORK);
         parts = parts.concat(Array(numberParts).fill(CARRY));
-        parts = parts.push(MOVE);
+        parts = parts.concat([MOVE]);
     } else if (roleStr == 'transporter' || roleStr == 'transporterUpgrader') {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
         parts = Array(numberParts).fill(CARRY);
@@ -36,7 +36,7 @@ var createCreep = function(name, roleStr) {
     }
     var name = Game.spawns.Spawn1.createCreep(parts, getName(name), {role: roleStr, gathering:true});
     if (name < 0) {
-        console.log("Error spawning creep: " + name);
+        console.log("Error spawning creep: " + name + parts);
     }
     if (typeof(name) == 'string') {
         console.log("Spawned creep " + name);
@@ -145,7 +145,7 @@ module.exports.loop = function () {
             creep.moveTo(Game.spawns.Spawn1);
         } else if (creep.memory.role == 'stationaryUpgrader') {
             stationaryUpgrader(creep);
-        } else if (creep.memory.roll == 'transporterUpgrader') {
+        } else if (creep.memory.role == 'transporterUpgrader') {
             transporterUpgrader(creep);
         }
 

@@ -14,7 +14,7 @@ module.exports = function (creep) {
         } else {
             return null;
         }
-    };
+    }
 
 	if(creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
 		gatherEnergy(creep);
