@@ -5,6 +5,8 @@ var guard = require('guard');
 var miner = require('miner');
 var transporter = require('transporter');
 var repairer = require('repairer');
+var stationaryUpgrader = require('stationaryUpgrader');
+var transporterUpgrader = require('transporterUpgrader');
 
 var sumCreeps = function(role) {
     return _.sum(Game.creeps, c => c.memory.role == role);
@@ -15,7 +17,12 @@ var createCreep = function(name, roleStr) {
         var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 100) / 100);
         parts = Array(numberParts).fill(WORK);
         parts = parts.concat([CARRY,MOVE]);
-    } else if (roleStr == 'transporter') {
+    } else if (roleStr == 'stationaryUpgrader') {
+        var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 50) / 150);
+        parts = Array(numberParts).fill(WORK);
+        parts = parts.concat(Array(numberParts).fill(CARRY));
+        parts = parts.push(MOVE);
+    } else if (roleStr == 'transporter' || roleStr == 'transporterUpgrader') {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
         parts = Array(numberParts).fill(CARRY);
         parts = parts.concat(Array(numberParts).fill(MOVE));
@@ -59,6 +66,8 @@ module.exports.loop = function () {
     var numberMiners = sumCreeps('miner');
     var numberTransporters = sumCreeps('transporter');
     var numberRepairers = sumCreeps('repairer');
+    var numberStationaryUpgraders = sumCreeps('stationUpgrader');
+    var numberTransporterUpgraders = sumCreeps('transporterUpgrader');
 
     var spawnMiners = false;
     var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
@@ -96,9 +105,13 @@ module.exports.loop = function () {
         createCreep('Builder ', 'builder');
     } else if (numberRepairers < 1) {
         createCreep('Repairer ', 'repairer');
-    } else if (numberUpgraders < 3){
+    } else if (numberUpgraders < 0){
         createCreep('Upgrader ', 'upgrader');
-    } else {
+    } else if (numberTransporterUpgraders < 4) {
+        createCreep('TransportUpg ', 'transporterUpgrader');
+    } else if (numberStationaryUpgraders < 4 && numberStationaryUpgraders <= numberTransporterUpgraders) {
+        createCreep('StaUpg ', 'stationaryUpgrader');
+    } else if (false) {
         let droppedEnergy = Game.spawns.Spawn1.room.find(FIND_DROPPED_RESOURCES,
             {filter: r => r.resourceType == RESOURCE_ENERGY});
         let total = 0;
@@ -127,6 +140,10 @@ module.exports.loop = function () {
             repairer(creep);
         } else if (creep.memory.role == 'recycle') {
             creep.moveTo(Game.spawns.Spawn1);
+        } else if (creep.memory.role == 'stationaryUpgrader') {
+            stationaryUpgrader(creep);
+        } else if (creep.memory.roll == 'transporterUpgrader') {
+            transporterUpgrader(creep);
         }
 
         if(creep.memory.role == 'guard') {
