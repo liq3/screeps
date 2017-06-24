@@ -66,7 +66,7 @@ module.exports.loop = function () {
     var numberMiners = sumCreeps('miner');
     var numberTransporters = sumCreeps('transporter');
     var numberRepairers = sumCreeps('repairer');
-    var numberStationaryUpgraders = sumCreeps('stationUpgrader');
+    var numberStationaryUpgraders = sumCreeps('stationaryUpgrader');
     var numberTransporterUpgraders = sumCreeps('transporterUpgrader');
 
     var spawnMiners = false;
@@ -150,6 +150,15 @@ module.exports.loop = function () {
 
         }
 	}
+
+    var towers = Game.spawns.Spawn1.room.find(FIND_MY_STRUCTURES, {filter:
+        s => s.structureType == STRUCTURE_TOWER});
+    for (let tower of towers) {
+        let target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if (target != null) {
+            tower.attack(target);
+        }
+    }
 
     Game.spawns.Spawn1.recycleCreep(Game.spawns.Spawn1.pos.findClosestByRange(
         FIND_CREEPS, {filter: c => c.memory.role == 'recycle'}));
