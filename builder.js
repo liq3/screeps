@@ -13,9 +13,10 @@ module.exports = function (creep) {
 			if (creep.build(target) == ERR_NOT_IN_RANGE) {
             	creep.moveTo(target);
 			}
+		} else {
+		    target = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter:
+			    w => w.structureType == STRUCTURE_WALL && w.hits < 10000});
 		}
-		target = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter:
-			w => w.structureType == STRUCTURE_WALL && w.hits < 10000});
 		if(target != null) {
 			if (creep.repair(target) == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target);

@@ -61,16 +61,14 @@ module.exports.loop = function () {
     var numberRepairers = sumCreeps('repairer');
 
     var spawnMiners = false;
-    var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES)
-    var minerTagetId = null;
+    var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
+    var minerTargetId = null;
     for (let source of sources) {
-        let miners = source.pos.findInRange(FIND_MY_CREEPS, 2, {filter:
-            c => c.memory.role == 'miner'});
-        miners = miners.concat(Game.spawns.Spawn1.room.find(FIND_MY_CREEPS, {
-            filter: c => c.memory.sourceId == source.id }));
+        let miners = Game.spawns.Spawn1.room.find(FIND_MY_CREEPS, {
+            filter: c => c.memory.sourceId == source.id });
         let total = 0;
         for (let minerC of miners) {
-            for (let part in minerC.body) {
+            for (let part of minerC.body) {
                 if (part.type == WORK) {
                     total = total + 1;
                 }
@@ -79,15 +77,15 @@ module.exports.loop = function () {
         if (total < 6) {
             spawnMiners = true;
             minerTargetId = source.id;
+            //console.log("WORK parts at " + source.id + " is " + total);
             break;
         }
-        //console.log("WORK parts at " + sources[source_i].id + " is " + total);
     }
 
-    var source = Game.spawns.Spawn1.room.find(FIND_SOURCES)[0];
+
     if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
         createCreep('Harvester ', 'harvester');
-    } else if (spawnMiners && false) {
+    } else if (spawnMiners) {
         let name = createCreep('Miner ', 'miner');
         if (typeof(name) == 'string') {
             Game.creeps[name].memory.sourceId = minerTargetId;
@@ -136,6 +134,6 @@ module.exports.loop = function () {
         }
 	}
 
-    Game.spawns.Spawn1.recycle(Game.spawns.Spawn1.pos.findClosestByRange(
+    Game.spawns.Spawn1.recycleCreep(Game.spawns.Spawn1.pos.findClosestByRange(
         FIND_CREEPS, {filter: c => c.memory.role == 'recycle'}));
 }
