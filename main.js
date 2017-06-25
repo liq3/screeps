@@ -177,6 +177,8 @@ module.exports.loop = function () {
             transporterUpgrader(creep);
         } else if (creep.memory.role == 'traveler') {
             traveler(creep);
+        } else if (creep.memory.role == 'attacker') {
+            attacker(creep);
         }
 	}
 
