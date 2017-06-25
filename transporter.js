@@ -27,7 +27,7 @@ module.exports = function (creep) {
 	            s => s.structureType == STRUCTURE_CONTAINER &&
 	                _.sum(s.store) < s.storeCapacity});
 		}
-		if (debug) console.log(target);
+		//if (debug) console.log(target);
         if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
         }

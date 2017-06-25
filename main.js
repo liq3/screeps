@@ -9,6 +9,8 @@ var stationaryUpgrader = require('stationaryUpgrader');
 var transporterUpgrader = require('transporterUpgrader');
 var traveler = require('traveler');
 
+debug = false;
+
 var createRoadsOnPath = function(start, end) {
     var path = start.findPathTo(end, {ignoreCreeps: true});
     var room = Game.rooms[start.roomName];
@@ -74,8 +76,6 @@ var getName = function(name, num) {
         return getName(name, num+1);
     }
 }
-
-debug = true;
 
 module.exports.loop = function () {
 
