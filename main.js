@@ -8,23 +8,32 @@ var repairer = require('repairer');
 var stationaryUpgrader = require('stationaryUpgrader');
 var transporterUpgrader = require('transporterUpgrader');
 
+var createRoadsOnPath = function(start, end) {
+    var path = start.findPathTo(end, {ignoreCreeps: true});
+    var room = Game.rooms[start.roomName];
+    for (let pos of path) {
+        room.createConstructionSite(pos.x,pos.y, STRUCTURE_ROAD);
+    }
+}
+
 var sumCreeps = function(role) {
     return _.sum(Game.creeps, c => c.memory.role == role);
 }
 var createCreep = function(name, roleStr) {
     var parts = [];
     if (roleStr == 'miner') {
-        var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 100) / 100);
-        parts = Array(numberParts).fill(WORK);
-        parts = parts.concat([CARRY,MOVE]);
+        var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 150) / 100);
+        parts = Array(Math.min(6,numberParts)).fill(WORK);
+        parts = parts.concat([CARRY,MOVE,MOVE]);
     } else if (roleStr == 'stationaryUpgrader') {
         var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 50) / 150);
         parts = Array(numberParts).fill(WORK);
         parts = parts.concat(Array(numberParts).fill(CARRY));
         parts = parts.concat([MOVE]);
     } else if (roleStr == 'transporter' || roleStr == 'transporterUpgrader') {
-        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
+        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150);
         parts = Array(numberParts).fill(CARRY);
+        parts = parts.concat(Array(numberParts).fill(CARRY));
         parts = parts.concat(Array(numberParts).fill(MOVE));
     } else if (roleStr == 'harvester') {
         parts = [WORK,CARRY,CARRY,CARRY,MOVE];
@@ -36,7 +45,7 @@ var createCreep = function(name, roleStr) {
     }
     var name = Game.spawns.Spawn1.createCreep(parts, getName(name), {role: roleStr, gathering:true});
     if (name < 0) {
-        console.log("Error spawning creep: " + name + parts);
+        //console.log("Error spawning creep: " + name + parts);
     }
     if (typeof(name) == 'string') {
         console.log("Spawned creep " + name);
