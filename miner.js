@@ -1,6 +1,6 @@
 module.exports = function (creep) {
 	var source;
-	if (creep.pos.roomName != creep.memory.room) {
+	if (creep.memory.room != undefined && creep.pos.roomName != creep.memory.room) {
 		creep.moveTo(new RoomPosition(25,25, creep.memory.room), {range: 22});
 		return;
 	}
