@@ -75,6 +75,8 @@ var getName = function(name, num) {
     }
 }
 
+debug = true;
+
 module.exports.loop = function () {
 
     for(var i in Memory.creeps) {
@@ -99,22 +101,20 @@ module.exports.loop = function () {
     var minerTargetRoom = null;
     for (let r of searchRooms) {
         if (Game.rooms[r] == undefined) {
-            if (_.filter(Game.creeps, c => c.memory.role == 'miner' && c.memory.room == r)) {
+            if (!_.filter(Game.creeps, c => c.memory.role == 'miner' && c.memory.room == r)) {
                 spawnMiners = true;
                 minerTargetRoom = r;
-                //console.log("WORK parts at " + source.id + " is " + total);
                 break;
-            } else {
-                continue;
             }
         } else {
             let trans = Game.rooms[r].find(FIND_MY_CREEPS, {
                 filter: c => c.memory.room == r && c.memory.role == 'miner' });
             let tempRoom = Game.rooms[r];
+            if (debug) console.log("In room " + r + " there are " + trans.length
+             + " assigned miners and " + tempRoom.find(FIND_SOURCES).length + " sources.");
             if (tempRoom != null && trans.length < tempRoom.find(FIND_SOURCES).length) {
                 spawnMiners = true;
                 minerTargetRoom = r;
-                //console.log("WORK parts at " + source.id + " is " + total);
                 break;
             }
         }
