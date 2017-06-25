@@ -39,7 +39,7 @@ var createCreep = function(name, roleStr) {
     } else if (roleStr == 'harvester') {
         parts = [WORK,CARRY,CARRY,CARRY,MOVE];
     } else if (roleStr == 'traveler') {
-        parts = [TOUGH,MOVE];
+        parts = Array(35).fill(TOUGH).push(MOVE);
     } else {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
         parts = Array(numberParts).fill(WORK);
@@ -83,6 +83,7 @@ module.exports.loop = function () {
     var numberRepairers = sumCreeps('repairer');
     var numberStationaryUpgraders = sumCreeps('stationaryUpgrader');
     var numberTransporterUpgraders = sumCreeps('transporterUpgrader');
+    var traveler = sumCreeps('traveler');
 
     var spawnMiners = false;
     var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
@@ -106,8 +107,12 @@ module.exports.loop = function () {
         }
     }
 
-
-    if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
+    if (numberTravelers < 2) {
+        let name = createCreep('Trav', 'traveler');
+        if (typeof(name) == 'string') {
+            Game.creeps[name].memory.target = {x:1,y:28,roomName='E62N94'};
+        }
+    } else if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
         createCreep('Harvester ', 'harvester');
     } else if (spawnMiners) {
         let name = createCreep('Miner ', 'miner');
