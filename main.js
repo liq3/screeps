@@ -96,7 +96,7 @@ module.exports.loop = function () {
 
     var spawnMiners = false;
     var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93'];
-    var sources = [2,1,2];
+    var sources = [2,2,1];
     var minerTargetId = null;
     for (let source of sources) {
         let miners = Game.spawns.Spawn1.room.find(FIND_MY_CREEPS, {
