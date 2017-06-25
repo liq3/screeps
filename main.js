@@ -96,30 +96,36 @@ module.exports.loop = function () {
 
     var spawnMiners = false;
     var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93'];
-    var sources = [2,2,1];
-    var minerTargetId = null;
-    for (let source of sources) {
-        let miners = Game.spawns.Spawn1.room.find(FIND_MY_CREEPS, {
-            filter: c => c.memory.sourceId == source.id });
-        let total = 0;
-        for (let minerC of miners) {
-            for (let part of minerC.body) {
-                if (part.type == WORK) {
-                    total = total + 1;
-                }
+    var minerTargetRoom = null;
+    for (let r of searchRooms) {
+        if (Game.rooms[r] == undefined) {
+            if (_.filter(Game.creeps, c => c.memory.role == 'miner' && c.memory.room == r)) {
+                spawnMiners = true;
+                minerTargetRoom = r;
+                //console.log("WORK parts at " + source.id + " is " + total);
+                break;
+            } else {
+                continue;
             }
-        }
-        if (total < 6) {
-            spawnMiners = true;
-            minerTargetId = source.id;
-            //console.log("WORK parts at " + source.id + " is " + total);
-            break;
+        } else {
+            let trans = Game.rooms[r].find(FIND_MY_CREEPS, {
+                filter: c => c.memory.room == r && c.memory.role == 'miner' });
+            let tempRoom = Game.rooms[r];
+            if (tempRoom != null && trans.length < tempRoom.find(FIND_SOURCES).length) {
+                spawnMiners = true;
+                minerTargetRoom = r;
+                //console.log("WORK parts at " + source.id + " is " + total);
+                break;
+            }
         }
     }
 
     var spawnTransporters = false;
     var transporterTargetRoom = null;
     for (let r of searchRooms) {
+        if (Game.rooms[r] == undefined) {
+            continue;
+        }
         let trans = Game.rooms[r].find(FIND_MY_CREEPS, {
             filter: c => c.memory.room == r && c.memory.role == 'transporter' });
         let tempRoom = Game.rooms[r];
@@ -134,7 +140,7 @@ module.exports.loop = function () {
     if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
         createCreep('Harvester ', {role:'harvester'});
     } else if (spawnMiners) {
-        createCreep('Miner ', {role:'miner',sourceId:minerTargetId});
+        createCreep('Miner ', {role:'miner',room:minerTargetRoom});
     } else if (spawnTransporters) {
         createCreep('T', {role:'transporter', room:transporterTargetRoom});
     } else if (numberTravelers < 0) {
