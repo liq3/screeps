@@ -22,7 +22,7 @@ var sumCreeps = function(role) {
 }
 var createCreep = function(name, data) {
     var parts = [];
-    if (roleStr == 'miner') {
+    if (data.role == 'miner') {
         var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 150) / 100);
         parts = Array(Math.min(6,numberParts)).fill(WORK);
         parts = parts.concat([CARRY,MOVE,MOVE]);
