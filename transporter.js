@@ -1,13 +1,19 @@
 var gatherEnergy = require("creepGatherEnergy");
 module.exports = function (creep) {
 
-	if(creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
-		gatherEnergy(creep);
-	} else if (creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
-        creep.memory.gathering = false;
+	if (creep.memory.gathering) {
+		if (creep.pos.roomName != creep.memory.room) {
+			creep.moveTo(new RoomPosition(25,25,creep.memory.room));
+		} else if (creep.carry.energy < creep.carryCapacity) {
+			gatherEnergy(creep);
+		} else if (creep.carry.energy == creep.carryCapacity) {
+        	creep.memory.gathering = false;
+		}
     } else if (!creep.memory.gathering && creep.carry.energy == 0) {
         creep.memory.gathering = true;
-    } else {
+    } else if (creep.pos.room != Game.spawns.Spawn1.room) {
+		creep.moveTo(Game.spawns.Spawn1);
+	} else {
 		var target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
 			s => s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity});
         if (target == null) {
