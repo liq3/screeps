@@ -1,7 +1,7 @@
 var harvester = require('harvester');
 var upgrader = require('upgrader');
 var builder = require('builder');
-var guard = require('guard');
+var attacker = require('attacker');
 var miner = require('miner');
 var transporter = require('transporter');
 var repairer = require('repairer');
@@ -39,7 +39,12 @@ var createCreep = function(name, roleStr) {
     } else if (roleStr == 'harvester') {
         parts = [WORK,CARRY,CARRY,CARRY,MOVE];
     } else if (roleStr == 'traveler') {
-        parts = Array(35).fill(TOUGH).push(MOVE);
+        parts = Array(35).fill(TOUGH).concat([MOVE]);
+    } else if (roleStr == 'attacker') {
+        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150);
+        for (let i = 0; i < numberParts; i++) {
+            parts = parts.concat([ATTACK,ATTACK,MOVE]);
+        }
     } else {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
         parts = Array(numberParts).fill(WORK);
@@ -84,6 +89,7 @@ module.exports.loop = function () {
     var numberStationaryUpgraders = sumCreeps('stationaryUpgrader');
     var numberTransporterUpgraders = sumCreeps('transporterUpgrader');
     var numberTravelers = sumCreeps('traveler');
+    var numberAttackers = sumCreeps('attacker');
 
     var spawnMiners = false;
     var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
@@ -116,7 +122,7 @@ module.exports.loop = function () {
         }
     } else if (numberTransporters < 2) {
         createCreep('T', 'transporter');
-    } else if (numberTravelers < 2) {
+    } else if (numberTravelers < 0) {
         let name = createCreep('Trav', 'traveler');
         if (typeof(name) == 'string') {
             Game.creeps[name].memory.target = {x:1,y:28,roomName:'E62N94'};
@@ -125,8 +131,13 @@ module.exports.loop = function () {
         createCreep('B', 'builder');
     } else if (numberRepairers < 1) {
         createCreep('R', 'repairer');
-    } else if (numberUpgraders < 0){
+    } else if (numberUpgraders < 0) {
         createCreep('U', 'upgrader');
+    } else if (numberAttackers < 1) {
+        let name = createCreep('A', 'attacker');
+        if (typeof(name) == 'string') {
+            Game.creeps[name].memory.targetRoom = 'E62N94';
+        }
     } else if (numberTransporterUpgraders < 4 && numberStationaryUpgraders >= numberTransporterUpgraders) {
         createCreep('TU', 'transporterUpgrader');
     } else if (numberStationaryUpgraders < 4) {

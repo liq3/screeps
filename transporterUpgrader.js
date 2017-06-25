@@ -26,7 +26,9 @@ module.exports = function (creep) {
         var target = Game.getObjectById(creep.memory.targetId);
         if (target == null) {
             target = chooseTarget();
-            creep.memory.targetId = target.id;
+            if (target != null) {
+                creep.memory.targetId = target.id;
+            }
         }
         if (target != null) {
             var error = creep.transfer(target, RESOURCE_ENERGY);
