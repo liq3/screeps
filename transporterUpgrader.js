@@ -32,7 +32,8 @@ module.exports = function (creep) {
             var error = creep.transfer(target, RESOURCE_ENERGY);
             if (error == ERR_NOT_IN_RANGE) {
                creep.moveTo(target);
-           } else if (target.carry.energy > creep.carryCapacity * 0.9) {
+           }
+           if (target.carry.energy > target.carryCapacity * 0.9) {
                creep.memory.targetId = chooseTarget().id;
            }
         }
