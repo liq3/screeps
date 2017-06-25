@@ -115,6 +115,7 @@ module.exports.loop = function () {
             if (tempRoom != null && trans.length < tempRoom.find(FIND_SOURCES).length) {
                 spawnMiners = true;
                 minerTargetRoom = r;
+                if (debug) console.log("Miner set to spawn targeting room " + r);
                 break;
             }
         }
