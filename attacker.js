@@ -3,6 +3,9 @@ module.exports = function (creep) {
         var target = creep.pos.findClosestByPath(FIND_HOSTILE_SPAWNS);
         if (target == null) {
             target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
+            if (target == null) {
+                target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
+            }
         }
         if(target != null && creep.attack(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
