@@ -125,7 +125,8 @@ module.exports.loop = function () {
     for (let r of searchRooms) {
         let trans = Game.rooms[r].find(FIND_MY_CREEPS, {
             filter: c => c.memory.room == r && c.memory.role == 'transporter' });
-        if (trans.length < Game.rooms[r].find(FIND_SOURCES).length) {
+        let tempRoom = Game.rooms[r];
+        if (tempRoom != null && trans.length < tempRoom.find(FIND_SOURCES).length) {
             spawnTransporters = true;
             transporterTargetRoom = r;
             //console.log("WORK parts at " + source.id + " is " + total);
