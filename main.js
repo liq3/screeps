@@ -55,8 +55,8 @@ var createCreep = function(name, data) {
         data.gathering = true;
     }
     var name = Game.spawns.Spawn1.createCreep(parts, getName(name), data);
-    if (name < 0) {
-        //console.log("Error spawning creep: " + name + parts);
+    if (name < 0 & debug) {
+        console.log("Error spawning creep: " + name + parts);
     }
     if (typeof(name) == 'string') {
         console.log("Spawned creep " + name);
