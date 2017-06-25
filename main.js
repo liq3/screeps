@@ -41,7 +41,7 @@ var createCreep = function(name, roleStr) {
     } else if (roleStr == 'traveler') {
         parts = Array(35).fill(TOUGH).concat([MOVE]);
     } else if (roleStr == 'attacker') {
-        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150);
+        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 210);
         for (let i = 0; i < numberParts; i++) {
             parts = parts.concat([ATTACK,ATTACK,MOVE]);
         }
