@@ -7,6 +7,7 @@ var transporter = require('transporter');
 var repairer = require('repairer');
 var stationaryUpgrader = require('stationaryUpgrader');
 var transporterUpgrader = require('transporterUpgrader');
+var traveler = require('traveler');
 
 var createRoadsOnPath = function(start, end) {
     var path = start.findPathTo(end, {ignoreCreeps: true});
@@ -37,6 +38,8 @@ var createCreep = function(name, roleStr) {
         parts = parts.concat(Array(numberParts).fill(MOVE));
     } else if (roleStr == 'harvester') {
         parts = [WORK,CARRY,CARRY,CARRY,MOVE];
+    } else if (roleStr == 'traveler') {
+        parts = [TOUGH,MOVE];
     } else {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
         parts = Array(numberParts).fill(WORK);
@@ -156,10 +159,8 @@ module.exports.loop = function () {
             stationaryUpgrader(creep);
         } else if (creep.memory.role == 'transporterUpgrader') {
             transporterUpgrader(creep);
-        }
-
-        if(creep.memory.role == 'guard') {
-
+        } else if (creep.memory.role == 'traveler') {
+            traveler(creep);
         }
 	}
 
