@@ -83,7 +83,7 @@ module.exports.loop = function () {
     var numberRepairers = sumCreeps('repairer');
     var numberStationaryUpgraders = sumCreeps('stationaryUpgrader');
     var numberTransporterUpgraders = sumCreeps('transporterUpgrader');
-    var traveler = sumCreeps('traveler');
+    var numberTravelers = sumCreeps('traveler');
 
     var spawnMiners = false;
     var sources = Game.spawns.Spawn1.room.find(FIND_SOURCES);
@@ -107,12 +107,7 @@ module.exports.loop = function () {
         }
     }
 
-    if (numberTravelers < 2) {
-        let name = createCreep('Trav', 'traveler');
-        if (typeof(name) == 'string') {
-            Game.creeps[name].memory.target = {x:1,y:28,roomName='E62N94'};
-        }
-    } else if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
+    if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
         createCreep('Harvester ', 'harvester');
     } else if (spawnMiners) {
         let name = createCreep('Miner ', 'miner');
@@ -121,6 +116,11 @@ module.exports.loop = function () {
         }
     } else if (numberTransporters < 2) {
         createCreep('T', 'transporter');
+    } else if (numberTravelers < 2) {
+        let name = createCreep('Trav', 'traveler');
+        if (typeof(name) == 'string') {
+            Game.creeps[name].memory.target = {x:1,y:28,roomName:'E62N94'};
+        }
     } else if (numberBuilders < 2) {
         createCreep('B', 'builder');
     } else if (numberRepairers < 1) {
