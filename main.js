@@ -166,7 +166,7 @@ module.exports.loop = function () {
     } else if (numberUpgraders < 0) {
         createCreep('U', {role:'upgrader'});
     } else if (true) {
-        createCreep('D', {role:'decoy', targetRoom:'E62N92'});
+        createCreep('D', {role:'decoy', targetPos:{25,25,roomName:'E62N92'}});
     } else if (spawnAttacker) {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (numberTransporterUpgraders < 4 && numberStationaryUpgraders >= numberTransporterUpgraders) {

@@ -1,7 +1,7 @@
 module.exports = function (creep) {
 
-    var target = creep.memory.targetRoom;
+    var target = creep.memory.targetPos;
 	if(target != null) {
-		creep.moveTo(new RoomPosition(target.x,target.y,target));
+		creep.moveTo(new RoomPosition(target.x,target.y,target.roomName));
 	}
 }
