@@ -210,6 +210,8 @@ module.exports.loop = function () {
             traveler(creep);
         } else if (creep.memory.role == 'attacker') {
             attacker(creep);
+        } else if (creep.memory.roll == 'decoy') {
+            decoy(creep);
         }
 	}
 
