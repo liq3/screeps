@@ -43,7 +43,7 @@ var createCreep = function(name, data) {
     } else if (data.role == 'harvester') {
         parts = [WORK,CARRY,CARRY,CARRY,MOVE];
         data.gathering = true;
-    } else if (data.role == 'traveler') {
+    } else if (data.role == 'decoy') {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
         for (let i = 0; i < Math.min(8,numberParts); i++) {
             parts = parts.concat([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE]);
