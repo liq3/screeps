@@ -1,14 +1,10 @@
-var harvester = require('harvester');
-var upgrader = require('upgrader');
-var builder = require('builder');
-var attacker = require('attacker');
-var miner = require('miner');
-var transporter = require('transporter');
-var repairer = require('repairer');
-var stationaryUpgrader = require('stationaryUpgrader');
-var transporterUpgrader = require('transporterUpgrader');
-var traveler = require('traveler');
-var decoy = require('decoy');
+var creepRoles = ['harvester','upgrader','builder','attacker','miner',
+    'transporter','repairer','stationaryUpgrader','transporterUpgrader',
+    'traveler','decoy'];
+
+for (let i in creepRoles) {
+    creepFunctions[i] = require(i);
+}
 
 debug = false;
 
@@ -188,31 +184,7 @@ module.exports.loop = function () {
 	for(var name in Game.creeps) {
 	    var creep = Game.creeps[name];
 
-		if(creep.memory.role == 'harvester') {
-			harvester(creep);
-		} else if (creep.memory.role == 'upgrader') {
-		    upgrader(creep);
-		} else if (creep.memory.role == 'builder') {
-            builder(creep);
-        } else if (creep.memory.role == 'miner') {
-            miner(creep);
-        } else if (creep.memory.role == 'transporter') {
-            transporter(creep);
-        } else if (creep.memory.role == 'repairer') {
-            repairer(creep);
-        } else if (creep.memory.role == 'recycle') {
-            creep.moveTo(Game.spawns.Spawn1);
-        } else if (creep.memory.role == 'stationaryUpgrader') {
-            stationaryUpgrader(creep);
-        } else if (creep.memory.role == 'transporterUpgrader') {
-            transporterUpgrader(creep);
-        } else if (creep.memory.role == 'traveler') {
-            traveler(creep);
-        } else if (creep.memory.role == 'attacker') {
-            attacker(creep);
-        } else if (creep.memory.roll == 'decoy') {
-            decoy(creep);
-        }
+		creepFunctions[creep.memory.role](creep);
 	}
 
     var towers = Game.spawns.Spawn1.room.find(FIND_MY_STRUCTURES, {filter:

@@ -4,7 +4,7 @@ module.exports = function (creep) {
 	if(target != null) {
 		var error = creep.moveTo(new RoomPosition(target.x,target.y,target.roomName));
         if (error != 0) {
-            console.log("Error moving decoy");
+            console.log("Error moving decoy " + error);
         }
 	}
 }
