@@ -11,7 +11,7 @@ module.exports = function (creep) {
 		}
     } else if (!creep.memory.gathering && creep.carry.energy == 0) {
         creep.memory.gathering = true;
-    } else if (creep.pos.room != Game.spawns.Spawn1.room) {
+    } else if (creep.room != Game.spawns.Spawn1.room) {
 		creep.moveTo(Game.spawns.Spawn1);
 	} else {
 		var target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:

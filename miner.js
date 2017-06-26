@@ -8,7 +8,7 @@ module.exports = function (creep) {
 		source = Game.getObjectById(creep.memory.sourceId);
 	} else {
 		for (let s of creep.room.find(FIND_SOURCES)) {
-			if (!_.filter(Game.creeps, c => c.memory.sourceId == s.id && c.memory.role == 'miner').length == 0) {
+			if (_.filter(Game.creeps, c => c.memory.sourceId == s.id && c.memory.role == 'miner').length == 0) {
 				creep.memory.sourceId = s.id;
 			}
 		}

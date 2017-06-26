@@ -100,41 +100,26 @@ module.exports.loop = function () {
     var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93'];
     var minerTargetRoom = null;
     for (let r of searchRooms) {
-        if (Game.rooms[r] == undefined) {
-            if (!_.filter(Game.creeps, c => c.memory.role == 'miner' && c.memory.room == r)) {
-                spawnMiners = true;
-                minerTargetRoom = r;
-                break;
-            }
-        } else {
-            let trans = Game.rooms[r].find(FIND_MY_CREEPS, {
-                filter: c => c.memory.room == r && c.memory.role == 'miner' });
-            let tempRoom = Game.rooms[r];
-            if (debug) console.log("In room " + r + " there are " + trans.length
-             + " assigned miners and " + tempRoom.find(FIND_SOURCES).length + " sources.");
-            if (tempRoom != null && trans.length < tempRoom.find(FIND_SOURCES).length) {
-                spawnMiners = true;
-                minerTargetRoom = r;
-                if (debug) console.log("Miner set to spawn targeting room " + r);
-                break;
-            }
+        let numberAssignedToRoom = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'miner' ).length;
+        if (numberAssignedToRoom == 0 ||
+            (Game.rooms[r] != undefined && numberAssignedToRoom < Game.rooms[r].find(FIND_SOURCES).length)) {
+            spawnMiners = true;
+            minerTargetRoom = r;
+            break;
         }
     }
 
     var spawnTransporters = false;
     var transporterTargetRoom = null;
     for (let r of searchRooms) {
-        if (Game.rooms[r] == undefined) {
-            continue;
-        }
-        let trans = Game.rooms[r].find(FIND_MY_CREEPS, {
-            filter: c => c.memory.room == r && c.memory.role == 'transporter' });
-        let tempRoom = Game.rooms[r];
-        if (tempRoom != null && trans.length < tempRoom.find(FIND_SOURCES).length) {
-            spawnTransporters = true;
-            transporterTargetRoom = r;
-            //console.log("WORK parts at " + source.id + " is " + total);
-            break;
+        if (Game.rooms[r] != undefined) {
+            let trans = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'transporter').length;
+            if (trans < Game.room[r].find(FIND_SOURCES).length) {
+                spawnTransporters = true;
+                transporterTargetRoom = r;
+                //console.log("WORK parts at " + source.id + " is " + total);
+                break;
+            }
         }
     }
 
@@ -152,7 +137,7 @@ module.exports.loop = function () {
         createCreep('R', {role:'repairer'});
     } else if (numberUpgraders < 0) {
         createCreep('U', {role:'upgrader'});
-    } else if (numberAttackers < 1) {
+    } else if (numberAttackers < 0) {
         createCreep('A', {role:'attacker',targetRoom:'E62N94'});
     } else if (numberTransporterUpgraders < 4 && numberStationaryUpgraders >= numberTransporterUpgraders) {
         createCreep('TU', {role:'transporterUpgrader'});
