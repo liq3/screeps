@@ -46,7 +46,7 @@ var createCreep = function(name, data) {
         parts = Array(35).fill(TOUGH).concat([MOVE]);
     } else if (data.role == 'attacker') {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 210);
-        for (let i = 0; i < numberParts; i++) {
+        for (let i = 0; i < Math.min(numberParts, 5); i++) {
             parts = parts.concat([ATTACK,ATTACK,MOVE]);
         }
     } else {
@@ -139,13 +139,11 @@ module.exports.loop = function () {
     var spawnAttacker = false;
     var attackerTargetRoom = null;
     for (let r of searchRooms) {
-        if (Game.rooms[r] != undefined) {
-            let trans = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'attacker').length;
-            if (trans == 0) {
-                spawnAttacker = true;
-                attackerTargetRoom = r;
-                break;
-            }
+        let trans = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'attacker').length;
+        if (trans == 0) {
+            spawnAttacker = true;
+            attackerTargetRoom = r;
+            break;
         }
     }
 
