@@ -139,7 +139,7 @@ module.exports.loop = function () {
     var spawnAttacker = false;
     var attackerTargetRoom = null;
     for (let r of searchRooms) {
-        let trans = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'attacker').length;
+        let trans = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'attacker').length;
         if (trans == 0) {
             spawnAttacker = true;
             attackerTargetRoom = r;
