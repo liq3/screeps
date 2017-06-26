@@ -109,12 +109,15 @@ module.exports.loop = function () {
         }
     }
 
+    if (_.filter(Game.creeps, c => c.memory.role == 'transporter' ).length > 4) {
+        searchRooms = ['E62N94', 'E61N93'];
+    }
     var spawnTransporters = false;
     var transporterTargetRoom = null;
     for (let r of searchRooms) {
         if (Game.rooms[r] != undefined) {
             let trans = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'transporter').length;
-            if (trans < Game.room[r].find(FIND_SOURCES).length) {
+            if (trans < Game.rooms[r].find(FIND_SOURCES).length) {
                 spawnTransporters = true;
                 transporterTargetRoom = r;
                 //console.log("WORK parts at " + source.id + " is " + total);
