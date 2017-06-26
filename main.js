@@ -185,8 +185,10 @@ module.exports.loop = function () {
 	for(var name in Game.creeps) {
 	    var creep = Game.creeps[name];
 
-        if (creep.memory.role != undefined) {
+        if (creepFunctions[creep.memory.role] != undefined) {
             creepFunctions[creep.memory.role].run(creep);
+        } else {
+            console.log("Undefined function for role: " + creep.memory.role);
         }
 	}
 
