@@ -3,7 +3,7 @@ var creepRoles = ['harvester','upgrader','builder','attacker','miner',
     'traveler','decoy'];
 
 var creepFunctions = {};
-for (let i in creepRoles) {
+for (let i of creepRoles) {
     creepFunctions[i] = require(i);
 }
 
