@@ -1,4 +1,6 @@
-module.exports = function (creep) {
+module.exports = {
+
+	run: function (creep) {
 
     var target = creep.memory.targetPos;
 	if(target != null) {
@@ -8,3 +10,4 @@ module.exports = function (creep) {
         }
 	}
 }
+};

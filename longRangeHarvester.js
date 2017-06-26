@@ -1,5 +1,7 @@
 var gatherEnergy = require("creepGatherEnergy");
-module.exports = function (creep) {
+module.exports = {
+
+	run: function (creep) {
 
 	if(creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
 		var gatherTarget = Game.getObjectById(creep.memory.sourceId);
@@ -18,3 +20,4 @@ module.exports = function (creep) {
         }
 	}
 }
+};

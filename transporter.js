@@ -1,5 +1,7 @@
 var gatherEnergy = require("creepGatherEnergy");
-module.exports = function (creep) {
+module.exports = {
+
+	run: function (creep) {
 
 	if (creep.memory.gathering) {
 		if (creep.memory.room != undefined && creep.pos.roomName != creep.memory.room) {
@@ -32,4 +34,4 @@ module.exports = function (creep) {
             creep.moveTo(target);
         }
 	}
-}
+}};

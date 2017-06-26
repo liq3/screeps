@@ -1,4 +1,6 @@
-module.exports = function (creep) {
+module.exports = {
+
+	run: function (creep) {
     if (creep.pos.roomName == creep.memory.targetRoom) {
         var target = creep.pos.findClosestByPath(FIND_HOSTILE_SPAWNS);
         if (target == null) {
@@ -14,3 +16,4 @@ module.exports = function (creep) {
         creep.moveTo(new RoomPosition(25,25,creep.memory.targetRoom));
     }
 }
+};

@@ -1,5 +1,7 @@
 var gatherEnergy = require("creepGatherEnergy");
-module.exports = function (creep) {
+module.exports = {
+
+	run: function (creep) {
     var chooseTarget = function() {
         var targets = creep.room.find(FIND_MY_CREEPS, {filter:
             c => c.memory.role == 'stationaryUpgrader'});
@@ -40,4 +42,4 @@ module.exports = function (creep) {
            }
         }
 	}
-}
+}};

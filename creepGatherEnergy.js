@@ -1,4 +1,6 @@
-module.exports = function (creep) {
+module.exports = {
+
+	run: function (creep) {
     var energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
         r => r.resourceType == RESOURCE_ENERGY});
     if (energy != null) {
@@ -29,3 +31,4 @@ module.exports = function (creep) {
         creep.memory.gathering = false;
     }
 }
+};
