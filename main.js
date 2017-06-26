@@ -2,6 +2,7 @@ var creepRoles = ['harvester','upgrader','builder','attacker','miner',
     'transporter','repairer','stationaryUpgrader','transporterUpgrader',
     'traveler','decoy'];
 
+var creepFunctions = {};
 for (let i in creepRoles) {
     creepFunctions[i] = require(i);
 }
