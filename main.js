@@ -61,7 +61,12 @@ var createCreep = function(name, data) {
         console.log("Error spawning creep: " + name + parts);
     }
     if (typeof(name) == 'string') {
-        console.log("Spawned creep " + name);
+        logStr = '';
+        logStr = logStr + "Spawned creep " + name;
+        if (data.role == 'attacker') {
+            logStr = logStr + " targeting room " + data.room;
+        }
+        console.log(logStr);
     }
     return name;
 }
@@ -129,7 +134,7 @@ module.exports.loop = function () {
     searchRooms = [];
     searchRooms = _.filter(Game.flags, f => f.name == 'attack');
     for (let i in searchRooms) {
-        searchRooms[i] = searchRooms[i].room.name;
+        searchRooms[i] = searchRooms[i].pos.roomName;
     }
     var spawnAttacker = false;
     var attackerTargetRoom = null;
