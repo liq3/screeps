@@ -8,6 +8,7 @@ var repairer = require('repairer');
 var stationaryUpgrader = require('stationaryUpgrader');
 var transporterUpgrader = require('transporterUpgrader');
 var traveler = require('traveler');
+var decoy = require('decoy');
 
 debug = false;
 
@@ -43,7 +44,10 @@ var createCreep = function(name, data) {
         parts = [WORK,CARRY,CARRY,CARRY,MOVE];
         data.gathering = true;
     } else if (data.role == 'traveler') {
-        parts = Array(35).fill(TOUGH).concat([MOVE]);
+        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
+        for (let i = 0; i < Math.min(8,numberParts); i++) {
+            parts = parts.concat([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE]);
+        }
     } else if (data.role == 'attacker') {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 210);
         for (let i = 0; i < Math.min(numberParts, 5); i++) {
@@ -161,6 +165,8 @@ module.exports.loop = function () {
         createCreep('R', {role:'repairer'});
     } else if (numberUpgraders < 0) {
         createCreep('U', {role:'upgrader'});
+    } else if (true) {
+        createCreep('D', {role:'decoy', targetRoom:'E62N92'});
     } else if (spawnAttacker) {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (numberTransporterUpgraders < 4 && numberStationaryUpgraders >= numberTransporterUpgraders) {
