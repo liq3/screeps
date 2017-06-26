@@ -126,6 +126,24 @@ module.exports.loop = function () {
         }
     }
 
+    searchRooms = [];
+    searchRooms = _.filter(Game.flags, f => f.name == 'attack');
+    for (let i in searchRooms) {
+        searchRooms[i] = searchRooms[i].room.name;
+    }
+    var spawnAttacker = false;
+    var attackerTargetRoom = null;
+    for (let r of searchRooms) {
+        if (Game.rooms[r] != undefined) {
+            let trans = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'attacker').length;
+            if (trans == 0) {
+                spawnAttacker = true;
+                attackerTargetRoom = r;
+                break;
+            }
+        }
+    }
+
     if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
         createCreep('Harvester ', {role:'harvester'});
     } else if (spawnMiners) {
@@ -140,8 +158,8 @@ module.exports.loop = function () {
         createCreep('R', {role:'repairer'});
     } else if (numberUpgraders < 0) {
         createCreep('U', {role:'upgrader'});
-    } else if (numberAttackers < 0) {
-        createCreep('A', {role:'attacker',targetRoom:'E62N94'});
+    } else if (spawnAttacker) {
+        createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (numberTransporterUpgraders < 4 && numberStationaryUpgraders >= numberTransporterUpgraders) {
         createCreep('TU', {role:'transporterUpgrader'});
     } else if (numberStationaryUpgraders < 4) {
