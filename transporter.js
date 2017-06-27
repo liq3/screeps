@@ -13,6 +13,9 @@ module.exports = {
 				} else {
 					creep.moveTo(creep.memory.sourcePos, {range:2});
 				}
+				if (creep.carry.energy == creep.carryCapacity) {
+		        	creep.memory.gathering = false;
+				}
 			} else if (creep.memory.room && creep.pos.roomName != creep.memory.room) {
 				creep.moveTo(new RoomPosition(25,25,creep.memory.room));
 			} else if (creep.carry.energy < creep.carryCapacity) {
