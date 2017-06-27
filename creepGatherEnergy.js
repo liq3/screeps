@@ -5,12 +5,12 @@ module.exports = function (creep) {
     }
     if (!energy) {
         energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
-            r => r.resourceType == RESOURCE_ENERGY});
+            r => r.resourceType == RESOURCE_ENERGY && r.amount > 200});
     }
     if (!energy && creep.memory.role != 'transporter') {
         energy = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
             s => s.structureType == STRUCTURE_STORE &&
-                s.store[RESOURCE_ENERGY] > 0});
+                s.store[RESOURCE_ENERGY] > 200});
     }
     if (!energy) {
         if (creep.memory.sourceId != undefined) {
