@@ -166,9 +166,9 @@ var spawnCreeps = function() {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (scoutTarget) {
         createCreep('S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
-    } else if (minerTargetRoom != null) {
+    } else if (minerTargetRoom && numberMiners < numberTransporters) {
         createCreep('Miner ', {role:'miner',room:minerTargetRoom});
-    } else if (transporterTargetPos != null) {
+    } else if (transporterTargetPos) {
         createCreep('T', {role:'transporter', sourcePos:transporterTargetPos});
     } else if (numberBuilders < 2) {
         createCreep('B', {role:'builder'});
