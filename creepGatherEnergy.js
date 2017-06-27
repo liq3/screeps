@@ -6,9 +6,11 @@ module.exports = function (creep) {
             creep.moveTo(energy);
         }
     } else {
-        energy = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-            s => s.structureType == STRUCTURE_CONTAINER &&
-                s.store[RESOURCE_ENERGY] > 0});
+        if (creep.memory.role != 'transporter') {
+            energy = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
+                s => s.structureType == STRUCTURE_STORE &&
+                    s.store[RESOURCE_ENERGY] > 0});
+        }
         if (energy != null) {
             if (creep.withdraw(energy) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(energy);
