@@ -123,8 +123,8 @@ var spawnCreeps = function() {
         if (Game.rooms[r] != undefined) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
                 let transporters = _.filter(Game.creeps, c => c.memory.targetPos == source.pos && c.memory.role == 'transporter');
-                let distance = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
-                let desiredTransporters = Math.ceil( 30 * distance / transporterCapacity) // 30 is ticks per move * max source mining rate
+                let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
+                let desiredTransporters = Math.ceil( 30 * path.cost / transporterCapacity) // 30 is ticks per move * max source mining rate
                 if (transporters.length < desiredTransporters) {
                     transporterTargetPos = source.pos;
                     //console.log("WORK parts at " + source.id + " is " + total);
