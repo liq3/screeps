@@ -3,8 +3,16 @@ module.exports = {
 
 	run: function (creep) {
 		if (creep.memory.gathering) {
-			if (creep.memory.sourcePos && creep.pos.roomName != creep.memory.sourcePos.roomName) {
-				creep.moveTo(creep.memory.sourcePos);
+			if (creep.memory.sourcePos) {
+				let energy = creep.pos.findClosestByPath(FIND_RESOURCE, {range: 5,
+					filter: r => r.resourceType == RESOURCE_ENERGY});
+				if (energy) {
+					if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {
+						creep.moveTo(energy);
+					}
+				} else {
+					creep.moveTo(creep.memory.sourcePos, {range:2});
+				}
 			} else if (creep.memory.room && creep.pos.roomName != creep.memory.room) {
 				creep.moveTo(new RoomPosition(25,25,creep.memory.room));
 			} else if (creep.carry.energy < creep.carryCapacity) {

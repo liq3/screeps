@@ -65,7 +65,7 @@ var createCreep = function(name, data) {
     }
     if (typeof(name) == 'string') {
         logStr = '';
-        logStr = logStr + "Spawned creep " + name;
+        logStr = logStr + "Spawning creep " + name;
         if (data.role == 'attacker') {
             logStr = logStr + " targeting room " + data.room;
         } else if (data.role == 'transporter') {
