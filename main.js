@@ -116,15 +116,19 @@ var spawnCreeps = function() {
     if (_.filter(Game.creeps, c => c.memory.role == 'transporter' ).length > 4) {
         searchRooms = ['E62N94', 'E61N93'];
     }
-    var transporterTargetRoom = null;
-    let numberTransporterParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 2;
+    var transporterTargetPos = null;
+    let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
     for (let r of searchRooms) {
         if (Game.rooms[r] != undefined) {
-            let trans = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'transporter').length;
-            if (trans < Game.rooms[r].find(FIND_SOURCES).length) {
-                transporterTargetRoom = r;
-                //console.log("WORK parts at " + source.id + " is " + total);
-                break;
+            for (let source of Game.rooms[r].find(FIND_SOURCES)) {
+                let transporters = _.filter(Game.creeps, c => c.memory.targetPos == source.pos && c.memory.role == 'transporter');
+                let distance = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.Pos, range: 1});
+                let desiredTransporters = Math.ceil( 30 * distance / transporterCapacity) // 30 is ticks per move * max source mining rate
+                if (transporters.length < desiredTransporters) {
+                    transporterTargetPos = source.pos;
+                    //console.log("WORK parts at " + source.id + " is " + total);
+                    break;
+                }
             }
         }
     }
@@ -152,7 +156,7 @@ var spawnCreeps = function() {
     } else if (minerTargetRoom != null) {
         createCreep('Miner ', {role:'miner',room:minerTargetRoom});
     } else if (transporterTargetRoom != null) {
-        createCreep('T', {role:'transporter', room:transporterTargetRoom});
+        createCreep('T', {role:'transporter', sourcePos:transporterTargetRoom});
     } else if (numberBuilders < 2) {
         createCreep('B', {role:'builder'});
     } else if (numberRepairers < 1) {
