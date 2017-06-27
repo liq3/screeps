@@ -85,14 +85,7 @@ var getName = function(name, num) {
     }
 }
 
-module.exports.loop = function () {
-
-    for(var i in Memory.creeps) {
-        if(!Game.creeps[i]) {
-            delete Memory.creeps[i];
-        }
-    }
-
+var spawnCreeps = function() {
     var numberHarvesters = sumCreeps('harvester');
     var numberBuilders = sumCreeps ('builder');
     var numberMiners = sumCreeps('miner');
@@ -172,6 +165,19 @@ module.exports.loop = function () {
         createCreep('TU', {role:'transporterUpgrader'});
     } else if (numberStationaryUpgraders < 4) {
         createCreep('SU', {role:'stationaryUpgrader'});
+    }
+}
+
+module.exports.loop = function () {
+
+    for(var i in Memory.creeps) {
+        if(!Game.creeps[i]) {
+            delete Memory.creeps[i];
+        }
+    }
+
+    if (!Game.spawns.Spawn1.spawning) {
+        spawnCreeps();
     }
 
 	for(var name in Game.creeps) {

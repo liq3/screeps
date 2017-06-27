@@ -7,7 +7,7 @@ module.exports = function (creep) {
         energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
             r => r.resourceType == RESOURCE_ENERGY});
     }
-    if (!energy && creep.role.memory != 'transporter') {
+    if (!energy && creep.memory.role != 'transporter') {
         energy = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
             s => s.structureType == STRUCTURE_STORE &&
                 s.store[RESOURCE_ENERGY] > 0});
@@ -30,10 +30,10 @@ module.exports = function (creep) {
                 creep.moveTo(energy);
             }
         } else if (energy instanceof Source) {
-            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(source);
+            if (creep.harvest(energy) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(energy);
             }
-        }   
+        }
     }
 
     if (creep.carry.energy == creep.carryCapacity) {
