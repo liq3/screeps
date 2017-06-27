@@ -1,6 +1,6 @@
 var creepRoles = ['harvester','builder','attacker','miner',
     'transporter','repairer','stationaryUpgrader','transporterUpgrader',
-    'scout','decoy','claimer'];
+    'scout','decoy','claimer', 'spawnHelper'];
 
 var creepFunctions = {};
 for (let i of creepRoles) {
@@ -31,7 +31,7 @@ var createCreep = function(name, data) {
         parts = Array(numberParts).fill(WORK);
         parts = parts.concat(Array(numberParts).fill(CARRY));
         parts = parts.concat([MOVE]);
-    } else if (data.role == 'transporter' || data.role == 'transporterUpgrader') {
+    } else if (data.role == 'transporter' || data.role == 'transporterUpgrader' || data.role == 'spawnHelper') {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150);
         parts = Array(numberParts).fill(CARRY);
         parts = parts.concat(Array(numberParts).fill(CARRY));
@@ -99,6 +99,7 @@ var spawnCreeps = function() {
     var numberTransporterUpgraders = sumCreeps('transporterUpgrader');
     var numberScouts = sumCreeps('scout');
     var numberAttackers = sumCreeps('attacker');
+    var numberSpawnHelpers = sumCreeps('spawnHelpers');
 
     var scoutTarget = null;
     var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93'];
@@ -166,6 +167,8 @@ var spawnCreeps = function() {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (scoutTarget) {
         createCreep('S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
+    } else if (numberSpawnHelpers < 1 && Game.spawns.Spawn1.room.storage.store[RESOURCE_ENERGY] > 5000) {
+        createCreep('SH', {role:'spawnHelper'});
     } else if (minerTargetRoom && numberMiners < numberTransporters) {
         createCreep('Miner ', {role:'miner',room:minerTargetRoom});
     } else if (transporterTargetPos) {
