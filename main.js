@@ -1,6 +1,6 @@
-var creepRoles = ['harvester','upgrader','builder','attacker','miner',
+var creepRoles = ['harvester','builder','attacker','miner',
     'transporter','repairer','stationaryUpgrader','transporterUpgrader',
-    'traveler','decoy'];
+    'scout','decoy'];
 
 var creepFunctions = {};
 for (let i of creepRoles) {
@@ -50,6 +50,8 @@ var createCreep = function(name, data) {
         for (let i = 0; i < Math.min(numberParts, 5); i++) {
             parts = parts.concat([ATTACK,ATTACK,MOVE]);
         }
+    } else if {data.role == 'scout') {
+        parts = [MOVE];
     } else {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
         parts = Array(numberParts).fill(WORK);
@@ -93,13 +95,12 @@ module.exports.loop = function () {
 
     var numberHarvesters = sumCreeps('harvester');
     var numberBuilders = sumCreeps ('builder');
-    var numberUpgraders = sumCreeps ('upgrader');
     var numberMiners = sumCreeps('miner');
     var numberTransporters = sumCreeps('transporter');
     var numberRepairers = sumCreeps('repairer');
     var numberStationaryUpgraders = sumCreeps('stationaryUpgrader');
     var numberTransporterUpgraders = sumCreeps('transporterUpgrader');
-    var numberTravelers = sumCreeps('traveler');
+    var numberScouts = sumCreeps('scout');
     var numberAttackers = sumCreeps('attacker');
 
     var spawnMiners = false;
@@ -160,8 +161,6 @@ module.exports.loop = function () {
         createCreep('B', {role:'builder'});
     } else if (numberRepairers < 1) {
         createCreep('R', {role:'repairer'});
-    } else if (numberUpgraders < 0) {
-        createCreep('U', {role:'upgrader'});
     } else if (true) {
         createCreep('D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
     } else if (spawnAttacker) {
@@ -170,17 +169,7 @@ module.exports.loop = function () {
         createCreep('TU', {role:'transporterUpgrader'});
     } else if (numberStationaryUpgraders < 4) {
         createCreep('SU', {role:'stationaryUpgrader'});
-    } else if (false) {
-        let droppedEnergy = Game.spawns.Spawn1.room.find(FIND_DROPPED_RESOURCES,
-            {filter: r => r.resourceType == RESOURCE_ENERGY});
-        let total = 0;
-        for (let r of droppedEnergy) {
-            total = total + r.amount;
-        }
-        if (total > 500) {
-            createCreep('Upgrader ', {role:'upgrader'});
-        }
-    }
+    } 
 
 	for(var name in Game.creeps) {
 	    var creep = Game.creeps[name];
