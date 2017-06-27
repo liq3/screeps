@@ -26,7 +26,7 @@ module.exports = {
             target = Game.spawns.Spawn1;
         } else if (target == null) {
 			target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-	            s => s.structureType == STRUCTURE_CONTAINER &&
+	            s => s.structureType == STRUCTURE_STORAGE &&
 	                _.sum(s.store) < s.storeCapacity});
 		}
 		//if (debug) console.log(target);
