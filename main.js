@@ -7,6 +7,14 @@ for (let i of creepRoles) {
     creepFunctions[i] = require(i);
 }
 
+global.transportLocations = function () {
+    for (var i in Game.creeps) {
+        if (Game.creeps[i].memory.sourcePos) {
+            console.log(Game.creeps[i].memory.sourcePos['roomName']);
+        }  
+    }
+}
+
 debug = false;
 
 var createRoadsOnPath = function(start, end) {
@@ -121,7 +129,7 @@ var spawnCreeps = function() {
     var transporterTargetPos = null;
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
     for (let r of searchRooms) {
-        if (Game.rooms[r] != undefined) {
+        if (Game.rooms[r] != undefined && transporterTargetPos == null) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
                 let transporters = _.filter(Game.creeps, c => c.memory.targetPos == source.pos && c.memory.role == 'transporter');
                 let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
