@@ -135,7 +135,7 @@ var spawnCreeps = function() {
     }
 
     var claimerTargetRoom = null;
-    for (let r of searchRooms) {
+    for (let r of ['E62N94', 'E61N93']) {
         if (Game.rooms[r]) {
             if (_.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length == 0) {
                 claimerTargetRoom = r;
