@@ -68,6 +68,8 @@ var createCreep = function(name, data) {
         logStr = logStr + "Spawned creep " + name;
         if (data.role == 'attacker') {
             logStr = logStr + " targeting room " + data.room;
+        } else if (data.role == 'transporter') {
+            logStr = logStr + " targeting pos " + JSON.stringify(data.sourcePos);
         }
         console.log(logStr);
     }
@@ -122,7 +124,7 @@ var spawnCreeps = function() {
         if (Game.rooms[r] != undefined) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
                 let transporters = _.filter(Game.creeps, c => c.memory.targetPos == source.pos && c.memory.role == 'transporter');
-                let distance = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.Pos, range: 1});
+                let distance = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
                 let desiredTransporters = Math.ceil( 30 * distance / transporterCapacity) // 30 is ticks per move * max source mining rate
                 if (transporters.length < desiredTransporters) {
                     transporterTargetPos = source.pos;
@@ -155,8 +157,8 @@ var spawnCreeps = function() {
         createCreep('S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
     } else if (minerTargetRoom != null) {
         createCreep('Miner ', {role:'miner',room:minerTargetRoom});
-    } else if (transporterTargetRoom != null) {
-        createCreep('T', {role:'transporter', sourcePos:transporterTargetRoom});
+    } else if (transporterTargetPos != null) {
+        createCreep('T', {role:'transporter', sourcePos:transporterTargetPos});
     } else if (numberBuilders < 2) {
         createCreep('B', {role:'builder'});
     } else if (numberRepairers < 1) {
