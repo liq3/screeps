@@ -113,8 +113,8 @@ module.exports.loop = function () {
             scoutTarget = r;
         } else if (minerTargetRoom == null) {
             let numberAssignedToRoom = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'miner' ).length;
-            if (&& numberAssignedToRoom == 0
-                    || (Games.rooms[r] && numberAssignedToRoom < Game.rooms[r].find(FIND_SOURCES).length)) {
+            if (numberAssignedToRoom == 0
+                    || (Game.rooms[r] && numberAssignedToRoom < Game.rooms[r].find(FIND_SOURCES).length)) {
                 minerTargetRoom = r;
             }
         }
@@ -160,13 +160,11 @@ module.exports.loop = function () {
         createCreep('Miner ', {role:'miner',room:minerTargetRoom});
     } else if (transporterTargetRoom != null) {
         createCreep('T', {role:'transporter', room:transporterTargetRoom});
-    } else if (numberTravelers < 0) {
-        createCreep('Trav', {role:'traveler', target:{x:1,y:28,roomName:'E62N94'}});
     } else if (numberBuilders < 2) {
         createCreep('B', {role:'builder'});
     } else if (numberRepairers < 1) {
         createCreep('R', {role:'repairer'});
-    } else if (true) {
+    } else if (false) {
         createCreep('D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
     } else if (spawnAttacker) {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});

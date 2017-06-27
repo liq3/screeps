@@ -17,7 +17,7 @@ module.exports = {
 		}
         if(source != null) {
             var error = creep.harvest(source);
-            if (error == ERR_NOT_IN_RANGE || creep.pos.getRangeTo(source)) {
+            if (error == ERR_NOT_IN_RANGE || creep.pos.getRangeTo(source) > 1) {
                 creep.moveTo(source);
             }
         }

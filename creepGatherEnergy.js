@@ -1,32 +1,41 @@
 module.exports = function (creep) {
-    var energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
-        r => r.resourceType == RESOURCE_ENERGY});
-    if (energy != null) {
-        if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(energy);
+    var id = creep.memory.energyId;
+    if (id) {
+        var energy = Game.getObjectById(id);
+    }
+    if (!energy) {
+        energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
+            r => r.resourceType == RESOURCE_ENERGY});
+    }
+    if (!energy && creep.role.memory != 'transporter') {
+        energy = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
+            s => s.structureType == STRUCTURE_STORE &&
+                s.store[RESOURCE_ENERGY] > 0});
+    }
+    if (!energy) {
+        if (creep.memory.sourceId != undefined) {
+            energy = Game.getObjectById(creep.memory.sourceId);
+        } else {
+            energy = creep.pos.findClosestByPath(FIND_SOURCES);
         }
-    } else {
-        if (creep.memory.role != 'transporter') {
-            energy = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-                s => s.structureType == STRUCTURE_STORE &&
-                    s.store[RESOURCE_ENERGY] > 0});
-        }
-        if (energy != null) {
+    }
+
+    if (energy) {
+        if (energy instanceof Resource) {
+            if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(energy);
+            }
+        } else if (energy instanceof StructureStorage) {
             if (creep.withdraw(energy) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(energy);
             }
-        } else {
-            var source;
-            if (creep.memory.sourceId != undefined) {
-                source = Game.getObjectById(creep.memory.sourceId);
-            } else {
-                source = creep.pos.findClosestByPath(FIND_SOURCES);
+        } else if (energy instanceof Source) {
+            if (creep.harvest(source) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(source);
             }
-            if (source != null && creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source);
-            }
-        }
+        }   
     }
+
     if (creep.carry.energy == creep.carryCapacity) {
         creep.memory.gathering = false;
     }
