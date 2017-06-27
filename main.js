@@ -200,12 +200,16 @@ module.exports.loop = function () {
 	for(var name in Game.creeps) {
 	    var creep = Game.creeps[name];
 
-        if (creepFunctions[creep.memory.role] != undefined) {
-            creepFunctions[creep.memory.role].run(creep);
-        } else if (creep.memory.role == 'recycle') {
-            creep.moveTo(Game.spawns.Spawn1);
-        } else {
-            console.log("Undefined function for role: " + creep.memory.role);
+        try {
+            if (creepFunctions[creep.memory.role] != undefined) {
+                creepFunctions[creep.memory.role].run(creep);
+            } else if (creep.memory.role == 'recycle') {
+                creep.moveTo(Game.spawns.Spawn1);
+            } else {
+                console.log("Undefined function for role: " + creep.memory.role);
+            }
+        } catch (e) {
+            console.log(e);
         }
 	}
 
