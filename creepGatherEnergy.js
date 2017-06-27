@@ -9,7 +9,7 @@ module.exports = function (creep) {
     }
     if (!energy && creep.memory.role != 'transporter') {
         energy = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-            s => s.structureType == STRUCTURE_STORE &&
+            s => s.structureType == STRUCTURE_STORAGE &&
                 s.store[RESOURCE_ENERGY] > 200});
     }
     if (!energy) {
@@ -26,17 +26,20 @@ module.exports = function (creep) {
                 creep.moveTo(energy);
             }
         } else if (energy instanceof StructureStorage) {
-            if (creep.withdraw(energy) == ERR_NOT_IN_RANGE) {
+            if (creep.withdraw(energy, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
                 creep.moveTo(energy);
             }
         } else if (energy instanceof Source) {
             if (creep.harvest(energy) == ERR_NOT_IN_RANGE) {
-                    creep.moveTo(energy);
+                creep.moveTo(energy);
             }
         }
     }
 
+    creep.memory.energyId = energy.id;
+
     if (creep.carry.energy == creep.carryCapacity) {
         creep.memory.gathering = false;
+        delete creep.memory.energyId;
     }
 }

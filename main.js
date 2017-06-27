@@ -102,7 +102,7 @@ var spawnCreeps = function() {
     for (let r of searchRooms) {
         if (Game.rooms[r] == undefined
                 && scoutTarget == null
-                && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName != r).length == 0) {
+                && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName == r).length == 0) {
             scoutTarget = r;
         } else if (minerTargetRoom == null) {
             let numberAssignedToRoom = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'miner' ).length;
@@ -161,7 +161,7 @@ var spawnCreeps = function() {
         createCreep('D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
     } else if (spawnAttacker) {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
-    } else if (numberTransporterUpgraders < 4 && numberStationaryUpgraders >= numberTransporterUpgraders) {
+    } else if (numberTransporterUpgraders < 2 && numberStationaryUpgraders >= numberTransporterUpgraders*2) {
         createCreep('TU', {role:'transporterUpgrader'});
     } else if (numberStationaryUpgraders < 4) {
         createCreep('SU', {role:'stationaryUpgrader'});
