@@ -99,10 +99,10 @@ var spawnCreeps = function() {
     var numberTransporterUpgraders = sumCreeps('transporterUpgrader');
     var numberScouts = sumCreeps('scout');
     var numberAttackers = sumCreeps('attacker');
-    var numberSpawnHelpers = sumCreeps('spawnHelpers');
+    var numberSpawnHelpers = sumCreeps('spawnHelper');
 
     var scoutTarget = null;
-    var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93'];
+    var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93', 'E62N93'];
     var minerTargetRoom = null;
     for (let r of searchRooms) {
         if (Game.rooms[r] == undefined
