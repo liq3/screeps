@@ -50,7 +50,7 @@ var createCreep = function(name, data) {
         for (let i = 0; i < Math.min(numberParts, 5); i++) {
             parts = parts.concat([ATTACK,ATTACK,MOVE]);
         }
-    } else if {data.role == 'scout') {
+    } else if (data.role == 'scout') {
         parts = [MOVE];
     } else {
         var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
@@ -103,29 +103,32 @@ module.exports.loop = function () {
     var numberScouts = sumCreeps('scout');
     var numberAttackers = sumCreeps('attacker');
 
-    var spawnMiners = false;
+    var scoutTarget = null;
     var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93'];
     var minerTargetRoom = null;
     for (let r of searchRooms) {
-        let numberAssignedToRoom = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'miner' ).length;
-        if (numberAssignedToRoom == 0 ||
-            (Game.rooms[r] != undefined && numberAssignedToRoom < Game.rooms[r].find(FIND_SOURCES).length)) {
-            spawnMiners = true;
-            minerTargetRoom = r;
-            break;
+        if (Game.rooms[r] == undefined
+                && scoutTarget == null
+                && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName != r).length == 0) {
+            scoutTarget = r;
+        } else if (minerTargetRoom == null) {
+            let numberAssignedToRoom = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'miner' ).length;
+            if (&& numberAssignedToRoom == 0
+                    || (Games.rooms[r] && numberAssignedToRoom < Game.rooms[r].find(FIND_SOURCES).length)) {
+                minerTargetRoom = r;
+            }
         }
     }
 
     if (_.filter(Game.creeps, c => c.memory.role == 'transporter' ).length > 4) {
         searchRooms = ['E62N94', 'E61N93'];
     }
-    var spawnTransporters = false;
     var transporterTargetRoom = null;
+    let numberTransporterParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 2;
     for (let r of searchRooms) {
         if (Game.rooms[r] != undefined) {
             let trans = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'transporter').length;
             if (trans < Game.rooms[r].find(FIND_SOURCES).length) {
-                spawnTransporters = true;
                 transporterTargetRoom = r;
                 //console.log("WORK parts at " + source.id + " is " + total);
                 break;
@@ -151,9 +154,11 @@ module.exports.loop = function () {
 
     if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
         createCreep('Harvester ', {role:'harvester'});
-    } else if (spawnMiners) {
+    } else if (scoutTarget) {
+        createCreep('S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
+    } else if (minerTargetRoom != null) {
         createCreep('Miner ', {role:'miner',room:minerTargetRoom});
-    } else if (spawnTransporters) {
+    } else if (transporterTargetRoom != null) {
         createCreep('T', {role:'transporter', room:transporterTargetRoom});
     } else if (numberTravelers < 0) {
         createCreep('Trav', {role:'traveler', target:{x:1,y:28,roomName:'E62N94'}});
@@ -169,7 +174,7 @@ module.exports.loop = function () {
         createCreep('TU', {role:'transporterUpgrader'});
     } else if (numberStationaryUpgraders < 4) {
         createCreep('SU', {role:'stationaryUpgrader'});
-    } 
+    }
 
 	for(var name in Game.creeps) {
 	    var creep = Game.creeps[name];

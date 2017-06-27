@@ -15,8 +15,11 @@ module.exports = {
 				}
 			}
 		}
-	    if(source != null && creep.harvest(source) == ERR_NOT_IN_RANGE) {
-	        creep.moveTo(source);
-		}
+        if(source != null) {
+            var error = creep.harvest(source);
+            if (error == ERR_NOT_IN_RANGE || creep.pos.getRangeTo(source)) {
+                creep.moveTo(source);
+            }
+        }
 	}
 };
