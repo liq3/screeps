@@ -208,8 +208,8 @@ module.exports.loop = function () {
             } else {
                 console.log("Undefined function for role: " + creep.memory.role);
             }
-        } catch (e) {
-            console.log(e);
+        } catch (err) {
+            console.log(err.stack || err);
         }
 	}
 
