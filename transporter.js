@@ -6,7 +6,8 @@ module.exports = {
 			if (creep.memory.sourcePos) {
 				let source = Game.getObjectById(creep.memory.sourceId);
 				let energy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 3, {filter: r => r.resourceType == RESOURCE_ENERGY});
-				if (energy) {
+				if (energy.length > 0) {
+					energy = energy[0];
 					if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {
 						creep.moveTo(energy);
 					}
