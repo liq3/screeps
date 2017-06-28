@@ -11,14 +11,23 @@ debug = false;
 
 global.myUtil = {};
 
-global.myUtil.transportLocations = function () {
-    var str = '';
-    for (var i in Game.creeps) {
-        if (Game.creeps[i].memory.sourcePos) {
-            str += JSON.stringify(Game.creeps[i].memory.sourcePos) + ", ";
+global.myUtil.sourceInfo = function () {
+    var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93', 'E62N93'];
+    let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
+    for (let r of searchRooms) {
+        if (Game.rooms[r]) {
+            for (let source of Game.rooms[r].find(FIND_SOURCES)) {
+                let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
+                let desiredTransporters = Math.ceil( source.energyCapacity / 10 * path.cost / transporterCapacity);
+                let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
+                let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
+                    && c.memory.sourcePos.x == source.pos.x
+                    && c.memory.sourcePos.y == source.pos.y
+                    && c.memory.sourcePos.roomName == source.pos.roomName );
+                console.log(r+', '+x+','+y+' : ' transporters.length +'/'+desiredTransporters+ ' Miners:' + miners.length);
+            }
         }
     }
-    console.log(str);
 }
 
 global.myUtil.createRoadsOnPath = function(start, end) {
