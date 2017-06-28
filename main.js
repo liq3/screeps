@@ -190,7 +190,7 @@ var spawnCreeps = function() {
     } else if (numberSpawnHelpers < 1 && Game.spawns.Spawn1.room.storage && Game.spawns.Spawn1.room.storage.store[RESOURCE_ENERGY] > 5000) {
         createCreep('SH', {role:'spawnHelper'});
     } else if (minerTargetId && numberMiners < numberTransporters) {
-        createCreep('Miner ', {role:'miner',room:minerTargetId});
+        createCreep('Miner ', {role:'miner',sourceId:minerTargetId});
     } else if (transporterSourceId) {
         createCreep('T', {role:'transporter', sourcePos:Game.getObjectById(transporterSourceId).pos, sourceId: transporterSourceId});
     } else if (claimerTargetRoom) {
