@@ -135,8 +135,8 @@ var spawnCreeps = function() {
     sourceList.sort((a,b) => a.path.cost - b.path.cost );
 
     for (let {source,path} of sourceList) {
-        let miner = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-        if (miner == null || miner.ticksToLive < ((path.cost+9)*3)) {
+        let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
+        if (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+9)*3))) {
             minerTargetId = source.id;
             break;
         }
