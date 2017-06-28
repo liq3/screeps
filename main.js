@@ -18,13 +18,13 @@ global.myUtil.sourceInfo = function () {
         if (Game.rooms[r]) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
                 let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
-                let desiredTransporters = Math.ceil( source.energyCapacity / 10 * path.cost / transporterCapacity);
+                let desiredTransporters = Math.ceil( (source.energyCapacity / 300) / (transporterCapacity / path.cost / 3));
                 let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
                 let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
                     && c.memory.sourcePos.x == source.pos.x
                     && c.memory.sourcePos.y == source.pos.y
                     && c.memory.sourcePos.roomName == source.pos.roomName );
-                console.log(r+', '+x+','+y+' : ' transporters.length +'/'+desiredTransporters+ ' Miners:' + miners.length);
+                console.log(r+', '+x+','+y+' : '+ transporters.length +'/'+desiredTransporters+ ' Miners:' + miners.length);
             }
         }
     }
@@ -153,7 +153,7 @@ var spawnCreeps = function() {
             && c.memory.sourcePos.x == source.pos.x
             && c.memory.sourcePos.y == source.pos.y
             && c.memory.sourcePos.roomName == source.pos.roomName );
-        let desiredTransporters = Math.ceil( source.energyCapacity / 10 * path.cost / transporterCapacity);
+        let desiredTransporters = Math.ceil( (source.energyCapacity / 300) / (transporterCapacity / path.cost / 3));
         if (transporters.length < desiredTransporters) {
             transporterSourceId = source.id;
             break;
