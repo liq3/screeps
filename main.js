@@ -112,9 +112,10 @@ var spawnCreeps = function() {
     var scoutTarget = null;
     var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93', 'E62N93'];
     var minerTargetRoom = null;
+    var transporterSourceId = null;
+    let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
     for (let r of searchRooms) {
-        if (Game.rooms[r] == undefined
-                && scoutTarget == null
+        if (Game.rooms[r] && scoutTarget == null
                 && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName == r).length == 0) {
             scoutTarget = r;
         } else if (minerTargetRoom == null) {
@@ -124,18 +125,19 @@ var spawnCreeps = function() {
                 minerTargetRoom = r;
             }
         }
-    }
-
-    var transporterSourceId = null;
-    let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
-    for (let r of searchRooms) {
-        if (Game.rooms[r] != undefined && transporterSourceId == null) {
+        if (Game.rooms[r]) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
+                let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
+                if (!minerTargetRoom) {
+                    let miner = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
+                    if (miner && miner.ticksToLive < (path.cost*5)) {
+                        minerTargetRoom = r;
+                    }
+                }
                 let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
                     && c.memory.sourcePos.x == source.pos.x
                     && c.memory.sourcePos.y == source.pos.y
                     && c.memory.sourcePos.roomName == r );
-                let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
                 let desiredTransporters = Math.ceil( 30 * path.cost / transporterCapacity) // 30 is ticks per move * max source mining rate
                 if (transporters.length < desiredTransporters) {
                     transporterSourceId = source.id;
