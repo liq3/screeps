@@ -132,12 +132,12 @@ var spawnCreeps = function() {
         }
     }
 
-    sourceList.sort((a,b) => a.path.cost < b.path.cost );
+    sourceList.sort((a,b) => a.path.cost - b.path.cost );
 
     for (let {source,path} of sourceList) {
         let miner = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-        if (miner && miner.ticksToLive < ((path.cost+9)*3)) {
-            minerTargetRoom = r;
+        if (!miner || miner.ticksToLive < ((path.cost+9)*3)) {
+            minerTargetRoom = source.pos.roomName;
             break;
         }
         let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
@@ -150,8 +150,6 @@ var spawnCreeps = function() {
             break;
         }
     }
-
-
 
     var claimerTargetRoom = null;
     for (let r of ['E62N94', 'E61N93']) {
