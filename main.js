@@ -11,6 +11,10 @@ debug = false;
 
 global.myUtil = {};
 
+global.myUtil.avgCpu = function() {
+    console.log(_.sum(Memory.cpuTimes) / memory.cpuTimes.length);
+}
+
 global.myUtil.sourceInfo = function () {
     var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93', 'E62N93'];
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
@@ -18,13 +22,13 @@ global.myUtil.sourceInfo = function () {
         if (Game.rooms[r]) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
                 let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
-                let desiredTransporters = Math.ceil( (source.energyCapacity / 300) / (transporterCapacity / path.cost / 3));
+                let desiredTransporters = Math.ceil( (source.energyCapacity / ENERGY_REGEN_TIME) / (transporterCapacity / path.cost / 3));
                 let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
                 let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
                     && c.memory.sourcePos.x == source.pos.x
                     && c.memory.sourcePos.y == source.pos.y
                     && c.memory.sourcePos.roomName == source.pos.roomName );
-                console.log(r+', '+source.pos.x+','+source.pos.y+' : '+ transporters.length +'/'+desiredTransporters+ ' Miners:' + miners.length);
+                console.log(r+', '+source.pos.x+','+source.pos.y+' : '+ transporters.length +'/'+desiredTransporters+ ' Miners:' + miners.length +" Distance: " + path.cost);
             }
         }
     }
@@ -153,7 +157,7 @@ var spawnCreeps = function() {
             && c.memory.sourcePos.x == source.pos.x
             && c.memory.sourcePos.y == source.pos.y
             && c.memory.sourcePos.roomName == source.pos.roomName );
-        let desiredTransporters = Math.ceil( (source.energyCapacity / 300) / (transporterCapacity / path.cost / 3));
+        let desiredTransporters = Math.ceil( (source.energyCapacity / ENERGY_REGEN_TIME) / (transporterCapacity / path.cost / 3));
         if (transporters.length < desiredTransporters) {
             transporterSourceId = source.id;
             break;
@@ -252,4 +256,12 @@ module.exports.loop = function () {
 
     Game.spawns.Spawn1.recycleCreep(Game.spawns.Spawn1.pos.findClosestByRange(
         FIND_CREEPS, {filter: c => c.memory.role == 'recycle'}));
+
+    if (Memory.cpuTimes == undefined) {
+        Memory.cpuTimes = [];
+    }
+    Memory.cpuTimes.push(Game.cpu.getUsed());
+    if (Memory.cpuTimes.length > 100) {
+        Memory.cpuTimes.shift();
+    }
 }
