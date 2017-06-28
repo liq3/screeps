@@ -21,22 +21,26 @@ module.exports = function (creep) {
     }
 
     if (energy) {
+        let error;
         if (energy instanceof Resource) {
-            if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(energy);
-            }
+            error = creep.pickup(energy);
         } else if (energy instanceof StructureStorage) {
-            if (creep.withdraw(energy, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(energy);
-            }
+            error = creep.withdraw(energy, RESOURCE_ENERGY);
         } else if (energy instanceof Source) {
-            if (creep.harvest(energy) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(energy);
-            }
+            error = creep.harvest(energy)
+        }
+
+        if (error == ERR_NOT_IN_RANGE) {
+            creep.moveTo(energy);
+        } else if (error == ERR_NOT_ENOUGH_RESOURCES) {
+            energy = null;
+            delete creep.memory.energyId;
         }
     }
 
-    creep.memory.energyId = energy.id;
+    if (energy) {
+        creep.memory.energyId = energy.id;
+    }
 
     if (creep.carry.energy == creep.carryCapacity) {
         creep.memory.gathering = false;

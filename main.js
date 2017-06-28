@@ -11,7 +11,7 @@ global.transportLocations = function () {
     for (var i in Game.creeps) {
         if (Game.creeps[i].memory.sourcePos) {
             console.log(Game.creeps[i].memory.sourcePos['roomName']);
-        }  
+        }
     }
 }
 
@@ -126,16 +126,19 @@ var spawnCreeps = function() {
         }
     }
 
-    var transporterTargetPos = null;
+    var transporterSourceId = null;
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
     for (let r of searchRooms) {
-        if (Game.rooms[r] != undefined && transporterTargetPos == null) {
+        if (Game.rooms[r] != undefined && transporterSourceId == null) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-                let transporters = _.filter(Game.creeps, c => c.memory.targetPos == source.pos && c.memory.role == 'transporter');
+                let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
+                    && c.memory.sourcePos.x == source.pos.x
+                    && c.memory.sourcePos.y == source.pos.y
+                    && c.memory.sourcePos.roomName == r );
                 let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
                 let desiredTransporters = Math.ceil( 30 * path.cost / transporterCapacity) // 30 is ticks per move * max source mining rate
                 if (transporters.length < desiredTransporters) {
-                    transporterTargetPos = source.pos;
+                    transporterSourceId = source.id;
                     //console.log("WORK parts at " + source.id + " is " + total);
                     break;
                 }
@@ -180,7 +183,7 @@ var spawnCreeps = function() {
     } else if (minerTargetRoom && numberMiners < numberTransporters) {
         createCreep('Miner ', {role:'miner',room:minerTargetRoom});
     } else if (transporterTargetPos) {
-        createCreep('T', {role:'transporter', sourcePos:transporterTargetPos});
+        createCreep('T', {role:'transporter', sourcePos:Game.getObjectById(transporterSourceId).pos, sourceId: transporterSourceId});
     } else if (numberBuilders < 2) {
         createCreep('B', {role:'builder'});
     } else if (numberRepairers < 1) {

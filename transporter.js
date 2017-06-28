@@ -3,7 +3,7 @@ module.exports = {
 
 	run: function (creep) {
 		if (creep.memory.gathering) {
-			if (creep.memory.sourcePos) {
+			if (creep.memory.sourcePos && creep.memory.sourcePos.roomName == cree.pos.roomName) {
 				let energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
 					filter: r => r.resourceType == RESOURCE_ENERGY && creep.pos.inRangeTo(r,2)});
 				if (energy) {
@@ -17,10 +17,8 @@ module.exports = {
 				if (creep.carry.energy == creep.carryCapacity) {
 		        	creep.memory.gathering = false;
 				}
-			} else if (creep.memory.room && creep.pos.roomName != creep.memory.room) {
+			} else if (creep.memory.sourcePos && creep.pos.roomName != creep.memory.sourcePos.roomName) {
 				creep.moveTo(new RoomPosition(25,25,creep.memory.room));
-			} else if (creep.carry.energy < creep.carryCapacity) {
-				gatherEnergy(creep);
 			} else if (creep.carry.energy == creep.carryCapacity) {
 	        	creep.memory.gathering = false;
 			}
