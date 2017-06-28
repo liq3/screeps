@@ -34,11 +34,17 @@ global.myUtil.sourceInfo = function () {
     }
 }
 
-global.myUtil.createRoadsBetweenFlags = function(start, end) {
-    var path = start.findPathTo(end, {ignoreCreeps: true});
-    var room = Game.rooms[start.roomName];
-    for (let pos of path) {
-        room.createConstructionSite(pos.x,pos.y, STRUCTURE_ROAD);
+global.myUtil.createRoadsBetweenFlags = function() {
+    if (Game.flags.roadStart && Game.flags.roadEnd) {
+        var start = Game.flags.roadStart.pos;
+        var end = Game.flags.roadEnd.pos;
+        var path = start.findPathTo(end, {ignoreCreeps: true});
+        var room = Game.rooms[start.roomName];
+        for (let pos of path) {
+            room.createConstructionSite(pos.x,pos.y, STRUCTURE_ROAD);
+        }
+    } else {
+        console.log("Flags not set properly!");
     }
 }
 
