@@ -114,39 +114,39 @@ var spawnCreeps = function() {
     var minerTargetRoom = null;
     var transporterSourceId = null;
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
+    var sourceList = [];
     for (let r of searchRooms) {
         if (Game.rooms[r] == null && scoutTarget == null
                 && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName == r).length == 0) {
             scoutTarget = r;
-        } else if (minerTargetRoom == null) {
-            let numberAssignedToRoom = _.filter(Game.creeps, c => c.memory.room == r && c.memory.role == 'miner' ).length;
-            if (numberAssignedToRoom == 0
-                    || (Game.rooms[r] && numberAssignedToRoom < Game.rooms[r].find(FIND_SOURCES).length)) {
-                minerTargetRoom = r;
-            }
-        }
-        if (Game.rooms[r]) {
+        } else if (Game.rooms[r]) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
                 let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
-                if (!minerTargetRoom) {
-                    let miner = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-                    if (miner && miner.ticksToLive < ((path.cost+9)*3)) {
-                        minerTargetRoom = r;
-                    }
-                }
-                let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
-                    && c.memory.sourcePos.x == source.pos.x
-                    && c.memory.sourcePos.y == source.pos.y
-                    && c.memory.sourcePos.roomName == r );
-                let desiredTransporters = Math.ceil( 30 * path.cost / transporterCapacity) // 30 is ticks per move * max source mining rate
-                if (transporters.length < desiredTransporters) {
-                    transporterSourceId = source.id;
-                    //console.log("WORK parts at " + source.id + " is " + total);
-                    break;
-                }
+                sourceList.push({source:source, path:path});
             }
         }
     }
+
+    sourceList.sort(a,b => a.path.cost < b.path.cost );
+
+    for (let [source,path] of sourceList) {
+        let miner = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
+        if (miner && miner.ticksToLive < ((path.cost+9)*3)) {
+            minerTargetRoom = r;
+            break;
+        }
+        let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
+            && c.memory.sourcePos.x == source.pos.x
+            && c.memory.sourcePos.y == source.pos.y
+            && c.memory.sourcePos.roomName == r );
+        let desiredTransporters = Math.ceil( 30 * path.cost / transporterCapacity) // 30 is ticks per move * max source mining rate
+        if (transporters.length < desiredTransporters) {
+            transporterSourceId = source.id;
+            break;
+        }
+    }
+
+
 
     var claimerTargetRoom = null;
     for (let r of ['E62N94', 'E61N93']) {
