@@ -116,7 +116,7 @@ var spawnCreeps = function() {
 
     var scoutTarget = null;
     var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93', 'E62N93'];
-    var minerTargetRoom = null;
+    var minerTargetId = null;
     var transporterSourceId = null;
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
     var sourceList = [];
@@ -136,8 +136,8 @@ var spawnCreeps = function() {
 
     for (let {source,path} of sourceList) {
         let miner = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-        if (!miner || miner.ticksToLive < ((path.cost+9)*3)) {
-            minerTargetRoom = source.pos.roomName;
+        if (miner == null || miner.ticksToLive < ((path.cost+9)*3)) {
+            minerTargetId = source.id;
             break;
         }
         let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
@@ -189,8 +189,8 @@ var spawnCreeps = function() {
         createCreep('R', {role:'repairer'});
     } else if (numberSpawnHelpers < 1 && Game.spawns.Spawn1.room.storage && Game.spawns.Spawn1.room.storage.store[RESOURCE_ENERGY] > 5000) {
         createCreep('SH', {role:'spawnHelper'});
-    } else if (minerTargetRoom && numberMiners < numberTransporters) {
-        createCreep('Miner ', {role:'miner',room:minerTargetRoom});
+    } else if (minerTargetId && numberMiners < numberTransporters) {
+        createCreep('Miner ', {role:'miner',room:minerTargetId});
     } else if (transporterSourceId) {
         createCreep('T', {role:'transporter', sourcePos:Game.getObjectById(transporterSourceId).pos, sourceId: transporterSourceId});
     } else if (claimerTargetRoom) {
