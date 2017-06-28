@@ -115,7 +115,7 @@ var spawnCreeps = function() {
     var transporterSourceId = null;
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
     for (let r of searchRooms) {
-        if (Game.rooms[r] && scoutTarget == null
+        if (Game.rooms[r] == null && scoutTarget == null
                 && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName == r).length == 0) {
             scoutTarget = r;
         } else if (minerTargetRoom == null) {
@@ -130,7 +130,7 @@ var spawnCreeps = function() {
                 let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
                 if (!minerTargetRoom) {
                     let miner = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-                    if (miner && miner.ticksToLive < (path.cost*5)) {
+                    if (miner && miner.ticksToLive < ((path.cost+9)*3)) {
                         minerTargetRoom = r;
                     }
                 }
@@ -180,16 +180,16 @@ var spawnCreeps = function() {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (scoutTarget) {
         createCreep('S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
+    } else if (numberBuilders < 2 && numberTransporters >= numberBuilders * 2 + 1) {
+        createCreep('B', {role:'builder'});
+    } else if (numberRepairers < 1 && numberTransporters >= 5) {
+        createCreep('R', {role:'repairer'});
     } else if (numberSpawnHelpers < 1 && Game.spawns.Spawn1.room.storage && Game.spawns.Spawn1.room.storage.store[RESOURCE_ENERGY] > 5000) {
         createCreep('SH', {role:'spawnHelper'});
     } else if (minerTargetRoom && numberMiners < numberTransporters) {
         createCreep('Miner ', {role:'miner',room:minerTargetRoom});
     } else if (transporterSourceId) {
         createCreep('T', {role:'transporter', sourcePos:Game.getObjectById(transporterSourceId).pos, sourceId: transporterSourceId});
-    } else if (numberBuilders < 2) {
-        createCreep('B', {role:'builder'});
-    } else if (numberRepairers < 1) {
-        createCreep('R', {role:'repairer'});
     } else if (claimerTargetRoom) {
         createCreep('C', {role:'claimer', targetRoom: claimerTargetRoom});
     } else if (false) {
