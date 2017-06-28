@@ -28,7 +28,11 @@ global.myUtil.sourceInfo = function () {
                     && c.memory.sourcePos.x == source.pos.x
                     && c.memory.sourcePos.y == source.pos.y
                     && c.memory.sourcePos.roomName == source.pos.roomName );
-                console.log(r+', '+source.pos.x+','+source.pos.y+' : '+ transporters.length +'/'+desiredTransporters+ ' Miners:' + miners.length +" Distance: " + path.cost);
+                let names = "";
+                for (let n in transporters) {
+                    names = names + " " + n.name;
+                }
+                console.log(r+', '+source.pos.x+','+source.pos.y+' : '+ transporters.length +'/'+desiredTransporters+ ' Miners:' + miners.length +" Distance: " + path.cost + names);
             }
         }
     }
