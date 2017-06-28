@@ -178,11 +178,11 @@ var spawnCreeps = function() {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (scoutTarget) {
         createCreep('S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
-    } else if (numberSpawnHelpers < 1 && Game.spawns.Spawn1.room.storage.store[RESOURCE_ENERGY] > 5000) {
+    } else if (numberSpawnHelpers < 1 && Game.spawns.Spawn1.room.storage && Game.spawns.Spawn1.room.storage.store[RESOURCE_ENERGY] > 5000) {
         createCreep('SH', {role:'spawnHelper'});
     } else if (minerTargetRoom && numberMiners < numberTransporters) {
         createCreep('Miner ', {role:'miner',room:minerTargetRoom});
-    } else if (transporterTargetPos) {
+    } else if (transporterSourceId) {
         createCreep('T', {role:'transporter', sourcePos:Game.getObjectById(transporterSourceId).pos, sourceId: transporterSourceId});
     } else if (numberBuilders < 2) {
         createCreep('B', {role:'builder'});
@@ -192,9 +192,9 @@ var spawnCreeps = function() {
         createCreep('C', {role:'claimer', targetRoom: claimerTargetRoom});
     } else if (false) {
         createCreep('D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
-    } else if (numberTransporterUpgraders < 2 && numberStationaryUpgraders >= numberTransporterUpgraders*2) {
+    } else if (numberTransporterUpgraders < 1 && numberStationaryUpgraders >= numberTransporterUpgraders*2) {
         createCreep('TU', {role:'transporterUpgrader'});
-    } else if (numberStationaryUpgraders < 4) {
+    } else if (numberStationaryUpgraders < 2) {
         createCreep('SU', {role:'stationaryUpgrader'});
     }
 }
