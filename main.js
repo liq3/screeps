@@ -12,11 +12,13 @@ debug = false;
 global.myUtil = {};
 
 global.myUtil.transportLocations = function () {
+    var str = '';
     for (var i in Game.creeps) {
         if (Game.creeps[i].memory.sourcePos) {
-            console.log(Game.creeps[i].memory.sourcePos['roomName']);
+            str += JSON.stringify(Game.creeps[i].memory.sourcePos) + ", ";
         }
     }
+    console.log(str);
 }
 
 global.myUtil.createRoadsOnPath = function(start, end) {
@@ -130,9 +132,9 @@ var spawnCreeps = function() {
         }
     }
 
-    sourceList.sort(a,b => a.path.cost < b.path.cost );
+    sourceList.sort((a,b) => a.path.cost < b.path.cost );
 
-    for (let [source,path] of sourceList) {
+    for (let {source,path} of sourceList) {
         let miner = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
         if (miner && miner.ticksToLive < ((path.cost+9)*3)) {
             minerTargetRoom = r;
@@ -141,8 +143,8 @@ var spawnCreeps = function() {
         let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
             && c.memory.sourcePos.x == source.pos.x
             && c.memory.sourcePos.y == source.pos.y
-            && c.memory.sourcePos.roomName == r );
-        let desiredTransporters = Math.ceil( 30 * path.cost / transporterCapacity) // 30 is ticks per move * max source mining rate
+            && c.memory.sourcePos.roomName == source.pos.roomName );
+        let desiredTransporters = Math.ceil( source.energyCapacity / 10 * path.cost / transporterCapacity);
         if (transporters.length < desiredTransporters) {
             transporterSourceId = source.id;
             break;
