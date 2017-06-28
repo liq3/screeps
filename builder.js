@@ -10,7 +10,7 @@ module.exports = {
 	    } else if (!creep.memory.gathering && creep.carry.energy == 0) {
 	        creep.memory.gathering = true;
 	    } else {
-	        var target = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+	        var target = creep.pos.findClosestByPath(Game.constructionSites);
 	        if(target != null) {
 				if (creep.build(target) == ERR_NOT_IN_RANGE) {
 	            	creep.moveTo(target);
