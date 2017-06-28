@@ -7,7 +7,11 @@ for (let i of creepRoles) {
     creepFunctions[i] = require(i);
 }
 
-global.transportLocations = function () {
+debug = false;
+
+global.myUtil = {};
+
+global.myUtil.transportLocations = function () {
     for (var i in Game.creeps) {
         if (Game.creeps[i].memory.sourcePos) {
             console.log(Game.creeps[i].memory.sourcePos['roomName']);
@@ -15,9 +19,7 @@ global.transportLocations = function () {
     }
 }
 
-debug = false;
-
-var createRoadsOnPath = function(start, end) {
+global.myUtil.createRoadsOnPath = function(start, end) {
     var path = start.findPathTo(end, {ignoreCreeps: true});
     var room = Game.rooms[start.roomName];
     for (let pos of path) {
@@ -28,6 +30,7 @@ var createRoadsOnPath = function(start, end) {
 var sumCreeps = function(role) {
     return _.sum(Game.creeps, c => c.memory.role == role);
 }
+
 var createCreep = function(name, data) {
     var parts = [];
     if (data.role == 'miner') {
