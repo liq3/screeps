@@ -3,9 +3,12 @@ module.exports = {
 
 	run: function (creep) {
 		if (creep.memory.gathering) {
-			if (creep.memory.sourcePos && creep.memory.sourcePos.roomName == creep.pos.roomName) {
+			if (creep.memory.sourcePos) {
 				let energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, { range:1,
-					filter: r => r.resourceType == RESOURCE_ENERGY && creep.pos.inRangeTo(r,3)});
+					filter: r => r.resourceType == RESOURCE_ENERGY &&
+					r.pos.findInRange(FIND_SOURCES, {range: 1,
+						filter: s => s.id != creep.memory.sourceId}).length == 0
+				});
 				if (energy) {
 					if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {
 						creep.moveTo(energy);
