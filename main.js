@@ -12,7 +12,7 @@ debug = false;
 global.myUtil = {};
 
 global.myUtil.avgCpu = function() {
-    console.log(_.sum(Memory.cpuTimes) / memory.cpuTimes.length);
+    console.log(_.sum(Memory.cpuTimes) / Memory.cpuTimes.length);
 }
 
 global.myUtil.sourceInfo = function () {
@@ -34,7 +34,7 @@ global.myUtil.sourceInfo = function () {
     }
 }
 
-global.myUtil.createRoadsOnPath = function(start, end) {
+global.myUtil.createRoadsBetweenFlags = function(start, end) {
     var path = start.findPathTo(end, {ignoreCreeps: true});
     var room = Game.rooms[start.roomName];
     for (let pos of path) {
@@ -128,7 +128,7 @@ var spawnCreeps = function() {
     var numberSpawnHelpers = sumCreeps('spawnHelper');
 
     var scoutTarget = null;
-    var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93', 'E62N93'];
+    var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94'];//, 'E61N93', 'E62N93'];
     var minerTargetId = null;
     var transporterSourceId = null;
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
@@ -255,7 +255,7 @@ module.exports.loop = function () {
     }
 
     Game.spawns.Spawn1.recycleCreep(Game.spawns.Spawn1.pos.findClosestByRange(
-        FIND_CREEPS, {filter: c => c.memory.role == 'recycle'}));
+        FIND_MY_CREEPS, {filter: c => c.memory.role == 'recycle'}));
 
     if (Memory.cpuTimes == undefined) {
         Memory.cpuTimes = [];
