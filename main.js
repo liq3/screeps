@@ -24,7 +24,7 @@ global.myUtil.sourceInfo = function () {
                     && c.memory.sourcePos.x == source.pos.x
                     && c.memory.sourcePos.y == source.pos.y
                     && c.memory.sourcePos.roomName == source.pos.roomName );
-                console.log(r+', '+x+','+y+' : '+ transporters.length +'/'+desiredTransporters+ ' Miners:' + miners.length);
+                console.log(r+', '+source.pos.x+','+source.pos.y+' : '+ transporters.length +'/'+desiredTransporters+ ' Miners:' + miners.length);
             }
         }
     }
