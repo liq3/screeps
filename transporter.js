@@ -41,6 +41,12 @@ module.exports = {
 		            s => s.structureType == STRUCTURE_STORAGE &&
 		                _.sum(s.store) < s.storeCapacity});
 			}
+			if (!target) {
+				creep.moveTo(Game.spawns.Spawn1, {range: 3});
+				if (creep.pos.inRangeTo(Game.spawns.Spawn1.pos, 5)) {
+					creep.drop(RESOURCE_ENERGY);
+				}
+			}
 			//if (debug) console.log(target);
 	        if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 	            creep.moveTo(target);
