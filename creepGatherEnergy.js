@@ -5,7 +5,7 @@ module.exports = function (creep) {
     }
     if (!energy) {
         energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
-            r => r.resourceType == RESOURCE_ENERGY && r.amount > 200});
+            r => r.resourceType == RESOURCE_ENERGY && r.amount > 200, range:1});
     }
     if (!energy) {
         energy = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:

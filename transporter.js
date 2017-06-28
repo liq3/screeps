@@ -4,7 +4,7 @@ module.exports = {
 	run: function (creep) {
 		if (creep.memory.gathering) {
 			if (creep.memory.sourcePos && creep.memory.sourcePos.roomName == creep.pos.roomName) {
-				let energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {
+				let energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, { range:1,
 					filter: r => r.resourceType == RESOURCE_ENERGY && creep.pos.inRangeTo(r,2)});
 				if (energy) {
 					if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {

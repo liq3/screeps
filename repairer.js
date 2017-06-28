@@ -12,8 +12,8 @@ module.exports = {
 	    } else {
 	        var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter:
 	            s => s.hits < s.hitsMax && s.structureType != STRUCTURE_WALL
-			    && (s.structerType != STRUCTURE_RAMPART || s.hits < 100,000)});
-	        if(target != null && creep.repair(target) == ERR_NOT_IN_RANGE) {
+			    && (s.structureType != STRUCTURE_RAMPART || s.hits < 1000000)});
+	        if(target && creep.repair(target) == ERR_NOT_IN_RANGE) {
 	            creep.moveTo(target);
 	        }
 	    }
