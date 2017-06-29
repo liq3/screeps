@@ -8,5 +8,9 @@ module.exports = {
                 creep.moveTo(source);
             }
         }
+        var dropOff = creep.pos.findClosestByRange(FIND_MY_CREEPS, 1, {filter: c => c.carry.energy < creep.carryCapacity});
+        if (dropOff) {
+            creep.transfer(dropOff, RESOURCE_ENERGY);
+        }
 	}
 };
