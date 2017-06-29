@@ -335,7 +335,7 @@ function spawnCreeps() {
         createCreep('C', {role:'claimer', targetRoom: claimerTargetRoom});
     } else if (false) {
         createCreep('D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
-    } else if (numberStationaryUpgraders < 2) {
+    } else if (numberStationaryUpgraders < Math.ceil(Game.spawns.Spawn1.room.storage.store[RESOURCE_ENERGY] / 5000)) {
         createCreep('SU', {role:'stationaryUpgrader'});
     }
 }
