@@ -13,6 +13,14 @@ module.exports.loop = function () {
 
     for(let i in Memory.creeps) {
         if(!Game.creeps[i]) {
+            if (Memory.creeps[i].role == 'transporter') {
+                let creep = Memory.creeps[i];
+                if (creep.memory.gathering) {
+                    Memory.energyPush[creep.memory.targetId].reserved -= creep.memory.reserved;
+                } else {
+                    Memory.energyPull[creep.memory.targetId].reserved -= creep.memory.reserved;
+                }
+            }
             delete Memory.creeps[i];
         }
     }
@@ -31,12 +39,43 @@ module.exports.loop = function () {
         }
     }
 
+    if (Memory.energyPull == null) {
+        Memory.energyPull = {};
+    } else {
+        for (let i in Memory.energyPull) {
+            if(!Game.getObjectById(i)) {
+                delete Memory.energyPull[i];
+            }
+        }
+    }
+
     for (let i in Game.rooms) {
         let room = Game.rooms[i];
-        let droppedEnergy = room.find(FIND_DROPPED_RESOURCES, {filter: c => c.resourceType == RESOURCE_ENERGY});
-        for (let res of droppedEnergy) {
+        let droppedEnergies = room.find(FIND_DROPPED_RESOURCES, {filter: c => c.resourceType == RESOURCE_ENERGY});
+        for (let res of droppedEnergies) {
             if (!(res.id in Memory.energyPush)) {
                 Memory.energyPush[res.id] = {reserved:0};
+            }
+        }
+
+        let pullStructures = room.find(FIND_MY_STRUCTURES, {filter:
+            s => s.structureType == STRUCTURE_STORAGE || s.structureType == STRUCTURTE_SPAWN ||
+                s.structureType == STRUCTURE_EXTENSION || s.structureType == STRUCTURE_TOWER });
+        pullStructures = pullStructures.concat(room.find(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER}));
+        for (let structure of pullStructures) {
+            if (!(structure.id in Memory.energyPull)) {
+                Memory.energyPull[structure.id] = {id:structure.id, reserved:0};
+            }
+            if (structure instanceof StructureExtension) {
+                Memory.energyPull[id].desired = structure.energyCapacity - structure.energy;
+            } else if (structure instanceof StructureContainer) {
+                Memory.energyPull[id].desired = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
+            } else if (structure instanceof StructureSpawn) {
+                Memory.energyPull[id].desired = structure.energyCapacity - structure.energy;
+            } else if (structure instanceof StructureStorage) {
+                Memory.energyPull[id].desired = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
+            } else if (structure instanceof StructureTower) {
+                Memory.energyPull[id].desired = structure.energyCapacity - structure.energy;
             }
         }
     }

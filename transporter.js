@@ -27,16 +27,18 @@ module.exports = {
 						if (possible) {
 						    let path = PathFinder.search(creep.pos, {pos:possible.pos, range:1});
 							let cost = path.cost * 4 + Math.max(0, ((creep.carryCapacity - creep.carry.energy) - (possible.amount - Memory.energyPush[id].reserved)));
-							console.log(cost +" "+ path.cost*4 +" " + possible.amount + " " + Memory.energyPush[id].reserved + " " + id);
+							//console.log(cost +" "+ path.cost*4 +" " + possible.amount + " " + Memory.energyPush[id].reserved + " " + id);
     						if (cost < best.cost) {
     							best.id = id;
     							best.cost = path.cost;
     						}
 						}
 					}
-					creep.memory.targetId = best.id;
-					creep.memory.reserved = creep.carryCapacity - creep.carry.energy;
-					Memory.energyPush[best.id].reserved += creep.memory.reserved;
+					if (best.id != null) {
+						creep.memory.targetId = best.id;
+						creep.memory.reserved = creep.carryCapacity - creep.carry.energy;
+						Memory.energyPush[best.id].reserved += creep.memory.reserved;
+					}
 				}
 			}
 			if (creep.carry.energy == creep.carryCapacity) {
@@ -49,29 +51,48 @@ module.exports = {
 	    } else if (creep.room != Game.spawns.Spawn1.room) {
 			creep.moveTo(Game.spawns.Spawn1);
 		} else {
-			var target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-				s => s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity});
-	        if (target == null) {
-				target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-	            	s => s.structureType == STRUCTURE_EXTENSION && s.energy < s.energyCapacity});
+			if (!creep.memory.targetId) {
+				let storage;
+				let possibleTargets = [];
+				for (let i in Memory.energyPull) {
+					let possible = Memory.energyPull[i];
+					if (possible.desired - possible.reserved > 0) {
+						possible = Game.getObjectById(i);
+						if (!(possible instanceof StructureStorage)) {
+							possibleTargets.push(possible);
+						} else {
+							storage = possible;
+						}
+					}
+				}
+
+				let target = creep.pos.getClosestByPath(possibleTargets, {range:1});
+
+				if (!target && storage) {
+					target = storage;
+				}
+
+				let reserve = Math.min(creep.carry.energy, Memory.energyPull[target.id].desired);
+				Memory.energyPull[target.id].reserved += reserve;
+				creep.memory.reserved = reserve;
+				creep.memory.targetId = target.id;
 			}
-			if (target == null && Game.spawns.Spawn1.energy < Game.spawns.Spawn1.energyCapacity) {
-	            target = Game.spawns.Spawn1;
-	        } else if (target == null) {
-				target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-		            s => s.structureType == STRUCTURE_STORAGE &&
-		                _.sum(s.store) < s.storeCapacity});
-			}
+
+			let target = creep.memory.targetId;
 			if (!target) {
 				creep.moveTo(Game.spawns.Spawn1, {range: 3});
 				if (creep.pos.inRangeTo(Game.spawns.Spawn1.pos, 5)) {
 					creep.drop(RESOURCE_ENERGY);
 				}
 			}
+
 			//if (debug) console.log(target);
-	        if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+			let err = creep.transfer(target, RESOURCE_ENERGY);
+	        if (err == ERR_NOT_IN_RANGE) {
 	            creep.moveTo(target);
-	        }
+	        } else if (err == OK) {
+
+			}
 		}
 	}
 };
