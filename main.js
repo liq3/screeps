@@ -1,6 +1,5 @@
 let creepRoles = ['harvester','builder','attacker','miner',
-    'transporter','repairer','stationaryUpgrader','transporterUpgrader',
-    'scout','decoy','claimer', 'spawnHelper'];
+    'transporter','repairer','stationaryUpgrader','scout','decoy','claimer', 'spawnHelper'];
 
 let creepFunctions = {};
 for (let i of creepRoles) {
@@ -176,7 +175,7 @@ function createCreep(name, data) {
         parts = Array(numberParts).fill(WORK);
         parts = parts.concat(Array(numberParts).fill(CARRY));
         parts = parts.concat([MOVE]);
-    } else if (data.role == 'transporter' || data.role == 'transporterUpgrader' || data.role == 'spawnHelper') {
+    } else if (data.role == 'transporter' || data.role == 'spawnHelper') {
         let numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150);
         parts = Array(numberParts).fill(CARRY);
         parts = parts.concat(Array(numberParts).fill(CARRY));
@@ -241,7 +240,6 @@ function spawnCreeps() {
     let numberTransporters = sumCreeps('transporter');
     let numberRepairers = sumCreeps('repairer');
     let numberStationaryUpgraders = sumCreeps('stationaryUpgrader');
-    let numberTransporterUpgraders = sumCreeps('transporterUpgrader');
     let numberScouts = sumCreeps('scout');
     let numberAttackers = sumCreeps('attacker');
     let numberSpawnHelpers = sumCreeps('spawnHelper');
@@ -329,8 +327,6 @@ function spawnCreeps() {
         createCreep('C', {role:'claimer', targetRoom: claimerTargetRoom});
     } else if (false) {
         createCreep('D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
-    } else if (numberTransporterUpgraders < 1 && numberStationaryUpgraders >= numberTransporterUpgraders*2) {
-        createCreep('TU', {role:'transporterUpgrader'});
     } else if (numberStationaryUpgraders < 2) {
         createCreep('SU', {role:'stationaryUpgrader'});
     }
