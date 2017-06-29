@@ -11,7 +11,7 @@ module.exports = {
 						err = creep.pickup(target);
 					}
 					if (err == 0) {
-						Memory.energyPush[best.id].reserved -= creep.memory.reserved;
+						Memory.energyPush[creep.memory.targetId].reserved -= creep.memory.reserved;
 					}
 					if (err == ERR_NOT_IN_RANGE) {
 						creep.moveTo(target);
