@@ -66,7 +66,7 @@ module.exports = {
 					}
 				}
 
-				let target = creep.pos.getClosestByPath(possibleTargets, {range:1});
+				let target = creep.pos.findClosestByPath(possibleTargets, {range:1});
 
 				if (!target && storage) {
 					target = storage;
@@ -91,7 +91,8 @@ module.exports = {
 	        if (err == ERR_NOT_IN_RANGE) {
 	            creep.moveTo(target);
 	        } else if (err == OK) {
-
+				Memory.energyPull[creep.memory.targetId].reserved -= creep.memory.reserved;
+				creep.memory.reserved = 0;
 			}
 		}
 	}

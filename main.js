@@ -59,13 +59,14 @@ module.exports.loop = function () {
         }
 
         let pullStructures = room.find(FIND_MY_STRUCTURES, {filter:
-            s => s.structureType == STRUCTURE_STORAGE || s.structureType == STRUCTURTE_SPAWN ||
+            s => s.structureType == STRUCTURE_STORAGE || s.structureType == STRUCTURE_SPAWN ||
                 s.structureType == STRUCTURE_EXTENSION || s.structureType == STRUCTURE_TOWER });
         pullStructures = pullStructures.concat(room.find(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER}));
         for (let structure of pullStructures) {
             if (!(structure.id in Memory.energyPull)) {
                 Memory.energyPull[structure.id] = {id:structure.id, reserved:0};
             }
+            let id = structure.id;
             if (structure instanceof StructureExtension) {
                 Memory.energyPull[id].desired = structure.energyCapacity - structure.energy;
             } else if (structure instanceof StructureContainer) {
