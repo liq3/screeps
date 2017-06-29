@@ -3,31 +3,36 @@ module.exports = {
 
 	run: function (creep) {
 		if (creep.memory.gathering) {
-			if (creep.memory.sourcePos) {
-				let source = Game.getObjectById(creep.memory.sourceId);
-				if (source) {
-					let energy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 3, {filter: r => r.resourceType == RESOURCE_ENERGY});
-					if (energy.length > 0) {
-						energy = energy[0];
-						if (creep.pickup(energy) == ERR_NOT_IN_RANGE) {
-							creep.moveTo(energy);
+			if (creep.memory.targetId) {
+				let target = Game.getObjectById(creep.memory.targetId);
+				let err;
+				if (target instanceof Resource) {
+					err = creep.pickup(target);
+				}
+				if (err == ERR_NOT_IN_RANGE) {
+					creep.moveTo(target);
+				}
+			} else {
+				if (Memory.energyPush.length > 0) {
+					let best = {id:null, cost:1000};
+					for (let id in Memory.energyPush) {
+						let possible = Game.getObjectById(id);
+						let path = PathFinder.search(creep.pos, {pos:possible.pos, range:1});
+						if (path.cost < best.cost) {
+							best.id = id;
+							best.cost = path.cost;
 						}
 					}
-				} else {
-				    let {x,y,roomName} = creep.memory.sourcePos;
-					creep.moveTo(new RoomPosition(x,y,roomName), {range:2});
+					creep.memory.targetId = best.id;
 				}
-				if (creep.carry.energy == creep.carryCapacity) {
-		        	creep.memory.gathering = false;
-				}
-			} else if (creep.memory.sourcePos && creep.pos.roomName != creep.memory.sourcePos.roomName) {
-			    let	{x,y,roomName} = creep.memory.sourcePos;
-				creep.moveTo(new RoomPosition(x,y,roomName));
-			} else if (creep.carry.energy == creep.carryCapacity) {
+			}
+			if (creep.carry.energy == creep.carryCapacity) {
 	        	creep.memory.gathering = false;
+				creep.memory.targetId = null;
 			}
 	    } else if (!creep.memory.gathering && creep.carry.energy == 0) {
 	        creep.memory.gathering = true;
+			creep.memory.targetId = null;
 	    } else if (creep.room != Game.spawns.Spawn1.room) {
 			creep.moveTo(Game.spawns.Spawn1);
 		} else {

@@ -1,13 +1,76 @@
-var creepRoles = ['harvester','builder','attacker','miner',
+let creepRoles = ['harvester','builder','attacker','miner',
     'transporter','repairer','stationaryUpgrader','transporterUpgrader',
     'scout','decoy','claimer', 'spawnHelper'];
 
-var creepFunctions = {};
+let creepFunctions = {};
 for (let i of creepRoles) {
     creepFunctions[i] = require(i);
 }
 
 debug = false;
+
+module.exports.loop = function () {
+
+    for(let i in Memory.creeps) {
+        if(!Game.creeps[i]) {
+            delete Memory.creeps[i];
+        }
+    }
+
+    if (!Game.spawns.Spawn1.spawning) {
+        spawnCreeps();
+    }
+
+    if (Memory.energyPush == null) {
+        Memory.energyPush = {};
+    }
+
+    for (let i in Game.rooms) {
+        let room = Game.rooms[i];
+        let droppedEnergy = room.find(FIND_DROPPED_RESOURCES, {filter: c => c.resourceType == RESOURCE_ENERGY});
+        for (let res of droppedEnergy) {
+            if (!(droppedEnergy.id in global.energyPush) {
+                energyPush.push({reserved:0});
+            }
+        }
+    }
+
+	for(let name in Game.creeps) {
+	    let creep = Game.creeps[name];
+
+        try {
+            if (creepFunctions[creep.memory.role] != undefined) {
+                creepFunctions[creep.memory.role].run(creep);
+            } else if (creep.memory.role == 'recycle') {
+                creep.moveTo(Game.spawns.Spawn1);
+            } else {
+                console.log("Undefined function for role: " + creep.memory.role);
+            }
+        } catch (err) {
+            console.log(err.stack || err);
+        }
+	}
+
+    let towers = Game.spawns.Spawn1.room.find(FIND_MY_STRUCTURES, {filter:
+        s => s.structureType == STRUCTURE_TOWER});
+    for (let tower of towers) {
+        let target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if (target != null) {
+            tower.attack(target);
+        }
+    }
+
+    Game.spawns.Spawn1.recycleCreep(Game.spawns.Spawn1.pos.findClosestByRange(
+        FIND_MY_CREEPS, {filter: c => c.memory.role == 'recycle'}));
+
+    if (Memory.cpuTimes == undefined) {
+        Memory.cpuTimes = [];
+    }
+    Memory.cpuTimes.push(Game.cpu.getUsed());
+    if (Memory.cpuTimes.length > 100) {
+        Memory.cpuTimes.shift();
+    }
+}
 
 global.myUtil = {};
 
@@ -16,7 +79,7 @@ global.myUtil.avgCpu = function() {
 }
 
 global.myUtil.sourceInfo = function () {
-    var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93', 'E62N93'];
+    let searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93', 'E62N93'];
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
     for (let r of searchRooms) {
         if (Game.rooms[r]) {
@@ -40,10 +103,10 @@ global.myUtil.sourceInfo = function () {
 
 global.myUtil.createRoadsBetweenFlags = function() {
     if (Game.flags.roadStart && Game.flags.roadEnd) {
-        var start = Game.flags.roadStart.pos;
-        var end = Game.flags.roadEnd.pos;
-        var path = start.findPathTo(end, {ignoreCreeps: true});
-        var room = Game.rooms[start.roomName];
+        let start = Game.flags.roadStart.pos;
+        let end = Game.flags.roadEnd.pos;
+        let path = start.findPathTo(end, {ignoreCreeps: true});
+        let room = Game.rooms[start.roomName];
         for (let pos of path) {
             room.createConstructionSite(pos.x,pos.y, STRUCTURE_ROAD);
         }
@@ -52,23 +115,23 @@ global.myUtil.createRoadsBetweenFlags = function() {
     }
 }
 
-var sumCreeps = function(role) {
+function sumCreeps(role) {
     return _.sum(Game.creeps, c => c.memory.role == role);
 }
 
-var createCreep = function(name, data) {
-    var parts = [];
+function createCreep(name, data) {
+    let parts = [];
     if (data.role == 'miner') {
-        var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 150) / 100);
+        let numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 150) / 100);
         parts = Array(Math.min(6,numberParts)).fill(WORK);
         parts = parts.concat([CARRY,MOVE,MOVE]);
     } else if (data.role == 'stationaryUpgrader') {
-        var numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 50) / 150);
+        let numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 50) / 150);
         parts = Array(numberParts).fill(WORK);
         parts = parts.concat(Array(numberParts).fill(CARRY));
         parts = parts.concat([MOVE]);
     } else if (data.role == 'transporter' || data.role == 'transporterUpgrader' || data.role == 'spawnHelper') {
-        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150);
+        let numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150);
         parts = Array(numberParts).fill(CARRY);
         parts = parts.concat(Array(numberParts).fill(CARRY));
         parts = parts.concat(Array(numberParts).fill(MOVE));
@@ -77,12 +140,12 @@ var createCreep = function(name, data) {
         parts = [WORK,CARRY,CARRY,CARRY,MOVE];
         data.gathering = true;
     } else if (data.role == 'decoy') {
-        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
+        let numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 100);
         for (let i = 0; i < Math.min(8,numberParts); i++) {
             parts = parts.concat([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE]);
         }
     } else if (data.role == 'attacker') {
-        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 210);
+        let numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 210);
         for (let i = 0; i < Math.min(numberParts, 5); i++) {
             parts = parts.concat([ATTACK,ATTACK,MOVE]);
         }
@@ -91,13 +154,13 @@ var createCreep = function(name, data) {
     } else if (data.role == 'claimer') {
         parts = [CLAIM,MOVE];
     } else {
-        var numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
+        let numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
         parts = Array(numberParts).fill(WORK);
         parts = parts.concat(Array(numberParts).fill(CARRY));
         parts = parts.concat(Array(numberParts).fill(MOVE));
         data.gathering = true;
     }
-    var name = Game.spawns.Spawn1.createCreep(parts, getName(name), data);
+    let name = Game.spawns.Spawn1.createCreep(parts, getName(name), data);
     if (name < 0 & debug) {
         console.log("Error spawning creep: " + name + parts);
     }
@@ -114,7 +177,7 @@ var createCreep = function(name, data) {
     return name;
 }
 
-var getName = function(name, num) {
+function getName(name, num) {
     if (num == undefined) {
         num = 0;
     }
@@ -125,24 +188,24 @@ var getName = function(name, num) {
     }
 }
 
-var spawnCreeps = function() {
-    var numberHarvesters = sumCreeps('harvester');
-    var numberBuilders = sumCreeps ('builder');
-    var numberMiners = sumCreeps('miner');
-    var numberTransporters = sumCreeps('transporter');
-    var numberRepairers = sumCreeps('repairer');
-    var numberStationaryUpgraders = sumCreeps('stationaryUpgrader');
-    var numberTransporterUpgraders = sumCreeps('transporterUpgrader');
-    var numberScouts = sumCreeps('scout');
-    var numberAttackers = sumCreeps('attacker');
-    var numberSpawnHelpers = sumCreeps('spawnHelper');
+function spawnCreeps() {
+    let numberHarvesters = sumCreeps('harvester');
+    let numberBuilders = sumCreeps ('builder');
+    let numberMiners = sumCreeps('miner');
+    let numberTransporters = sumCreeps('transporter');
+    let numberRepairers = sumCreeps('repairer');
+    let numberStationaryUpgraders = sumCreeps('stationaryUpgrader');
+    let numberTransporterUpgraders = sumCreeps('transporterUpgrader');
+    let numberScouts = sumCreeps('scout');
+    let numberAttackers = sumCreeps('attacker');
+    let numberSpawnHelpers = sumCreeps('spawnHelper');
 
-    var scoutTarget = null;
-    var searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94'];//, 'E61N93', 'E62N93'];
-    var minerTargetId = null;
-    var transporterSourceId = null;
+    let scoutTarget = null;
+    let searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94'];//, 'E61N93', 'E62N93'];
+    let minerTargetId = null;
+    let transporterSourceId = null;
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
-    var sourceList = [];
+    let sourceList = [];
     for (let r of searchRooms) {
         if (Game.rooms[r] == null && scoutTarget == null
                 && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName == r).length == 0) {
@@ -174,7 +237,7 @@ var spawnCreeps = function() {
         }
     }
 
-    var claimerTargetRoom = null;
+    let claimerTargetRoom = null;
     for (let r of ['E62N94', 'E61N93']) {
         if (Game.rooms[r]) {
             if (_.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length < 2) {
@@ -189,8 +252,8 @@ var spawnCreeps = function() {
     for (let i in searchRooms) {
         searchRooms[i] = searchRooms[i].pos.roomName;
     }
-    var spawnAttacker = false;
-    var attackerTargetRoom = null;
+    let spawnAttacker = false;
+    let attackerTargetRoom = null;
     for (let r of searchRooms) {
         let trans = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'attacker').length;
         if (trans == 0) {
@@ -224,54 +287,5 @@ var spawnCreeps = function() {
         createCreep('TU', {role:'transporterUpgrader'});
     } else if (numberStationaryUpgraders < 2) {
         createCreep('SU', {role:'stationaryUpgrader'});
-    }
-}
-
-module.exports.loop = function () {
-
-    for(var i in Memory.creeps) {
-        if(!Game.creeps[i]) {
-            delete Memory.creeps[i];
-        }
-    }
-
-    if (!Game.spawns.Spawn1.spawning) {
-        spawnCreeps();
-    }
-
-	for(var name in Game.creeps) {
-	    var creep = Game.creeps[name];
-
-        try {
-            if (creepFunctions[creep.memory.role] != undefined) {
-                creepFunctions[creep.memory.role].run(creep);
-            } else if (creep.memory.role == 'recycle') {
-                creep.moveTo(Game.spawns.Spawn1);
-            } else {
-                console.log("Undefined function for role: " + creep.memory.role);
-            }
-        } catch (err) {
-            console.log(err.stack || err);
-        }
-	}
-
-    var towers = Game.spawns.Spawn1.room.find(FIND_MY_STRUCTURES, {filter:
-        s => s.structureType == STRUCTURE_TOWER});
-    for (let tower of towers) {
-        let target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if (target != null) {
-            tower.attack(target);
-        }
-    }
-
-    Game.spawns.Spawn1.recycleCreep(Game.spawns.Spawn1.pos.findClosestByRange(
-        FIND_MY_CREEPS, {filter: c => c.memory.role == 'recycle'}));
-
-    if (Memory.cpuTimes == undefined) {
-        Memory.cpuTimes = [];
-    }
-    Memory.cpuTimes.push(Game.cpu.getUsed());
-    if (Memory.cpuTimes.length > 100) {
-        Memory.cpuTimes.shift();
     }
 }

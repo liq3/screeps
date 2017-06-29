@@ -11,9 +11,11 @@ module.exports = {
         }
         if(target != null && creep.attack(target) == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
-        }
+        } else {
+			creep.moveTo(new RoomPosition(25,25,creep.memory.targetRoom), {range: 22});
+		}
     } else {
-        creep.moveTo(new RoomPosition(25,25,creep.memory.targetRoom));
+        creep.moveTo(new RoomPosition(25,25,creep.memory.targetRoom), {range: 22});
     }
 }
 };
