@@ -23,6 +23,12 @@ module.exports.loop = function () {
 
     if (Memory.energyPush == null) {
         Memory.energyPush = {};
+    } else {
+        for (let i in Memory.energyPush) {
+            if(!Game.getObjectById(i)) {
+                delete Memory.energyPush[i];
+            }
+        }
     }
 
     for (let i in Game.rooms) {
