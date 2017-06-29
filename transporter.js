@@ -78,7 +78,7 @@ module.exports = {
 				creep.memory.targetId = target.id;
 			}
 
-			let target = creep.memory.targetId;
+			let target = Game.getObjectById(creep.memory.targetId);
 			if (!target) {
 				creep.moveTo(Game.spawns.Spawn1, {range: 3});
 				if (creep.pos.inRangeTo(Game.spawns.Spawn1.pos, 5)) {
