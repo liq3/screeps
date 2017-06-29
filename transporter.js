@@ -5,25 +5,38 @@ module.exports = {
 		if (creep.memory.gathering) {
 			if (creep.memory.targetId) {
 				let target = Game.getObjectById(creep.memory.targetId);
-				let err;
-				if (target instanceof Resource) {
-					err = creep.pickup(target);
-				}
-				if (err == ERR_NOT_IN_RANGE) {
-					creep.moveTo(target);
+				if (target) {
+					let err;
+					if (target instanceof Resource) {
+						err = creep.pickup(target);
+					}
+					if (err == 0) {
+						Memory.energyPush[best.id].reserved -= creep.memory.reserved;
+					}
+					if (err == ERR_NOT_IN_RANGE) {
+						creep.moveTo(target);
+					}
+				} else {
+					delete creep.memory.targetId;
 				}
 			} else {
-				if (Memory.energyPush.length > 0) {
+				if (Object.keys(Memory.energyPush).length > 0) {
 					let best = {id:null, cost:1000};
 					for (let id in Memory.energyPush) {
+					    console.log(id);
 						let possible = Game.getObjectById(id);
-						let path = PathFinder.search(creep.pos, {pos:possible.pos, range:1});
-						if (path.cost < best.cost) {
-							best.id = id;
-							best.cost = path.cost;
+						if (possible) {
+						    let path = PathFinder.search(creep.pos, {pos:possible.pos, range:1});
+							let cost = path.cost - possible.amount + Memory.energyPush[id].reserved;
+    						if (cost < best.cost) {
+    							best.id = id;
+    							best.cost = path.cost;
+    						}
 						}
 					}
 					creep.memory.targetId = best.id;
+					creep.memory.reserved = creep.carryCapacity - creep.carry.energy;
+					Memory.energyPush[best.id].reserved += creep.memory.reserved;
 				}
 			}
 			if (creep.carry.energy == creep.carryCapacity) {

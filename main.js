@@ -29,8 +29,8 @@ module.exports.loop = function () {
         let room = Game.rooms[i];
         let droppedEnergy = room.find(FIND_DROPPED_RESOURCES, {filter: c => c.resourceType == RESOURCE_ENERGY});
         for (let res of droppedEnergy) {
-            if (!(droppedEnergy.id in global.energyPush) {
-                energyPush.push({reserved:0});
+            if (!(res.id in Memory.energyPush)) {
+                Memory.energyPush[res.id] = {reserved:0};
             }
         }
     }
@@ -160,7 +160,7 @@ function createCreep(name, data) {
         parts = parts.concat(Array(numberParts).fill(MOVE));
         data.gathering = true;
     }
-    let name = Game.spawns.Spawn1.createCreep(parts, getName(name), data);
+    name = Game.spawns.Spawn1.createCreep(parts, getName(name), data);
     if (name < 0 & debug) {
         console.log("Error spawning creep: " + name + parts);
     }
