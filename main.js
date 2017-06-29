@@ -117,13 +117,13 @@ module.exports.loop = function () {
     }
 }
 
-global.myUtil = {};
+global.myUtils = {};
 
-global.myUtil.avgCpu = function() {
+global.myUtils.avgCpu = function() {
     console.log(_.sum(Memory.cpuTimes) / Memory.cpuTimes.length);
 }
 
-global.myUtil.sourceInfo = function () {
+global.myUtils.sourceInfo = function () {
     let searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93', 'E62N93'];
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
     for (let r of searchRooms) {
@@ -146,7 +146,15 @@ global.myUtil.sourceInfo = function () {
     }
 }
 
-global.myUtil.createRoadsBetweenFlags = function() {
+global.myUtils.energyPullInfo = function() {
+    for (let id in Memory.energyPull) {
+        let thing = Game.getObjectById(id);
+        let mem = Memory.energyPull[id];
+        console.log(thing +" "+ mem.desired + " " + mem.reserved)
+    }
+}
+
+global.myUtils.createRoadsBetweenFlags = function() {
     if (Game.flags.roadStart && Game.flags.roadEnd) {
         let start = Game.flags.roadStart.pos;
         let end = Game.flags.roadEnd.pos;

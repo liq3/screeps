@@ -93,7 +93,7 @@ module.exports = {
 	        } else if (err == OK) {
 				Memory.energyPull[creep.memory.targetId].reserved -= creep.memory.reserved;
 				creep.memory.reserved = 0;
-			} else {
+			} else if (err != ERR_FULL) {
 				console.log("Transporter.transfer error: " + err);
 			}
 		}
