@@ -27,7 +27,7 @@ module.exports = {
 						let possible = Game.getObjectById(id);
 						if (possible) {
 						    let path = PathFinder.search(creep.pos, {pos:possible.pos, range:1});
-							let cost = path.cost - possible.amount + Memory.energyPush[id].reserved;
+							let cost = path.cost * 4 - possible.amount + Memory.energyPush[id].reserved;
     						if (cost < best.cost) {
     							best.id = id;
     							best.cost = path.cost;
