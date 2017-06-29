@@ -14,10 +14,10 @@ module.exports.loop = function () {
         if(!Game.creeps[i]) {
             if (Memory.creeps[i].role == 'transporter') {
                 let creep = Memory.creeps[i];
-                if (creep.memory.gathering) {
-                    Memory.energyPush[creep.memory.targetId].reserved -= creep.memory.reserved;
+                if (creep.gathering) {
+                    Memory.energyPush[creep.targetId].reserved -= creep.reserved;
                 } else {
-                    Memory.energyPull[creep.memory.targetId].reserved -= creep.memory.reserved;
+                    Memory.energyPull[creep.targetId].reserved -= creep.reserved;
                 }
             }
             delete Memory.creeps[i];
@@ -59,7 +59,7 @@ module.exports.loop = function () {
 
         let pullStructures = room.find(FIND_MY_STRUCTURES, {filter:
             s => s.structureType == STRUCTURE_STORAGE || s.structureType == STRUCTURE_SPAWN ||
-                s.structureType == STRUCTURE_EXTENSION || s.structureType == STRUCTURE_TOWER });
+                s.structureType == STRUCTURE_TOWER });
         pullStructures = pullStructures.concat(room.find(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER}));
         for (let structure of pullStructures) {
             if (!(structure.id in Memory.energyPull)) {
