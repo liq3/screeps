@@ -275,7 +275,7 @@ function spawnCreeps() {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (scoutTarget) {
         createCreep('S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
-    } else if (numberBuilders < 2 && numberTransporters >= numberBuilders * 2 + 1) {
+    } else if (numberBuilders < 0 && numberTransporters >= numberBuilders * 2 + 1) {
         createCreep('B', {role:'builder'});
     } else if (numberRepairers < 1 && numberTransporters >= 5) {
         createCreep('R', {role:'repairer'});

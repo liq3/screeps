@@ -23,11 +23,11 @@ module.exports = {
 				if (Object.keys(Memory.energyPush).length > 0) {
 					let best = {id:null, cost:1000};
 					for (let id in Memory.energyPush) {
-					    console.log(id);
 						let possible = Game.getObjectById(id);
 						if (possible) {
 						    let path = PathFinder.search(creep.pos, {pos:possible.pos, range:1});
-							let cost = path.cost * 4 - possible.amount + Memory.energyPush[id].reserved;
+							let cost = path.cost * 4 + Math.max(0, ((creep.carryCapacity - creep.carry.energy) - (possible.amount - Memory.energyPush[id].reserved)));
+							console.log(cost +" "+ path.cost*4 +" " + possible.amount + " " + Memory.energyPush[id].reserved + " " + id);
     						if (cost < best.cost) {
     							best.id = id;
     							best.cost = path.cost;
