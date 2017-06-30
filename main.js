@@ -282,7 +282,7 @@ function spawnCreeps(spawn) {
     let scoutTarget = null;
     let searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94'];//, 'E61N93', 'E62N93'];
     let minerTargetId = null;
-    let transporterSourceId = null;
+    let spawnTransporter = false;
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
     let sourceList = [];
     for (let r of searchRooms) {
@@ -298,22 +298,26 @@ function spawnCreeps(spawn) {
     }
 
     sourceList.sort((a,b) => a.path.cost - b.path.cost );
-
+    let desiredTransportCapacity = 0;
     for (let {source,path} of sourceList) {
         let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-        if (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+9)*3))) {
+        if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+9)*3)))) {
             minerTargetId = source.id;
             break;
         }
-        let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
-            && c.memory.sourcePos.x == source.pos.x
-            && c.memory.sourcePos.y == source.pos.y
-            && c.memory.sourcePos.roomName == source.pos.roomName );
-        let desiredTransporters = Math.ceil( (source.energyCapacity / ENERGY_REGEN_TIME) / (transporterCapacity / path.cost / 2));
-        if (transporters.length < desiredTransporters) {
-            transporterSourceId = source.id;
-            break;
+
+        desiredTransportCapacity += Math.ceil( 2 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
+    }
+    let transportCapacity = 0;
+    for (let creep of _.filter(Game.creeps, c => c.memory.role == 'transporter')) {
+        for (let part of creep.body) {
+            if (part.type == CARRY) {
+                transportCapacity += 50;
+            }
         }
+    }
+    if (transportCapacity < desiredTransportCapacity) {
+        spawnTransporter = true;
     }
 
     let claimerTargetRoom = null;
@@ -343,24 +347,24 @@ function spawnCreeps(spawn) {
     }
 
     if (numberHarvesters < 2 && (sumCreeps('miner', spawn.room) == 0 || numberTransporters == 0)) {
-        createCreep('Harvester ', {role:'harvester'});
+        createCreep(spawn, 'Harvester ', {role:'harvester'});
     } else if (spawnAttacker) {
-        createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
+        createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (scoutTarget) {
-        createCreep('S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
+        createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
     } else if (numberBuilders < 2 && numberTransporters >= numberBuilders * 2 + 1) {
-        createCreep('B', {role:'builder'});
+        createCreep(spawn, 'B', {role:'builder'});
     } else if (numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
-        createCreep('SH', {role:'spawnHelper'});
+        createCreep(spawn, 'SH', {role:'spawnHelper'});
     } else if (minerTargetId && numberMiners < numberTransporters) {
-        createCreep('Miner ', {role:'miner',sourceId:minerTargetId});
-    } else if (transporterSourceId) {
-        createCreep('T', {role:'transporter'});
+        createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
+    } else if (spawnTransporter) {
+        createCreep(spawn, 'T', {role:'transporter'});
     } else if (claimerTargetRoom) {
-        createCreep('C', {role:'claimer', targetRoom: claimerTargetRoom});
+        createCreep(spawn, 'C', {role:'claimer', targetRoom: claimerTargetRoom});
     } else if (false) {
-        createCreep('D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
+        createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
     } else if (numberStationaryUpgraders < 5 && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 20000)) {
-        createCreep('SU', {role:'stationaryUpgrader'});
+        createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
     }
 }
