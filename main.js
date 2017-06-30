@@ -106,6 +106,11 @@ module.exports.loop = function () {
         let target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         if (target != null) {
             tower.attack(target);
+        } else {
+            target = tower.pos.findClosestByRange(FIND_MY_CREEPS, {filter: c => c.hits < c.hitsMax});
+            if (target) {
+                tower.heal(target);
+            }
         }
     }
 
