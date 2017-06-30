@@ -61,6 +61,7 @@ module.exports.loop = function () {
             s => s.structureType == STRUCTURE_STORAGE || s.structureType == STRUCTURE_SPAWN ||
                 s.structureType == STRUCTURE_TOWER || s.structureType == STRUCTURE_EXTENSION});
         pullStructures = pullStructures.concat(room.find(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER}));
+        pullStructures = pullStructures.concat(_.filter(Game.creeps, c => c.memory.role == 'builder'));
         for (let structure of pullStructures) {
             if (!(structure.id in Memory.energyPull)) {
                 Memory.energyPull[structure.id] = {id:structure.id, reserved:0};
@@ -76,6 +77,8 @@ module.exports.loop = function () {
                 Memory.energyPull[id].desired = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
             } else if (structure instanceof StructureTower) {
                 Memory.energyPull[id].desired = structure.energyCapacity - structure.energy;
+            } else if (structure instanceof Creep) {
+                Memory.energyPull[id].desired = structure.carryCapacity - structure.carry.energy;
             }
         }
     }
@@ -168,15 +171,17 @@ global.myUtils.createRoadsBetweenFlags = function() {
     }
 }
 
-global.costMatrixCallback(roomName) {
-    var costMatrix = new Pathfind.costMatrix();
-    for (let structure of Game.rooms[roomName].find(FIND_STRUCTURES)) {
-        if (structure.structureType == STRUCTURE_ROAD) {
-            if (costMatrix.get(structure.pos.x, structure.pos.y) == 0) {
-                costMatrix.set(structure.pos.x, structure.pos.y, 1);
+global.costMatrixCallback = function(roomName) {
+    var costMatrix = new PathFinder.CostMatrix;
+    if (Game.rooms[roomName]) {
+        for (let structure of Game.rooms[roomName].find(FIND_STRUCTURES)) {
+            if (structure.structureType == STRUCTURE_ROAD) {
+                if (costMatrix.get(structure.pos.x, structure.pos.y) == 0) {
+                    costMatrix.set(structure.pos.x, structure.pos.y, 1);
+                }
+            } else if (!(structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_CONTAINER)) {
+                costMatrix.set(structure.pos.x, structure.pos.y, 255);
             }
-        } else if (!(structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_CONTAINER)) {
-            costMatrix.set(structure.pos.x, structure.pos.y, 255);
         }
     }
     return costMatrix;
@@ -299,7 +304,7 @@ function spawnCreeps() {
             && c.memory.sourcePos.x == source.pos.x
             && c.memory.sourcePos.y == source.pos.y
             && c.memory.sourcePos.roomName == source.pos.roomName );
-        let desiredTransporters = Math.ceil( (source.energyCapacity / ENERGY_REGEN_TIME) / (transporterCapacity / path.cost / 3));
+        let desiredTransporters = Math.ceil( (source.energyCapacity / ENERGY_REGEN_TIME) / (transporterCapacity / path.cost / 2));
         if (transporters.length < desiredTransporters) {
             transporterSourceId = source.id;
             break;
