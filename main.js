@@ -24,8 +24,10 @@ module.exports.loop = function () {
         }
     }
 
-    if (!Game.spawns.Spawn1.spawning) {
-        spawnCreeps();
+    for (let i in Game.spawns) {
+        if (!Game.spawns[i].spawning)
+            spawnCreeps(Game.spawns[i]);
+        }
     }
 
     if (Memory.energyPush == null) {
@@ -99,7 +101,7 @@ module.exports.loop = function () {
         }
 	}
 
-    let towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER});
+    let towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
     for (let tower of towers) {
         let target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         if (target != null) {
@@ -188,21 +190,7 @@ global.costMatrixCallback = function(roomName) {
     return costMatrix;
 }
 
-function sumCreeps(role) {
-    return _.sum(Game.creeps, c => c.memory.role == role);
-}
-
-function createCreep(name, data) {
-    var spawn;
-    for (let i in Game.spawns) {
-        if (Game.spawns[i].spawning == null) {
-            spawn = Game.spawns[i];
-            break;
-        }
-    }
-    if (!spawn) {
-        return;
-    }
+function createCreep(spawn, name, data) {
     let parts = [];
     if (data.role == 'miner') {
         let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 150) / 100);
@@ -275,15 +263,22 @@ function getName(name, num) {
 }
 
 function spawnCreeps(spawn) {
-    let numberHarvesters = sumCreeps('harvester');
+    function sumCreeps(role, room) {
+        if (room == undefined) {
+            return _.sum(Game.creeps, c => c.memory.role == role);
+        } else {
+            return room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == role}).length;
+        }
+    }
+
+    let numberHarvesters = sumCreeps('harvester', spawn.room);
     let numberBuilders = sumCreeps ('builder');
     let numberMiners = sumCreeps('miner');
     let numberTransporters = sumCreeps('transporter');
-    let numberRepairers = sumCreeps('repairer');
-    let numberStationaryUpgraders = sumCreeps('stationaryUpgrader');
+    let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', spawn.room);
     let numberScouts = sumCreeps('scout');
     let numberAttackers = sumCreeps('attacker');
-    let numberSpawnHelpers = sumCreeps('spawnHelper');
+    let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
 
     let scoutTarget = null;
     let searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94'];//, 'E61N93', 'E62N93'];
@@ -348,7 +343,7 @@ function spawnCreeps(spawn) {
         }
     }
 
-    if (numberHarvesters < 2 && (numberMiners == 0 || numberTransporters == 0)) {
+    if (numberHarvesters < 2 && (sumCreeps('miner', spawn.room) == 0 || numberTransporters == 0)) {
         createCreep('Harvester ', {role:'harvester'});
     } else if (spawnAttacker) {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
@@ -361,7 +356,7 @@ function spawnCreeps(spawn) {
     } else if (minerTargetId && numberMiners < numberTransporters) {
         createCreep('Miner ', {role:'miner',sourceId:minerTargetId});
     } else if (transporterSourceId) {
-        createCreep('T', {role:'transporter', sourcePos:Game.getObjectById(transporterSourceId).pos, sourceId: transporterSourceId});
+        createCreep('T', {role:'transporter'});
     } else if (claimerTargetRoom) {
         createCreep('C', {role:'claimer', targetRoom: claimerTargetRoom});
     } else if (false) {
