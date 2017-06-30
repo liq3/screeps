@@ -179,10 +179,9 @@ function createCreep(name, data) {
         parts = Array(Math.min(6,numberParts)).fill(WORK);
         parts = parts.concat([CARRY,MOVE,MOVE]);
     } else if (data.role == 'stationaryUpgrader') {
-        let numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 50) / 150);
+        let numberParts = Math.floor((Game.spawns.Spawn1.room.energyCapacityAvailable - 100) / 100);
         parts = Array(numberParts).fill(WORK);
-        parts = parts.concat(Array(numberParts).fill(CARRY));
-        parts = parts.concat([MOVE]);
+        parts = parts.concat([CARRY,MOVE]);
     } else if (data.role == 'transporter' || data.role == 'spawnHelper') {
         let numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150);
         parts = Array(numberParts).fill(CARRY);
@@ -335,7 +334,7 @@ function spawnCreeps() {
         createCreep('C', {role:'claimer', targetRoom: claimerTargetRoom});
     } else if (false) {
         createCreep('D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
-    } else if (numberStationaryUpgraders < Math.ceil(Game.spawns.Spawn1.room.storage.store[RESOURCE_ENERGY] / 5000)) {
+    } else if (numberStationaryUpgraders < 5 && numberStationaryUpgraders < Math.ceil(Game.spawns.Spawn1.room.storage.store[RESOURCE_ENERGY] / 20000)) {
         createCreep('SU', {role:'stationaryUpgrader'});
     }
 }

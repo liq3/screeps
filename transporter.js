@@ -90,7 +90,7 @@ module.exports = {
 			let err = creep.transfer(target, RESOURCE_ENERGY);
 	        if (err == ERR_NOT_IN_RANGE) {
 	            creep.moveTo(target);
-	        } else if (err == OK || err = ERR_FULL) {
+	        } else if (err == OK || err == ERR_FULL) {
 				Memory.energyPull[creep.memory.targetId].reserved -= creep.memory.reserved;
 				creep.memory.reserved = 0;
 				creep.memory.targetId = null;
