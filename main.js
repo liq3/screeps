@@ -25,7 +25,7 @@ module.exports.loop = function () {
     }
 
     for (let i in Game.spawns) {
-        if (!Game.spawns[i].spawning)
+        if (!Game.spawns[i].spawning) {
             spawnCreeps(Game.spawns[i]);
         }
     }
@@ -164,10 +164,9 @@ global.myUtils.createRoadsBetweenFlags = function() {
     if (Game.flags.roadStart && Game.flags.roadEnd) {
         let start = Game.flags.roadStart.pos;
         let end = Game.flags.roadEnd.pos;
-        let path = start.findPathTo(end, {ignoreCreeps: true});
-        let room = Game.rooms[start.roomName];
+        let path = PathFinder.search(start, {pos:end, range:0}, {swampCost:1});
         for (let pos of path) {
-            room.createConstructionSite(pos.x,pos.y, STRUCTURE_ROAD);
+            Game.rooms[pos.roomName].createConstructionSite(pos.x,pos.y, STRUCTURE_ROAD);
         }
     } else {
         console.log("Flags not set properly!");
