@@ -311,7 +311,7 @@ function spawnCreeps(spawn) {
             break;
         }
 
-        desiredTransportCapacity += Math.ceil( 2 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
+        desiredTransportCapacity += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
     }
     let transportCapacity = 0;
     for (let creep of _.filter(Game.creeps, c => c.memory.role == 'transporter')) {
@@ -327,13 +327,27 @@ function spawnCreeps(spawn) {
     Memory.transportCapacity = transportCapacity;
     Memory.desiredTransportCapacity = desiredTransportCapacity;
 
-    let claimerTargetRoom = null;
+    let reserveTargetRoom = null;
     for (let r of ['E62N94', 'E61N93']) {
         if (Game.rooms[r]) {
             if (_.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length < 2) {
-                claimerTargetRoom = r;
+                reserveTargetRoom = r;
                 break;
             }
+        }
+    }
+
+    searchRooms = [];
+    searchRooms = _.filter(Game.flags, f => f.name == 'claim');
+    for (let i in searchRooms) {
+        searchRooms[i] = searchRooms[i].pos.roomName;
+    }
+    let claimTargetRoom = null;
+    for (let r of searchRooms) {
+        let trans = _.filter(Game.creeps, c => c.memory.claimRoom == r && c.memory.role == 'claimer').length;
+        if (trans == 0) {
+            claimTargetRoom = r;
+            break;
         }
     }
 
@@ -359,6 +373,8 @@ function spawnCreeps(spawn) {
         createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (scoutTarget) {
         createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
+    } else if (claimTargetRoom) {
+        createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
     } else if (numberBuilders < 2 && numberTransporters >= numberBuilders * 2 + 1) {
         createCreep(spawn, 'B', {role:'builder'});
     } else if (numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
@@ -367,8 +383,8 @@ function spawnCreeps(spawn) {
         createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
     } else if (spawnTransporter) {
         createCreep(spawn, 'T', {role:'transporter'});
-    } else if (claimerTargetRoom) {
-        createCreep(spawn, 'C', {role:'claimer', targetRoom: claimerTargetRoom});
+    } else if (reserveTargetRoom) {
+        createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
     } else if (false) {
         createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
     } else if (numberStationaryUpgraders < 5 && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 20000)) {
