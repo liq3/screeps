@@ -14,9 +14,9 @@ module.exports.loop = function () {
         if(!Game.creeps[i]) {
             if (Memory.creeps[i].role == 'transporter') {
                 let creep = Memory.creeps[i];
-                if (creep.gathering) {
+                if (creep.gathering && Memory.energyPush[creep.targetId]) {
                     Memory.energyPush[creep.targetId].reserved -= creep.reserved;
-                } else {
+                } else if (Memory.energyPull[creep.targetId]) {
                     Memory.energyPull[creep.targetId].reserved -= creep.reserved;
                 }
             }
