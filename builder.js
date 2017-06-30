@@ -4,7 +4,7 @@ module.exports = {
 	run: function (creep) {
 
 		if(creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
-			var err = creep.withdraw(Game.spawns.Spawn1.room.storage);
+			var err = creep.withdraw(Game.spawns.Spawn1.room.storage, RESOURCE_ENERGY);
 			if (err == ERR_NOT_IN_RANGE) {
 				creep.moveTo(Game.spawns.Spawn1.room.storage)
 			}
@@ -16,26 +16,29 @@ module.exports = {
 	        var target = Game.getObjectById(creep.memory.targetId);
 	        if(!target) {
 				let possible = {best:1000000, id:null};
-				for (let itr of creep.room.find(FIND_STRUCTURES, {filter: s => s.hits < s.hitsMax})) {
-					let score = PathFinder.search(creep.pos, {goal:itr.pos, range:3}).cost * 2;
-					if (itr.structureType == STRUCTURE_WALL || itr.structureType == STRUCTURE_RAMPART) {
-						if (itr.hits > 10000) {
-							score += 1000 + itr.hits / 1000;
-						} else {
-							score -= 100;
+				for (let r in Game.rooms) {
+					for (let itr of Game.rooms[r].find(FIND_STRUCTURES, {filter: s => s.hits < s.hitsMax})) {
+						let score = PathFinder.search(creep.pos, {pos:itr.pos, range:3}).cost * 2;
+						if (itr.structureType == STRUCTURE_WALL || itr.structureType == STRUCTURE_RAMPART) {
+							if (itr.hits > 10000) {
+								score += 1000 + itr.hits / 1000;
+							} else {
+								score -= 100;
+							}
 						}
-					}
-					if ((itr.structureType == STRUCTURE_ROAD || itr.structureType == STRUCTURE_CONTAINER) && itr.hits > (itr.hits/2)) {
-						score += 100;
-					}
-					if (score < possible.best) {
-						possible.best = score;
-						possible.id = itr.id;
+						if ((itr.structureType == STRUCTURE_ROAD || itr.structureType == STRUCTURE_CONTAINER) && itr.hits > (itr.hits/2)) {
+							score += 100;
+						}
+						if (score < possible.best) {
+							possible.best = score;
+							possible.id = itr.id;
+						}
 					}
 				}
 
-				for (let itr of creep.room.find(FIND_CONSTRUCTION_SITES)) {
-					let score = PathFinder.search(creep.pos, {goal:itr.pos, range:3}).cost * 2;
+				for (let i in Game.constructionSites) {
+					let itr = Game.constructionSites[i];
+					let score = PathFinder.search(creep.pos, {pos:itr.pos, range:3}).cost * 2;
 					if (itr.structureType == STRUCTURE_WALL || itr.structureType == STRUCTURE_RAMPART) {
 						score += 200;
 					}
@@ -54,14 +57,19 @@ module.exports = {
 			}
 
 			var err;
-			if(creep.memory.jobType == 'build') {
+			if(target instanceof ConstructionSite) {
 				err = creep.build(target);
-			} else if (creep.memory.jobType == 'repair'){
+			} else {
 				err = creep.repair(target);
+				if (target.hits == target.hitsMax) {
+					creep.memory.targetId = null;
+				}
 			}
 
 			if (err == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target);
+			} else if (err != 0) {
+			    console.log(err + " " + target);
 			}
 	    }
 	}

@@ -11,9 +11,9 @@ module.exports = {
         var dropOff = creep.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c => c.name != creep.name});
         if (dropOff.length > 0) {
             var error = creep.transfer(dropOff[0], RESOURCE_ENERGY);
-            if (error < 0 && error != -6 && error != -8) {
+            if (error < 0 && error != -6 && error != -8 && error != -4) {
                 console.log(creep.name + " error transfering energy. " + error);
             }
-        } 
+        }
 	}
 };
