@@ -324,6 +324,8 @@ function spawnCreeps(spawn) {
     if (transportCapacity < desiredTransportCapacity) {
         spawnTransporter = true;
     }
+    Memory.transportCapacity = transportCapacity;
+    Memory.desiredTransportCapacity = desiredTransportCapacity;
 
     let claimerTargetRoom = null;
     for (let r of ['E62N94', 'E61N93']) {
