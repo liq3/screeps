@@ -4,7 +4,7 @@ module.exports = {
 		var target;
 		var error = creep.transfer(creep.room.controller,RESOURCE_ENERGY);
 		if(error == ERR_NOT_IN_RANGE || error == ERR_NOT_ENOUGH_ENERGY) {
-			target = creep.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType==STRUCTURE_CONTAINER});
+			target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType==STRUCTURE_CONTAINER});
 			if (target.length > 0) {
 				creep.moveTo(target[0], {range: 1});
 				creep.withdraw(target[0], RESOURCE_ENERGY);

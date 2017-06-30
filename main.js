@@ -206,11 +206,15 @@ function createCreep(name, data) {
     } else if (data.role == 'claimer') {
         parts = [CLAIM,MOVE];
     } else {
-        let numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 200);
-        parts = Array(numberParts).fill(WORK);
-        parts = parts.concat(Array(numberParts).fill(CARRY));
-        parts = parts.concat(Array(numberParts).fill(MOVE));
-        data.gathering = true;
+        if (Game.spawns.Spawn1.room.energyCapacityAvailable < 350) {
+            parts = [WORK, CARRY, CARRY, MOVE, MOVE];
+        } else {
+            let numberParts = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 350);
+            parts = Array(numberParts).fill(WORK);
+            parts = parts.concat(Array(numberParts*2).fill(CARRY));
+            parts = parts.concat(Array(numberParts*3).fill(MOVE));
+            data.gathering = true;
+        }
     }
     name = Game.spawns.Spawn1.createCreep(parts, getName(name), data);
     if (name < 0 & debug) {
@@ -320,10 +324,8 @@ function spawnCreeps() {
         createCreep('A', {role:'attacker',targetRoom:attackerTargetRoom});
     } else if (scoutTarget) {
         createCreep('S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
-    } else if (numberBuilders < 0 && numberTransporters >= numberBuilders * 2 + 1) {
+    } else if (numberBuilders < 2 && numberTransporters >= numberBuilders * 2 + 1) {
         createCreep('B', {role:'builder'});
-    } else if (numberRepairers < 1 && numberTransporters >= 5) {
-        createCreep('R', {role:'repairer'});
     } else if (numberSpawnHelpers < 1 && Game.spawns.Spawn1.room.storage && Game.spawns.Spawn1.room.storage.store[RESOURCE_ENERGY] > 5000) {
         createCreep('SH', {role:'spawnHelper'});
     } else if (minerTargetId && numberMiners < numberTransporters) {
