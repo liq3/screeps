@@ -25,8 +25,8 @@ module.exports = {
 					for (let id in Memory.energyPush) {
 						let possible = Game.getObjectById(id);
 						if (possible) {
-						    let path = PathFinder.search(creep.pos, {pos:possible.pos, range:1});
-							let cost = path.cost * 4 + Math.max(0, ((creep.carryCapacity - creep.carry.energy) - (possible.amount - Memory.energyPush[id].reserved)));
+						    let path = PathFinder.search(creep.pos, {pos:possible.pos, range:1}, {swampCost:10, plainCost:2, roomCallback:global.costMatrixCallback});
+							let cost = path.cost * 3 + Math.max(0, ((creep.carryCapacity - creep.carry.energy) - (possible.amount - Memory.energyPush[id].reserved)));
 							//console.log(cost +" "+ path.cost*4 +" " + possible.amount + " " + Memory.energyPush[id].reserved + " " + id);
     						if (cost < best.cost) {
     							best.id = id;

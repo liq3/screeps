@@ -14,11 +14,14 @@ module.exports = {
 	        creep.memory.gathering = true;
 	    } else {
 	        var target = Game.getObjectById(creep.memory.targetId);
+			if (target instanceof Structure && target.hits == target.hitsMax) {
+				creep.memory.targetId = null;
+			}
 	        if(!target) {
 				let possible = {best:1000000, id:null};
 				for (let r in Game.rooms) {
 					for (let itr of Game.rooms[r].find(FIND_STRUCTURES, {filter: s => s.hits < s.hitsMax})) {
-						let score = PathFinder.search(creep.pos, {pos:itr.pos, range:3}).cost * 2;
+						let score = PathFinder.search(creep.pos, {pos:itr.pos, range:3}, {swampCost:10, plainCost:2, roomCallback:global.costMatrixCallback}).cost;
 						if (itr.structureType == STRUCTURE_WALL || itr.structureType == STRUCTURE_RAMPART) {
 							if (itr.hits > 10000) {
 								score += 1000 + itr.hits / 1000;
@@ -27,7 +30,7 @@ module.exports = {
 							}
 						}
 						if ((itr.structureType == STRUCTURE_ROAD || itr.structureType == STRUCTURE_CONTAINER) && itr.hits > (itr.hits/2)) {
-							score += 100;
+							score += 300;
 						}
 						if (score < possible.best) {
 							possible.best = score;
@@ -38,7 +41,7 @@ module.exports = {
 
 				for (let i in Game.constructionSites) {
 					let itr = Game.constructionSites[i];
-					let score = PathFinder.search(creep.pos, {pos:itr.pos, range:3}).cost * 2;
+					let score = PathFinder.search(creep.pos, {pos:itr.pos, range:3}, {swampCost:10, plainCost:2, roomCallback:global.costMatrixCallback}).cost * 2;
 					if (itr.structureType == STRUCTURE_WALL || itr.structureType == STRUCTURE_RAMPART) {
 						score += 200;
 					}
@@ -61,9 +64,6 @@ module.exports = {
 				err = creep.build(target);
 			} else {
 				err = creep.repair(target);
-				if (target.hits == target.hitsMax) {
-					creep.memory.targetId = null;
-				}
 			}
 
 			if (err == ERR_NOT_IN_RANGE) {

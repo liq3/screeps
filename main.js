@@ -129,7 +129,7 @@ global.myUtils.sourceInfo = function () {
     for (let r of searchRooms) {
         if (Game.rooms[r]) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-                let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
+                let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1}, {swampCost:10, plainCost:2, roomCallback:global.costMatrixCallback});
                 let desiredTransporters = Math.ceil( (source.energyCapacity / ENERGY_REGEN_TIME) / (transporterCapacity / path.cost / 3));
                 let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
                 let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
@@ -166,6 +166,20 @@ global.myUtils.createRoadsBetweenFlags = function() {
     } else {
         console.log("Flags not set properly!");
     }
+}
+
+global.costMatrixCallback(roomName) {
+    var costMatrix = new Pathfind.costMatrix();
+    for (let structure of Game.rooms[roomName].find(FIND_STRUCTURES)) {
+        if (structure.structureType == STRUCTURE_ROAD) {
+            if (costMatrix.get(structure.pos.x, structure.pos.y) == 0) {
+                costMatrix.set(structure.pos.x, structure.pos.y, 1);
+            }
+        } else if (!(structure.structureType == STRUCTURE_RAMPART || structure.structureType == STRUCTURE_CONTAINER)) {
+            costMatrix.set(structure.pos.x, structure.pos.y, 255);
+        }
+    }
+    return costMatrix;
 }
 
 function sumCreeps(role) {
@@ -267,7 +281,7 @@ function spawnCreeps() {
             scoutTarget = r;
         } else if (Game.rooms[r]) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-                let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1});
+                let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1}, {swampCost:10, plainCost:2, roomCallback:global.costMatrixCallback});
                 sourceList.push({source:source, path:path});
             }
         }
