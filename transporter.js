@@ -61,14 +61,22 @@ module.exports = {
 							if (possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
 								possibleTargets.push(possible);
 							}
-						} else if (possible instanceof StructureContainer && possible.storeCapacity - possible.store[RESOURCE_ENERGY] - Memory.energyPull[possible.id].reserved > 0) {
-							possibleTargets.push(possible);
-						} else if (possible instanceof StructureSpawn && possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
+						} else if (possible instanceof StructureContainer) {
+							if (possible.storeCapacity - possible.store[RESOURCE_ENERGY] - Memory.energyPull[possible.id].reserved > 0) {
 								possibleTargets.push(possible);
-						} else if (possible instanceof StructureTower && possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
+							}
+						} else if (possible instanceof StructureSpawn) {
+							if (possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
 								possibleTargets.push(possible);
-						} else if (possible instanceof Creep && possible.carryCapacity - possible.carry.energy - Memory.energyPull[possible.id].reserved > 0) {
+							}
+						} else if (possible instanceof StructureTower) {
+							if (possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
 								possibleTargets.push(possible);
+							}
+						} else if (possible instanceof Creep) {
+							if (possible.carryCapacity - possible.carry.energy - Memory.energyPull[possible.id].reserved > 0) {
+								possibleTargets.push(possible);
+							}
 						} else if (possible instanceof StructureStorage) {
 							storage = possible;
 						} else {
