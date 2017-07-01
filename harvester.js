@@ -13,9 +13,19 @@ module.exports = {
 		var target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
 			s => s.structureType == STRUCTURE_EXTENSION && s.energy < s.energyCapacity})
         if (target == null) {
-            target = Game.spawns.Spawn1;
+            target = creep.pos.findClosestByPath(FIND_MY_SPAWNS, {filter: s => s.energy < s.energyCapacity });
         }
-        if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
+        if (!target) {
+            target = creep.room.controller;
+        }
+
+        var error;
+        if (target instanceof StructureController) {
+            error = creep.upgradeController(target);
+        } else {
+            error = creep.transfer(target, RESOURCE_ENERGY);
+        }
+        if (error == ERR_NOT_IN_RANGE) {
             creep.moveTo(target);
         }
 	}

@@ -4,10 +4,7 @@ module.exports = {
 	run: function (creep) {
 
 		if(creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
-			var err = creep.withdraw(Game.spawns.Spawn1.room.storage, RESOURCE_ENERGY);
-			if (err == ERR_NOT_IN_RANGE) {
-				creep.moveTo(Game.spawns.Spawn1.room.storage)
-			}
+			gatherEnergy(creep);
 	    } else if (creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
 	        creep.memory.gathering = false;
 	    } else if (!creep.memory.gathering && creep.carry.energy == 0) {
@@ -47,6 +44,9 @@ module.exports = {
 					}
 					if (itr.structureType == STRUCTURE_ROAD || itr.structureType == STRUCTURE_CONTAINER) {
 						score += 100;
+					}
+					if (itr.structureType == STRUCTURE_SPAWN) {
+					    score -= 200;
 					}
 					if (score < possible.best) {
 						possible.best = score;

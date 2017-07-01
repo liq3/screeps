@@ -211,7 +211,7 @@ function createCreep(spawn, name, data) {
         parts = parts.concat(Array(numberParts).fill(MOVE));
         data.gathering = true;
     } else if (data.role == 'harvester') {
-        parts = [WORK,CARRY,CARRY,CARRY,MOVE];
+        parts = [WORK,CARRY,MOVE,MOVE];
         data.gathering = true;
     } else if (data.role == 'decoy') {
         let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
@@ -285,7 +285,7 @@ function spawnCreeps(spawn) {
     let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
 
     let scoutTarget = null;
-    let searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94'];//, 'E61N93', 'E62N93'];
+    let searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E62N93'];//, 'E61N93', ];
     let minerTargetId = null;
     let spawnTransporter = false;
     let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
@@ -367,7 +367,8 @@ function spawnCreeps(spawn) {
         }
     }
 
-    if (numberHarvesters < 2 && (sumCreeps('miner', spawn.room) == 0 || numberTransporters == 0)) {
+    var RCL = spawn.room.controller.level;
+    if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || numberTransporters == 0)) {
         createCreep(spawn, 'Harvester ', {role:'harvester'});
     } else if (spawnAttacker) {
         createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom});
@@ -375,19 +376,19 @@ function spawnCreeps(spawn) {
         createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
     } else if (claimTargetRoom) {
         createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
-    } else if (numberBuilders < 2 && numberTransporters >= numberBuilders * 2 + 1) {
+    } else if (numberBuilders < 2 && RCL > 2 && numberTransporters >= numberBuilders * 2 + 1) {
         createCreep(spawn, 'B', {role:'builder'});
     } else if (numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
         createCreep(spawn, 'SH', {role:'spawnHelper'});
-    } else if (minerTargetId && numberMiners < numberTransporters) {
+    } else if (minerTargetId && numberMiners <= numberTransporters && RCL > 2) {
         createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
-    } else if (spawnTransporter) {
+    } else if (spawnTransporter && spawn.room.controller.level >= 3) {
         createCreep(spawn, 'T', {role:'transporter'});
-    } else if (reserveTargetRoom) {
+    } else if (reserveTargetRoom && RCL > 2) {
         createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
     } else if (false) {
         createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
-    } else if (numberStationaryUpgraders < 5 && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 20000)) {
+    } else if ((numberStationaryUpgraders < 5 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 20000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
         createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
     }
 }
