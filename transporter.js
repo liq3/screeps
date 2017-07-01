@@ -48,9 +48,7 @@ module.exports = {
 	    } else if (!creep.memory.gathering && creep.carry.energy == 0) {
 	        creep.memory.gathering = true;
 			creep.memory.targetId = null;
-	    } else if (creep.room != Game.spawns.Spawn1.room) {
-			creep.moveTo(Game.spawns.Spawn1);
-		} else {
+	    } else {
 			if (!creep.memory.targetId) {
 				let storage;
 				let possibleTargets = [];
@@ -122,12 +120,13 @@ module.exports = {
 	        if (err == ERR_NOT_IN_RANGE) {
 				let moveErr = creep.moveTo(target, {range:1});
 				if (moveErr != 0) {
-					console.log(`${creep.name} move error ${moveErr}`);
+					//console.log(`${creep.name} move error ${moveErr} tick:${Game.time}`);
 				}
 	        } else if (err == OK || err == ERR_FULL) {
 				Memory.energyPull[creep.memory.targetId].reserved -= creep.memory.reserved;
 				creep.memory.reserved = 0;
 				creep.memory.targetId = null;
+				console.log(`full ok ${Game.time}`);
 			} else if (err != ERR_FULL) {
 				console.log("Transporter.transfer error: " + err);
 			}
