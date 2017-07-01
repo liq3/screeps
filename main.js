@@ -218,9 +218,9 @@ function createCreep(spawn, name, data) {
             parts = parts.concat([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE]);
         }
     } else if (data.role == 'attacker') {
-        let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 210);
+        let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 130);
         for (let i = 0; i < Math.min(numberParts, 5); i++) {
-            parts = parts.concat([ATTACK,ATTACK,MOVE]);
+            parts = parts.concat([ATTACK,MOVE]);
         }
     } else if (data.role == 'scout') {
         parts = [MOVE];
