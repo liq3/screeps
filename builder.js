@@ -14,7 +14,7 @@ module.exports = {
 			if (target instanceof Structure && target.hits == target.hitsMax) {
 				creep.memory.targetId = null;
 			}
-	        if(!target) {
+	        if(!target || Game.time - creep.memory.jobStartTime > 100) {
 				let possible = {best:1000000, id:null};
 				for (let r in Game.rooms) {
 					for (let itr of Game.rooms[r].find(FIND_STRUCTURES, {filter: s => s.hits < s.hitsMax})) {
@@ -57,6 +57,7 @@ module.exports = {
 				creep.memory.targetId = possible.id;
 				target = Game.getObjectById(possible.id);
 				creep.memory.jobType = (target instanceof ConstructionSite) ? 'repair' : 'build';
+				creep.memory.jobStartTime = Game.time;
 			}
 
 			var err;
