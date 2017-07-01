@@ -66,7 +66,15 @@ module.exports = {
 					}
 				}
 
-				let target = creep.pos.findClosestByPath(possibleTargets, {range:1});
+				let target = null;
+				let best = 1000000;
+				for (let i of possibleTargets) {
+					let path = PathFinder.search(creep.pos, {pos:i.pos, range:1}, {swampCost:10, plainCost:2, roomCallback:global.costMatrixCallback});
+					if (path.cost < best) {
+						best = path.cost;
+						target = i;
+					}
+				}
 
 				if (!target && storage) {
 					target = storage;
