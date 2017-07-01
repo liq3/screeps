@@ -78,7 +78,7 @@ module.exports.loop = function () {
             if (creepFunctions[creep.memory.role] != undefined) {
                 creepFunctions[creep.memory.role].run(creep);
             } else if (creep.memory.role == 'recycle') {
-                creep.moveTo(Game.spawns.Spawn1);
+                creep.moveTo(creep.pos.findClosestByPath(FIND_MY_SPAWNS));
             } else {
                 console.log("Undefined function for role: " + creep.memory.role);
             }

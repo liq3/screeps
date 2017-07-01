@@ -126,7 +126,6 @@ module.exports = {
 				Memory.energyPull[creep.memory.targetId].reserved -= creep.memory.reserved;
 				creep.memory.reserved = 0;
 				creep.memory.targetId = null;
-				console.log(`full ok ${Game.time}`);
 			} else if (err != ERR_FULL) {
 				console.log("Transporter.transfer error: " + err);
 			}
