@@ -92,6 +92,8 @@ module.exports = {
 				if (creep.pos.inRangeTo(Game.spawns.Spawn1.pos, 5)) {
 					creep.drop(RESOURCE_ENERGY);
 				}
+				creep.memory.targetId = null;
+				creep.memory.reserved = 0;
 			}
 
 			//if (debug) console.log(target);

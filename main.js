@@ -243,7 +243,7 @@ function createCreep(spawn, name, data) {
         console.log("Error spawning creep: " + name + parts);
     }
     if (typeof(name) == 'string') {
-        logStr = spawn.name + "spawning creep " + name + " in room " + spawn.room.name ".";
+        logStr = spawn.name + " spawning creep " + name + " in room " + spawn.room.name + " in " + spawn.spawning.remainingTime + " ticks.";
         if (data.role == 'attacker') {
             logStr = logStr + " Targeting room " + data.room;
         } else if (data.role == 'transporter') {
