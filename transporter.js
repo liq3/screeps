@@ -58,17 +58,17 @@ module.exports = {
 					let possible = Memory.energyPull[i];
 					if (possible.desired - possible.reserved > 0) {
 						possible = Game.getObjectById(i);
-						if (structure instanceof StructureExtension && structure.energyCapacity - structure.energy - Memory.energyPull[possible.id].reserved > 0) {
+						if (possible instanceof StructureExtension && possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
 							possibleTargets.push(possible);
-						} else if (structure instanceof StructureContainer && structure.storeCapacity - structure.store[RESOURCE_ENERGY] - Memory.energyPull[possible.id].reserved > 0) {
+						} else if (possible instanceof StructureContainer && possible.storeCapacity - possible.store[RESOURCE_ENERGY] - Memory.energyPull[possible.id].reserved > 0) {
 							possibleTargets.push(possible);
-						} else if (structure instanceof StructureSpawn && structure.energyCapacity - structure.energy - Memory.energyPull[possible.id].reserved > 0) {
+						} else if (possible instanceof StructureSpawn && possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
 								possibleTargets.push(possible);
-						} else if (structure instanceof StructureTower && structure.energyCapacity - structure.energy - Memory.energyPull[possible.id].reserved > 0) {
+						} else if (possible instanceof StructureTower && possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
 								possibleTargets.push(possible);
-						} else if (structure instanceof Creeps && tructure.carryCapacity - structure.carry.energy - Memory.energyPull[possible.id].reserved > 0) {
+						} else if (possible instanceof Creeps && tructure.carryCapacity - possible.carry.energy - Memory.energyPull[possible.id].reserved > 0) {
 								possibleTargets.push(possible);
-						} else if (structure instanceof StructureStorage) {
+						} else if (possible instanceof StructureStorage) {
 							storage = possible;
 						} else {
 							console.log("IT'S ALL GONE WRONG. transporter");
