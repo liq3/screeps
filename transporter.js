@@ -99,10 +99,12 @@ module.exports = {
 					target = storage;
 				}
 
-				let reserve = Math.min(creep.carry.energy, Memory.energyPull[target.id].desired);
-				Memory.energyPull[target.id].reserved += reserve;
-				creep.memory.reserved = reserve;
-				creep.memory.targetId = target.id;
+				if (target) {
+					let reserve = Math.min(creep.carry.energy, Memory.energyPull[target.id].desired);
+					Memory.energyPull[target.id].reserved += reserve;
+					creep.memory.reserved = reserve;
+					creep.memory.targetId = target.id;
+				}
 			}
 
 			let target = Game.getObjectById(creep.memory.targetId);
