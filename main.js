@@ -194,6 +194,19 @@ global.costMatrixCallback = function(roomName) {
     return costMatrix;
 }
 
+global.myUtils.clearTransportMemory() {
+    for (let i in Game.creeps) {
+        let creep = Game.creeps[i];
+        if (creep.memory.role == 'transporter') {
+            delete creep.memory.reserved;
+            delete creep.memory.targetId;
+        }
+    }
+    delete Memory.energyPush;
+    delete Memory.energyPull;
+}
+
+
 function createCreep(spawn, name, data) {
     let parts = [];
     if (data.role == 'miner') {
@@ -243,7 +256,7 @@ function createCreep(spawn, name, data) {
         console.log("Error spawning creep: " + name + parts);
     }
     if (typeof(name) == 'string') {
-        logStr = spawn.name + " spawning creep " + name + " in room " + spawn.room.name + " in " + spawn.spawning.remainingTime + " ticks.";
+        logStr = spawn.name + " spawning creep " + name + " in room " + spawn.room.name + " in " + parts.length*3 + " ticks.";
         if (data.role == 'attacker') {
             logStr = logStr + " Targeting room " + data.room;
         } else if (data.role == 'transporter') {
