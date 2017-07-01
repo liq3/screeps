@@ -57,8 +57,10 @@ module.exports = {
 				for (let i in Memory.energyPull) {
 					let possible = Game.getObjectById(i);
 					if (possible) {
-						if (possible instanceof StructureExtension && possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
-							possibleTargets.push(possible);
+						if (possible instanceof StructureExtension) {
+							if (possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
+								possibleTargets.push(possible);
+							}
 						} else if (possible instanceof StructureContainer && possible.storeCapacity - possible.store[RESOURCE_ENERGY] - Memory.energyPull[possible.id].reserved > 0) {
 							possibleTargets.push(possible);
 						} else if (possible instanceof StructureSpawn && possible.energyCapacity - possible.energy - Memory.energyPull[possible.id].reserved > 0) {
