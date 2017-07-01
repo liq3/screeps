@@ -68,20 +68,6 @@ module.exports.loop = function () {
             if (!(structure.id in Memory.energyPull)) {
                 Memory.energyPull[structure.id] = {id:structure.id, reserved:0};
             }
-            let id = structure.id;
-            if (structure instanceof StructureExtension) {
-                Memory.energyPull[id].desired = structure.energyCapacity - structure.energy;
-            } else if (structure instanceof StructureContainer) {
-                Memory.energyPull[id].desired = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
-            } else if (structure instanceof StructureSpawn) {
-                Memory.energyPull[id].desired = structure.energyCapacity - structure.energy;
-            } else if (structure instanceof StructureStorage) {
-                Memory.energyPull[id].desired = structure.storeCapacity - structure.store[RESOURCE_ENERGY];
-            } else if (structure instanceof StructureTower) {
-                Memory.energyPull[id].desired = structure.energyCapacity - structure.energy;
-            } else if (structure instanceof Creep) {
-                Memory.energyPull[id].desired = structure.carryCapacity - structure.carry.energy;
-            }
         }
     }
 
@@ -194,7 +180,7 @@ global.costMatrixCallback = function(roomName) {
     return costMatrix;
 }
 
-global.myUtils.clearTransportMemory() {
+global.myUtils.clearTransportMemory = function() {
     for (let i in Game.creeps) {
         let creep = Game.creeps[i];
         if (creep.memory.role == 'transporter') {
