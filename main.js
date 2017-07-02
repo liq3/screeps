@@ -1,15 +1,23 @@
+// Any modules that you use that modify the game's prototypes should be require'd
+// before you require the profiler.
+const profiler = require('screeps-profiler');
+
+// This line monkey patches the global prototypes.
+profiler.enable();
+
 let creepRoles = ['harvester','builder','attacker','miner',
     'transporter','stationaryUpgrader','scout','decoy','claimer', 'spawnHelper'];
 
 let creepFunctions = {};
 for (let i of creepRoles) {
     creepFunctions[i] = require(i);
+    profiler.registerObject(creepFunctions[i], i);
 }
 
 debug = false;
 
 module.exports.loop = function () {
-
+    profiler.wrap(function() {
     for(let i in Memory.creeps) {
         if(!Game.creeps[i]) {
             if (Memory.creeps[i].role == 'transporter') {
@@ -52,17 +60,18 @@ module.exports.loop = function () {
 
     for (let i in Game.rooms) {
         let room = Game.rooms[i];
-        let droppedEnergies = room.find(FIND_DROPPED_RESOURCES, {filter: c => c.resourceType == RESOURCE_ENERGY});
-        for (let res of droppedEnergies) {
-            if (!(res.id in Memory.energyPush)) {
-                Memory.energyPush[res.id] = {reserved:0};
+        let pushTargets = room.find(FIND_DROPPED_RESOURCES, {filter: c => c.resourceType == RESOURCE_ENERGY});
+        pushTarget = pushTargets.concat(room.find(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER && s.pos.findInRange(FIND_SOURCES, 2).length > 0}));
+        for (let pt of pushTargets) {
+            if (!(pt.id in Memory.energyPush)) {
+                Memory.energyPush[pt.id] = {reserved:0};
             }
         }
 
         let pullStructures = room.find(FIND_MY_STRUCTURES, {filter:
             s => s.structureType == STRUCTURE_STORAGE || s.structureType == STRUCTURE_SPAWN ||
                 s.structureType == STRUCTURE_TOWER || s.structureType == STRUCTURE_EXTENSION});
-        pullStructures = pullStructures.concat(room.find(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER}));
+        pullStructures = pullStructures.concat(room.find(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER && s.pos.getRangeTo(s.room.controller) <= 2}));
         pullStructures = pullStructures.concat(_.filter(Game.creeps, c => c.memory.role == 'builder'));
         for (let structure of pullStructures) {
             if (!(structure.id in Memory.energyPull)) {
@@ -89,7 +98,7 @@ module.exports.loop = function () {
 
     let towers = _.filter(Game.structures, s => s.structureType == STRUCTURE_TOWER);
     for (let tower of towers) {
-        let target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        let target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {filter: c => c.pos.x != 0 && c.pos.y != 0 && c.pos.y != 49 && c.pos.x != 49});
         if (target != null) {
             tower.attack(target);
         } else {
@@ -112,6 +121,7 @@ module.exports.loop = function () {
     if (Memory.cpuTimes.length > 100) {
         Memory.cpuTimes.shift();
     }
+    });
 }
 
 global.myUtils = {};
@@ -180,6 +190,8 @@ global.costMatrixCallback = function(roomName) {
     return costMatrix;
 }
 
+global.CostMatrixCallback = profiler.registerFN(global.costMatrixCallback, 'global.costMatrixCallback');
+
 global.myUtils.clearTransportMemory = function() {
     for (let i in Game.creeps) {
         let creep = Game.creeps[i];
@@ -201,7 +213,7 @@ function createCreep(spawn, name, data) {
         parts = parts.concat([CARRY,MOVE,MOVE]);
     } else if (data.role == 'stationaryUpgrader') {
         let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 100);
-        parts = Array(numberParts).fill(WORK);
+        parts = Array(Math.min(10,numberParts)).fill(WORK);
         parts = parts.concat([CARRY,MOVE]);
     } else if (data.role == 'transporter' || data.role == 'spawnHelper') {
         let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 150);
@@ -294,7 +306,7 @@ function spawnCreeps(spawn) {
             scoutTarget = r;
         } else if (Game.rooms[r]) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-                let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1}, {swampCost:10, plainCost:2, roomCallback:global.costMatrixCallback});
+                let path = PathFinder.search(spawn.pos, {pos:source.pos, range: 1}, {swampCost:10, plainCost:2, roomCallback:global.costMatrixCallback});
                 sourceList.push({source:source, path:path});
             }
         }
@@ -309,7 +321,7 @@ function spawnCreeps(spawn) {
             break;
         }
 
-        desiredTransportCapacity += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
+        desiredTransportCapacity += Math.ceil( 3 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
     }
     let transportCapacity = 0;
     for (let creep of _.filter(Game.creeps, c => c.memory.role == 'transporter')) {
@@ -374,19 +386,19 @@ function spawnCreeps(spawn) {
         createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
     } else if (claimTargetRoom) {
         createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
-    } else if (numberBuilders < 2 && RCL > 2 && numberTransporters >= numberBuilders * 2 + 1) {
+    } else if (numberBuilders < 3 && RCL > 2 && numberTransporters >= numberBuilders * 2 + 1) {
         createCreep(spawn, 'B', {role:'builder'});
     } else if (numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
         createCreep(spawn, 'SH', {role:'spawnHelper'});
     } else if (minerTargetId && numberMiners <= numberTransporters && RCL > 2) {
         createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
-    } else if (spawnTransporter && spawn.room.controller.level >= 3) {
+    } else if (spawnTransporter && RCL >= 3) {
         createCreep(spawn, 'T', {role:'transporter'});
     } else if (reserveTargetRoom && RCL > 2) {
         createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
     } else if (false) {
         createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
-    } else if ((numberStationaryUpgraders < 5 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 20000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
+    } else if ((numberStationaryUpgraders < 2 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
         createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
     }
 }
