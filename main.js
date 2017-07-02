@@ -58,7 +58,7 @@ module.exports.loop = function () {
         }
     }
 
-    for (let i in Game.rooms) {
+    for (let i in ['E61N94','E62N94','E62N93']) {
         let room = Game.rooms[i];
         let pushTargets = room.find(FIND_DROPPED_RESOURCES, {filter: c => c.resourceType == RESOURCE_ENERGY});
         pushTarget = pushTargets.concat(room.find(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER && s.pos.findInRange(FIND_SOURCES, 2).length > 0}));
