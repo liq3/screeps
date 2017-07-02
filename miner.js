@@ -12,7 +12,7 @@ module.exports = {
                     creep.moveTo(source);
                 }
             } else {
-                let structures = creep.pos.lookFor(FIND_STRUCTURES);
+                let structures = creep.pos.lookFor(LOOK_STRUCTURES);
                 if (structures.length > 0) {
                     let s = structures[0];
                     if (s instanceof StructureContainer && s.hits < s.hitsMax) {

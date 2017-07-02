@@ -205,7 +205,7 @@ global.myUtils.clearTransportMemory = function() {
 }
 
 
-function createCreep(spawn, name, data) {
+function createCreep(spawn, name, data, partNumber) {
     let parts = [];
     if (data.role == 'miner') {
         let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 150) / 100);
@@ -230,7 +230,7 @@ function createCreep(spawn, name, data) {
             parts = parts.concat([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE]);
         }
     } else if (data.role == 'attacker') {
-        let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 130);
+        let numberParts = partNumber == undefined ? Math.floor(spawn.room.energyCapacityAvailable / 130) : partNumber;
         for (let i = 0; i < Math.min(numberParts, 5); i++) {
             parts = parts.concat([ATTACK,MOVE]);
         }
@@ -362,17 +362,33 @@ function spawnCreeps(spawn) {
     }
 
     searchRooms = [];
-    searchRooms = _.filter(Game.flags, f => f.name == 'attack');
+    searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attack');
     for (let i in searchRooms) {
         searchRooms[i] = searchRooms[i].pos.roomName;
     }
     let spawnAttacker = false;
     let attackerTargetRoom = null;
     for (let r of searchRooms) {
-        let trans = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'attacker').length;
-        if (trans == 0) {
+        let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'attacker').length;
+        if (attackers == 0) {
             spawnAttacker = true;
             attackerTargetRoom = r;
+            break;
+        }
+    }
+
+    searchRooms = [];
+    searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'harass');
+    for (let i in searchRooms) {
+        searchRooms[i] = searchRooms[i].pos.roomName;
+    }
+    let attackerParts;
+    for (let r of searchRooms) {
+        let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'attacker').length;
+        if (attackers == 0) {
+            spawnAttacker = true;
+            attackerTargetRoom = r;
+            attackerParts = 1;
             break;
         }
     }
@@ -381,7 +397,7 @@ function spawnCreeps(spawn) {
     if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || numberTransporters == 0)) {
         createCreep(spawn, 'Harvester ', {role:'harvester'});
     } else if (spawnAttacker) {
-        createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom});
+        createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom}, attackerParts);
     } else if (scoutTarget) {
         createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
     } else if (claimTargetRoom) {
