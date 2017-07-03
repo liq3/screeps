@@ -13,7 +13,7 @@ module.exports = {
 						target = containers[0];
 						err = creep.withdraw(target, RESOURCE_ENERGY);
 					} else {
-						let droppedEnergy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.type == RESOURCE_ENERGY});
+						let droppedEnergy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY});
 						if (droppedEnergy.length > 0) {
 							target = droppedEnergy[0];
 							creep.pickUp(target);
