@@ -1,7 +1,7 @@
 // Any modules that you use that modify the game's prototypes should be require'd
 // before you require the profiler.
 const profiler = require('screeps-profiler');
-const spawnManager = require('spawnCreep.js');
+const spawnManager = require('spawnManager');
 
 // This line monkey patches the global prototypes.
 profiler.enable();

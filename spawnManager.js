@@ -1,5 +1,5 @@
-model.export = {
-    function spawnCreeps(spawn) {
+module.exports = {
+    spawnCreeps: function(spawn) {
         function sumCreeps(role, room) {
             if (room == undefined) {
                 return _.sum(Game.creeps, c => c.memory.role == role);
@@ -118,31 +118,31 @@ model.export = {
 
         var RCL = spawn.room.controller.level;
         if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || numberTransporters == 0)) {
-            createCreep(spawn, 'Harvester ', {role:'harvester'});
+            this.createCreep(spawn, 'Harvester ', {role:'harvester'});
         } else if (spawnAttacker) {
-            createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom}, attackerParts);
+            this.createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom}, attackerParts);
         } else if (scoutTarget) {
-            createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
+            this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
         } else if (claimTargetRoom) {
-            createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
+            this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
         } else if (numberBuilders < 3 && RCL > 2 && numberTransporters >= numberBuilders * 2 + 1) {
-            createCreep(spawn, 'B', {role:'builder'});
+            this.createCreep(spawn, 'B', {role:'builder'});
         } else if (numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
-            createCreep(spawn, 'SH', {role:'spawnHelper'});
+            this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (minerTargetId && numberMiners <= numberTransporters && RCL > 2) {
-            createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
+            this.createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
         } else if (spawnTransporter && RCL >= 3) {
-            createCreep(spawn, 'T', {role:'transporter'});
+            this.createCreep(spawn, 'T', {role:'transporter'});
         } else if (reserveTargetRoom && RCL > 2) {
-            createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
+            this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
         } else if (false) {
-            createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
+            this.createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
         } else if ((numberStationaryUpgraders < 2 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
-            createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
+            this.createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
         }
-    }
+    },
 
-    function createCree(spawn, name, data, partNumber) {
+    createCreep: function(spawn, name, data, partNumber) {
         let parts = [];
         if (data.role == 'miner') {
             let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 150) / 100);
@@ -195,9 +195,9 @@ model.export = {
             console.log(logStr);
         }
         return name;
-    }
+    },
 
-    function getName(name, num) {
+    getName: function(name, num) {
         if (num == undefined) {
             num = 0;
         }
@@ -207,4 +207,4 @@ model.export = {
             return getName(name, num+1);
         }
     }
-}
+};
