@@ -127,10 +127,7 @@ module.exports = {
         }
         let upgradeHaulerParts;
         if (desiredUpgradeHaulerCapacity > currentUpgradeHaulerCapacity) {
-            for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
-                creep.memory.role = 'recycle';
-            }
-            upgradeHaulerParts = Math.ceil(desiredUpgradeHaulerCapacity / 50);
+            upgradeHaulerParts = Math.ceil((desiredUpgradeHaulerCapacity - currentUpgradeHaulerCapacity) / 50);
         }
 
         var RCL = spawn.room.controller.level;
@@ -139,7 +136,7 @@ module.exports = {
         let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', spawn.room);
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
 
-        if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || numberTransporters == 0)) {
+        if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || sumCreeps('transporter', spawn.room) == 0)) {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
         } else if (spawnAttacker) {
             this.createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom}, attackerParts);
@@ -147,7 +144,7 @@ module.exports = {
             this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
         } else if (claimTargetRoom) {
             this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
-        } else if (numberBuilders < 3 && RCL > 2 && numberTransporters >= numberBuilders * 2 + 1) {
+        } else if (numberBuilders < 2 && RCL > 2) {
             this.createCreep(spawn, 'B', {role:'builder'});
         } else if (minerTargetId && RCL > 2) {
             this.createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
