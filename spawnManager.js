@@ -20,8 +20,7 @@ module.exports = {
         let scoutTarget = null;
         let searchRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93']};
         let minerTargetId = null;
-        let spawnTransporter = false;
-        let transportPartCount;
+        let transportPartCount = 1;
         let transportTargetId;
         let sourceList = [];
         for (let r of searchRooms[spawn.room.name]) {
@@ -55,7 +54,7 @@ module.exports = {
             }
             if (transportCapacity < desiredTransportCapacity) {
                 transportTargetId = source.id;
-                transportPartCount = (desiredTransportCapacity - transportCapacity) / 50;
+                transportPartCount = Math.max(1,(desiredTransportCapacity - transportCapacity) / 50);
                 break;
             }
         }
@@ -153,7 +152,7 @@ module.exports = {
             parts = Array(Math.min(10,numberParts)).fill(WORK);
             parts = parts.concat([CARRY,MOVE]);
         } else if (data.role == 'transporter') {
-            let numberParts = Math.max(1, partNumber ? partNumber : Math.floor(spawn.room.energyCapacityAvailable / 100));
+            let numberParts = partNumber ? Math.min(partNumber, Math.floor(spawn.room.energyCapacityAvailable / 100)) : Math.floor(spawn.room.energyCapacityAvailable / 100);
             parts = Array(numberParts).fill(CARRY);
             parts = parts.concat(Array(numberParts).fill(MOVE));
         } else if (data.role == 'spawnHelper') {
