@@ -29,7 +29,7 @@ module.exports = {
                 scoutTarget = r;
             } else if (Game.rooms[r]) {
                 for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-                    let path = PathFinder.search(spawn.pos, {pos:source.pos, range: 1});
+                    let path = PathFinder.search(spawn.pos, {pos:source.pos, range: 2});
                     sourceList.push({source:source, path:path});
                 }
             }
@@ -39,7 +39,7 @@ module.exports = {
         let desiredTransportCapacity = 0;
         for (let {source,path} of sourceList) {
             let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-            if ((miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+9)*3)))) {
+            if ((miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3)))) {
                 minerTargetId = source.id;
                 break;
             }
