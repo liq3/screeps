@@ -118,7 +118,7 @@ module.exports = {
         let upgradeHaulerDistance = PathFinder.search(spawn.room.storage.pos, {pos:upgradeContainer.pos, range:0}).cost * 2;
         let desiredUpgradeHaulerCapacity = upgradeHaulerDistance * upgradeWorkParts;
         let currentUpgradeHaulerCapacity = 0;
-        for (let creep in spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
+        for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
             for (let part in creep.body) {
                 if (creep.body[part].type == CARRY) {
                     currentUpgradeHaulerCapacity += 50;
@@ -127,7 +127,10 @@ module.exports = {
         }
         let upgradeHaulerParts;
         if (desiredUpgradeHaulerCapacity > currentUpgradeHaulerCapacity) {
-            upgradeHaulerParts = Math.ceil((desiredUpgradeHaulerCapacity - currentUpgradeHaulerCapacity) / 50);
+            for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
+                creep.memory.role = 'recycle';
+            }
+            upgradeHaulerParts = Math.ceil(desiredUpgradeHaulerCapacity / 50);
         }
 
         var RCL = spawn.room.controller.level;

@@ -9,7 +9,7 @@ module.exports = {
         } else if (!creep.memory.gathering && creep.carry.energy == 0) {
             creep.memory.gathering = true;
         } else {
-            var target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType == STRUCTURE_CONTAINER});
+            var target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER});
             var err;
             if (target.length > 0) {
                 err = creep.transfer(target[0], RESOURCE_ENERGY);
