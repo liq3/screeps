@@ -55,6 +55,7 @@ module.exports = {
             if (transportCapacity < desiredTransportCapacity) {
                 transportTargetId = source.id;
                 transportPartCount = Math.max(1,(desiredTransportCapacity - transportCapacity) / 50);
+                console.log("transport");
                 break;
             }
         }
@@ -128,7 +129,7 @@ module.exports = {
             this.createCreep(spawn, 'B', {role:'builder'});
         } else if (numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
-        } else if (minerTargetId && numberMiners <= numberTransporters && RCL > 2) {
+        } else if (minerTargetId && RCL > 2) {
             this.createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
         } else if (transportTargetId && RCL >= 3) {
             this.createCreep(spawn, 'T', {role:'transporter', bossRoom:spawn.room.name, sourceId: transportTargetId}, transportPartCount);
@@ -152,7 +153,10 @@ module.exports = {
             parts = Array(Math.min(10,numberParts)).fill(WORK);
             parts = parts.concat([CARRY,MOVE]);
         } else if (data.role == 'transporter') {
-            let numberParts = partNumber ? Math.min(partNumber, Math.floor(spawn.room.energyCapacityAvailable / 100)) : Math.floor(spawn.room.energyCapacityAvailable / 100);
+            let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
+            if(partNumber > 0 && partNumber < numberParts) {
+                numberParts = partNumber;
+            }
             parts = Array(numberParts).fill(CARRY);
             parts = parts.concat(Array(numberParts).fill(MOVE));
         } else if (data.role == 'spawnHelper') {
@@ -190,8 +194,10 @@ module.exports = {
             }
         }
         name = spawn.createCreep(parts, this.getName(name), data);
-        if (name < 0 & debug) {
+        if (name == -10 || name == -6) {
             console.log("Error spawning creep: " + name + parts);
+        } else if (name == -3) {
+            console.log("Error! Trying to spawn creep with same name");
         }
         if (typeof(name) == 'string') {
             logStr = spawn.name + " spawning creep " + name + " in room " + spawn.room.name + " in " + parts.length*3 + " ticks." + JSON.stringify(data);
