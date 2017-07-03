@@ -7,11 +7,11 @@ module.exports = {
 				let source = Game.getObjectById(creep.memory.sourceId);
 				if (source) {
 					let target;
-					let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType == STRUCTURE_CONTAINER});
+					let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType == STRUCTURE_CONTAINER && s.energy > 0});
 					var err;
 					if (containers.length > 0) {
 						target = containers[0];
-						err = creep.withDraw(target);
+						err = creep.withdraw(target, RESOURCE_ENERGY);
 					} else {
 						let droppedEnergy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.type == RESOURCE_ENERGY});
 						if (droppedEnergy.length > 0) {
@@ -36,13 +36,17 @@ module.exports = {
 	    } else if (!creep.memory.gathering && creep.pos.roomName != creep.memory.bossRoom) {
 			if (creep.memory.bossRoom) {
 				creep.moveTo(new RoomPosition(25,25,creep.memory.bossRoom), {range:22});
+			} else {
+			    creep.memory.role = 'recycle';
 			}
 		} else {
 			let err;
+			let target;
 			if (creep.room.storage) {
-				err = creep.transfer(creep.room.storage, RESOURCE_ENERGY);
+			    target = creep.room.storage;
+				err = creep.transfer(target, RESOURCE_ENERGY);
 			} else {
-				let target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {range:1, filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
+				target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {range:1, filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
 				if (target) {
 					err = creep.transfer(target, RESOURCE_ENERGY);
 				}

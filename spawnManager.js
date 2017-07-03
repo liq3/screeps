@@ -22,6 +22,7 @@ module.exports = {
         let minerTargetId = null;
         let spawnTransporter = false;
         let transportPartCount;
+        let transportTargetId;
         let sourceList = [];
         for (let r of searchRooms[spawn.room.name]) {
             if (Game.rooms[r] == null && scoutTarget == null
@@ -130,7 +131,7 @@ module.exports = {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (minerTargetId && numberMiners <= numberTransporters && RCL > 2) {
             this.createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
-        } else if (spawnTransporter && RCL >= 3) {
+        } else if (transportTargetId && RCL >= 3) {
             this.createCreep(spawn, 'T', {role:'transporter', bossRoom:spawn.room.name, sourceId: transportTargetId}, transportPartCount);
         } else if (reserveTargetRoom && RCL > 2) {
             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
@@ -152,7 +153,7 @@ module.exports = {
             parts = Array(Math.min(10,numberParts)).fill(WORK);
             parts = parts.concat([CARRY,MOVE]);
         } else if (data.role == 'transporter') {
-            let numberParts = partNumber ? partNumber : Math.floor(spawn.room.energyCapacityAvailable / 100);
+            let numberParts = Math.max(1, partNumber ? partNumber : Math.floor(spawn.room.energyCapacityAvailable / 100));
             parts = Array(numberParts).fill(CARRY);
             parts = parts.concat(Array(numberParts).fill(MOVE));
         } else if (data.role == 'spawnHelper') {
