@@ -18,7 +18,7 @@ module.exports = {
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
 
         let scoutTarget = null;
-        let searchRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93']};
+        let searchRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93','E63N93']};
         let minerTargetId = null;
         let transportPartCount = 1;
         let transportTargetId;
@@ -115,6 +115,33 @@ module.exports = {
             }
         }
 
+        let upgradeWorkParts = 0;
+        for (let creep in spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'stationaryUpgrader'})) {
+            for (let part of creep.body) {
+                if (part.type == WORK) {
+                    upgradeWorkParts += 1;
+                }
+            }
+        }
+        let upgradeContainer = spawn.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER});
+        let upgradeHaulerDistance = PathFinder.search(spawn.room.storage, {pos:upgradeContainer.pos, range:0}).cost * 2;
+        let desiredUpgradeHaulerCapacity = upgradeHaulerDistance * upgradeWorkParts;
+        let currentUpgradeHaulerCapacity = 0;
+        for (let creep in spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
+            for (let part of creep.body) {
+                if (part.type == CARRY) {
+                    currentUpgradeHaulerCapacity += 50;
+                }
+            }
+        }
+        let upgradeHaulerParts;
+        if (desiredUpgradeHaulerCapacity > currentUpgradeHaulerCapacity) {
+            for (let creep in spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
+                creep.memory.role == 'recycle';
+            }
+            upgradeHaulerParts = Math.ceil(desiredUpgradeHaulerCapacity / 50);
+        }
+
         var RCL = spawn.room.controller.level;
         if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || numberTransporters == 0)) {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
@@ -138,6 +165,8 @@ module.exports = {
             this.createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
         } else if ((numberStationaryUpgraders < 2 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
+        } else if (upgradeHaulerParts) {
+            this.createCreep(spawn, 'UH', {role:'upgradeHauler'}, upgradeHaulerParts);
         }
     },
 
@@ -151,7 +180,7 @@ module.exports = {
             let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 100);
             parts = Array(Math.min(10,numberParts)).fill(WORK);
             parts = parts.concat([CARRY,MOVE]);
-        } else if (data.role == 'transporter') {
+        } else if (data.role == 'transporter' || data.role == 'upgradeHauler') {
             let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
             if(partNumber > 0 && partNumber < numberParts) {
                 numberParts = partNumber;

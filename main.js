@@ -7,7 +7,7 @@ const spawnManager = require('spawnManager');
 profiler.enable();
 
 let creepRoles = ['harvester','builder','attacker','miner',
-    'transporter','stationaryUpgrader','scout','decoy','claimer', 'spawnHelper'];
+    'transporter','stationaryUpgrader','scout','decoy','claimer', 'spawnHelper','upgradeHauler'];
 
 let creepFunctions = {};
 for (let i of creepRoles) {

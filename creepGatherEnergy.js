@@ -4,13 +4,13 @@ module.exports = function (creep) {
         var energy = Game.getObjectById(id);
     }
     if (!energy) {
-        energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
-            r => r.resourceType == RESOURCE_ENERGY && r.amount > 200, range:1});
+        if (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 0) {
+            energy = creep.room.storage;
+        }
     }
     if (!energy) {
-        energy = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-            s => s.structureType == STRUCTURE_STORAGE &&
-                s.store[RESOURCE_ENERGY] > 200});
+        energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
+            r => r.resourceType == RESOURCE_ENERGY && r.amount > 0, range:1});
     }
     if (!energy && creep.memory.role != 'transporter') {
         if (creep.memory.sourceId != undefined) {
