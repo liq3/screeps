@@ -48,7 +48,7 @@ module.exports = {
 		} else {
 			let err;
 			let target;
-			if (creep.room.storage) {
+			if (creep.room.storage && creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length > 0) {
 			    target = creep.room.storage;
 				err = creep.transfer(target, RESOURCE_ENERGY);
 				if (err == OK) {
