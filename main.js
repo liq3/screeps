@@ -162,7 +162,7 @@ global.myUtils.energyPullInfo = function() {
     }
 }
 
-global.myUtils.createRoadsBetweenFlags = function() {
+global.myUtils.createRoadBetweenFlags = function() {
     if (Game.flags.roadStart && Game.flags.roadEnd) {
         let start = Game.flags.roadStart.pos;
         let end = Game.flags.roadEnd.pos;
@@ -203,4 +203,14 @@ global.myUtils.clearTransportMemory = function() {
     }
     delete Memory.energyPush;
     delete Memory.energyPull;
+}
+
+global.myUtils.countParts = function(rooms) {
+    let ret = 0;
+    for (let r of rooms) {
+        for (let creep of Game.rooms[r].find(FIND_MY_CREEPS)) {
+            ret += creep.body.length;
+        }
+    }
+    console.log (ret + " parts.");
 }

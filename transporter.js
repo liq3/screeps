@@ -7,7 +7,7 @@ module.exports = {
 				let source = Game.getObjectById(creep.memory.sourceId);
 				if (source) {
 					let target;
-					let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType == STRUCTURE_CONTAINER && s.energy > 0});
+					let containers = source.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0});
 					var err;
 					if (containers.length > 0) {
 						target = containers[0];
@@ -66,6 +66,9 @@ module.exports = {
 			if (err == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target, {range:1});
 			}
+			// if (creep.carry.energy > 0 && creep.pos.lookFor(LOOK_STRUCTURES).length > 0) {
+			// 	creep.repair(creep.pos.lookFor(LOOK_STRUCTURES)[0]);
+			// }
 		}
 	}
 };
