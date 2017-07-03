@@ -18,7 +18,7 @@ module.exports = {
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
 
         let scoutTarget = null;
-        let searchRooms = ['E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93']];//, 'E61N93', ];
+        let searchRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93']};
         let minerTargetId = null;
         let spawnTransporter = false;
         let transportPartCount;
@@ -54,7 +54,7 @@ module.exports = {
             }
             if (transportCapacity < desiredTransportCapacity) {
                 transportTargetId = source.id;
-                transportPartCount = (desiredTransportCaapcity - transportCapacity) / 50;
+                transportPartCount = (desiredTransportCapacity - transportCapacity) / 50;
                 break;
             }
         }

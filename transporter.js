@@ -34,7 +34,9 @@ module.exports = {
 	    } else if (!creep.memory.gathering && creep.carry.energy == 0) {
 	        creep.memory.gathering = true;
 	    } else if (!creep.memory.gathering && creep.pos.roomName != creep.memory.bossRoom) {
-			creep.moveTo(new RoomPosition(25,25,creep.memory.bossRoom), {range:22});
+			if (creep.memory.bossRoom) {
+				creep.moveTo(new RoomPosition(25,25,creep.memory.bossRoom), {range:22});
+			}
 		} else {
 			let err;
 			if (creep.room.storage) {
