@@ -16,7 +16,7 @@ module.exports = {
 						let droppedEnergy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY});
 						if (droppedEnergy.length > 0) {
 							target = droppedEnergy[0];
-							creep.pickUp(target);
+							creep.pickup(target);
 						}
 					}
 					if (!target) {

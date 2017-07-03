@@ -194,7 +194,7 @@ module.exports = {
             }
         }
         name = spawn.createCreep(parts, this.getName(name), data);
-        if (name == -10 || name == -6) {
+        if (name == -10) {
             console.log("Error spawning creep: " + name + parts);
         } else if (name == -3) {
             console.log("Error! Trying to spawn creep with same name");
