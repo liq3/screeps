@@ -8,15 +8,6 @@ module.exports = {
             }
         }
 
-        let numberHarvesters = sumCreeps('harvester', spawn.room);
-        let numberBuilders = sumCreeps ('builder');
-        let numberMiners = sumCreeps('miner');
-        let numberTransporters = sumCreeps('transporter');
-        let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', spawn.room);
-        let numberScouts = sumCreeps('scout');
-        let numberAttackers = sumCreeps('attacker');
-        let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
-
         let scoutTarget = null;
         let searchRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93','E63N93']};
         let minerTargetId = null;
@@ -143,6 +134,11 @@ module.exports = {
         }
 
         var RCL = spawn.room.controller.level;
+        let numberHarvesters = sumCreeps('harvester', spawn.room);
+        let numberBuilders = sumCreeps ('builder', spawn.room);
+        let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', spawn.room);
+        let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
+
         if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || numberTransporters == 0)) {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
         } else if (spawnAttacker) {
