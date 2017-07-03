@@ -116,28 +116,28 @@ module.exports = {
         }
 
         let upgradeWorkParts = 0;
-        for (let creep in spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'stationaryUpgrader'})) {
-            for (let part of creep.body) {
-                if (part.type == WORK) {
+        for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'stationaryUpgrader'})) {
+            for (let part in creep.body) {
+                if (creep.body[part].type == WORK) {
                     upgradeWorkParts += 1;
                 }
             }
         }
         let upgradeContainer = spawn.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER});
-        let upgradeHaulerDistance = PathFinder.search(spawn.room.storage, {pos:upgradeContainer.pos, range:0}).cost * 2;
+        let upgradeHaulerDistance = PathFinder.search(spawn.room.storage.pos, {pos:upgradeContainer.pos, range:0}).cost * 2;
         let desiredUpgradeHaulerCapacity = upgradeHaulerDistance * upgradeWorkParts;
         let currentUpgradeHaulerCapacity = 0;
         for (let creep in spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
-            for (let part of creep.body) {
-                if (part.type == CARRY) {
+            for (let part in creep.body) {
+                if (creep.body[part].type == CARRY) {
                     currentUpgradeHaulerCapacity += 50;
                 }
             }
         }
         let upgradeHaulerParts;
         if (desiredUpgradeHaulerCapacity > currentUpgradeHaulerCapacity) {
-            for (let creep in spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
-                creep.memory.role == 'recycle';
+            for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
+                creep.memory.role = 'recycle';
             }
             upgradeHaulerParts = Math.ceil(desiredUpgradeHaulerCapacity / 50);
         }
