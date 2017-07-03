@@ -54,8 +54,7 @@ module.exports = {
             }
             if (transportCapacity < desiredTransportCapacity) {
                 transportTargetId = source.id;
-                transportPartCount = Math.max(1,(desiredTransportCapacity - transportCapacity) / 50);
-                console.log("transport");
+                transportPartCount = Math.max(1,Math.ceil((desiredTransportCapacity - transportCapacity) / 50));
                 break;
             }
         }

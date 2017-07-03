@@ -12,11 +12,17 @@ module.exports = {
 					if (containers.length > 0) {
 						target = containers[0];
 						err = creep.withdraw(target, RESOURCE_ENERGY);
+						if (err == OK && creep.carryCapacity - creep.carry.energy < target.store[RESOURCE_ENERGY]) {
+							creep.memory.gathering = false;
+						}
 					} else {
 						let droppedEnergy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY});
 						if (droppedEnergy.length > 0) {
 							target = droppedEnergy[0];
-							creep.pickup(target);
+							err = creep.pickup(target);
+							if (err == OK && creep.carryCapacity - creep.carry.energy < target.amount) {
+								creep.memory.gathering = false;
+							}
 						}
 					}
 					if (!target) {
@@ -45,6 +51,9 @@ module.exports = {
 			if (creep.room.storage) {
 			    target = creep.room.storage;
 				err = creep.transfer(target, RESOURCE_ENERGY);
+				if (err == OK) {
+					creep.memory.gathering = true;
+				}
 			} else {
 				target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {range:1, filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
 				if (target) {
