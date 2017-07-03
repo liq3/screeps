@@ -5,7 +5,7 @@ module.exports = {
         if(source) {
             var error = creep.harvest(source);
             if (error == ERR_NOT_IN_RANGE || creep.pos.getRangeTo(source) > 1) {
-                let containers = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType = STRUCTURE_CONTAINER});
+                let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType = STRUCTURE_CONTAINER});
                 if (containers.length > 0) {
                     creep.moveTo(containers[0]);
                 } else {
