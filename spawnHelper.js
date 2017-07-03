@@ -16,11 +16,8 @@ module.exports = {
 				s => s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity});
 	        if (target == null) {
 				target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-	            	s => s.structureType == STRUCTURE_EXTENSION && s.energy < s.energyCapacity});
+	            	s => (s.structureType == STRUCTURE_EXTENSION || s.structureType == STRUCTURE_SPAWN) && s.energy < s.energyCapacity});
 			}
-			if (target == null && Game.spawns.Spawn1.energy < Game.spawns.Spawn1.energyCapacity) {
-	            target = Game.spawns.Spawn1;
-	        }
 	        if (creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
 	            creep.moveTo(target);
 	        }

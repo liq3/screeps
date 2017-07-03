@@ -39,7 +39,7 @@ module.exports = {
         let desiredTransportCapacity = 0;
         for (let {source,path} of sourceList) {
             let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-            if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+9)*3)))) {
+            if ((miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+9)*3)))) {
                 minerTargetId = source.id;
                 break;
             }
