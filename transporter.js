@@ -62,6 +62,13 @@ module.exports = {
 				if (err == OK && creep.carry.energy == 0) {
 					creep.memory.gathering = true;
 				}
+				if (!target) {
+					target = creep.room.storage;
+					err = creep.transfer(target, RESOURCE_ENERGY);
+					if (err == OK) {
+						creep.memory.gathering = true;
+					}
+				}
 			}
 			if (err == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target, {range:1});
