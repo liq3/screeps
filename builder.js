@@ -17,7 +17,7 @@ module.exports = {
 	        if(!target || Game.time - creep.memory.jobStartTime > 100) {
 				let possible = {best:1000000, id:null};
 				for (let r in Game.rooms) {
-					for (let itr of Game.rooms[r].find(FIND_STRUCTURES, {filter: s => s.hits < s.hitsMax})) {
+					for (let itr of Game.rooms[r].find(FIND_STRUCTURES, {filter: s => s.hits < s.hitsMax && s.hits < 500000})) {
 						let score = creep.pos.getRangeTo(itr);
 						if (itr.structureType == STRUCTURE_WALL || itr.structureType == STRUCTURE_RAMPART) {
 							if (itr.hits > 10000) {
