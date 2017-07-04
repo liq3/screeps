@@ -12,7 +12,7 @@ module.exports = {
                     if (creep.pos.getRangeTo(source.pos) == 1) {
                         source.room.createConstructionSite(creep.pos, STRUCTURE_CONTAINER);
                     }
-                } else if (sites.length > 0 && creep.carry.energy > 40) {
+                } else if (sites.length > 0 && creep.carry.energy > 30) {
                     creep.build(sites[0]);
                 }
             }

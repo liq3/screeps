@@ -68,7 +68,7 @@ module.exports = {
         let claimTargetRoom = null;
         for (let r of searchRooms) {
             let trans = _.filter(Game.creeps, c => c.memory.claimRoom == r && c.memory.role == 'claimer').length;
-            if (trans == 0) {
+            if (trans < 2) {
                 claimTargetRoom = r;
                 break;
             }
@@ -159,7 +159,7 @@ module.exports = {
             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
         } else if (false) {
             this.createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
-        } else if ((numberStationaryUpgraders < 2 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
+        } else if ((spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
         } else if (upgradeHaulerParts) {
             this.createCreep(spawn, 'UH', {role:'upgradeHauler'}, upgradeHaulerParts);
