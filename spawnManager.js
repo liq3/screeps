@@ -53,7 +53,8 @@ module.exports = {
         let reserveTargetRoom = null;
         for (let r of ['E62N94', 'E61N93']) {
             if (Game.rooms[r]) {
-                if (_.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length < 2) {
+                let a = _.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length;
+                if (a < 1 || (a < 2 && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) {
                     reserveTargetRoom = r;
                     break;
                 }
@@ -68,7 +69,7 @@ module.exports = {
         let claimTargetRoom = null;
         for (let r of searchRooms) {
             let trans = _.filter(Game.creeps, c => c.memory.claimRoom == r && c.memory.role == 'claimer').length;
-            if (trans < 2) {
+            if (trans == 0) {
                 claimTargetRoom = r;
                 break;
             }
