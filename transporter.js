@@ -48,7 +48,10 @@ module.exports = {
 		} else {
 			let err;
 			let target;
-			if (creep.room.storage && creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length > 0) {
+			let roadSites = creep.pos.findInRange(FIND_CONSTRUCTION_SITES, 1, {filter: s=>s.structureType == STRUCTURE_ROAD});
+			if (roadSites.length > 0) {
+				err = creep.build(roadSite[0]);
+			} else if (creep.room.storage && creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length > 0) {
 			    target = creep.room.storage;
 				err = creep.transfer(target, RESOURCE_ENERGY);
 				if (err == OK) {
@@ -73,9 +76,9 @@ module.exports = {
 			if (err == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target, {range:1});
 			}
-			// if (creep.carry.energy > 0 && creep.pos.lookFor(LOOK_STRUCTURES).length > 0) {
-			// 	creep.repair(creep.pos.lookFor(LOOK_STRUCTURES)[0]);
-			// }
+			if (creep.carry.energy > 0 && creep.pos.lookFor(LOOK_STRUCTURES).length > 0) {
+			 	creep.repair(creep.pos.lookFor(LOOK_STRUCTURES)[0]);
+			}
 		}
 	}
 };
