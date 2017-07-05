@@ -54,7 +54,7 @@ module.exports = {
         for (let r of ['E62N94', 'E61N93']) {
             if (Game.rooms[r]) {
                 let a = _.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length;
-                if (a < 1 || (a < 2 && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) {
+                if (a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) {
                     reserveTargetRoom = r;
                     break;
                 }
@@ -160,7 +160,7 @@ module.exports = {
             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
         } else if (false) {
             this.createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
-        } else if ((numberStationaryUpgraders < 3 && pawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
+        } else if ((numberStationaryUpgraders < 3 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
         } else if (upgradeHaulerParts) {
             this.createCreep(spawn, 'UH', {role:'upgradeHauler'}, upgradeHaulerParts);
@@ -177,7 +177,7 @@ module.exports = {
             let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 110);
             parts = Array(numberParts).fill(WORK);
             parts = parts.concat([CARRY])
-            parts = parts.concat(Array(Math.ceil(numberParts/10)).fill(MOVE);
+            parts = parts.concat(Array(Math.ceil(numberParts/10)).fill(MOVE));
         } else if (data.role == 'transporter' || data.role == 'upgradeHauler') {
             let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
             if(partNumber > 0 && partNumber < numberParts) {
