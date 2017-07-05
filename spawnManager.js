@@ -160,7 +160,7 @@ module.exports = {
             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
         } else if (false) {
             this.createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
-        } else if ((spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
+        } else if ((numberStationaryUpgraders < 3 && pawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
         } else if (upgradeHaulerParts) {
             this.createCreep(spawn, 'UH', {role:'upgradeHauler'}, upgradeHaulerParts);
@@ -174,9 +174,10 @@ module.exports = {
             parts = Array(Math.min(6,numberParts)).fill(WORK);
             parts = parts.concat([CARRY,MOVE,MOVE]);
         } else if (data.role == 'stationaryUpgrader') {
-            let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 100);
-            parts = Array(Math.min(10,numberParts)).fill(WORK);
-            parts = parts.concat([CARRY,MOVE]);
+            let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 110);
+            parts = Array(numberParts).fill(WORK);
+            parts = parts.concat([CARRY])
+            parts = parts.concat(Array(Math.ceil(numberParts/10)).fill(MOVE);
         } else if (data.role == 'transporter' || data.role == 'upgradeHauler') {
             let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
             if(partNumber > 0 && partNumber < numberParts) {
