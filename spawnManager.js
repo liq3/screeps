@@ -174,10 +174,11 @@ module.exports = {
             parts = Array(Math.min(6,numberParts)).fill(WORK);
             parts = parts.concat([CARRY,MOVE,MOVE]);
         } else if (data.role == 'stationaryUpgrader') {
-            let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 110);
-            parts = Array(numberParts).fill(WORK);
-            parts = parts.concat([CARRY])
-            parts = parts.concat(Array(Math.ceil(numberParts/10)).fill(MOVE));
+            let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 1100);
+            let extraWork = Math.floor(spawn.room.energyCapacityAvailable / 100 - numberParts);
+            parts = Array(numberParts*10+extraWork).fill(WORK);
+            parts = parts.concat(Array(Math.max(1,numberParts)).fill(CARRY));
+            parts = parts.concat(Array(Math.max(1,numberParts)).fill(MOVE));
         } else if (data.role == 'transporter' || data.role == 'upgradeHauler') {
             let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
             if(partNumber > 0 && partNumber < numberParts) {
