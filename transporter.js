@@ -38,6 +38,39 @@ module.exports = {
 				creep.memory.role = 'recycle';
 			}
 	    } else if (!creep.memory.gathering && creep.carry.energy == 0) {
+			let possibleSources = [];
+			for (let room in Memory.ownedRooms) {
+				for (let r in Memory.ownedRoom[room]) {
+					if (Game.rooms[r]) {
+						for (let source of Game.rooms[r]) {
+							let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+							let distance = path.cost/2;
+							let energy = 0;
+							for (let creep in _.filter(Game.creeps, c=>c.sourceId == source.id && c.memory.gathering)) {
+								reserved -= creep.carryCapacity + creep.carry.energy;
+							}
+							for (let s in source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType == STRUCTURE_CONTAINER})) {
+								energy += s.store[RESOURCE_ENERGY];
+							}
+							for (let r in source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY}) {
+								energy += r.amount;
+							}
+							if (source.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c=>c.memory.role == 'miner'}).length > 0) {
+								energy += distance*6;
+							}
+							possibleSources.push(id:source.id, distance:distance, energy:energy);
+						}
+					}
+				}
+			}
+			let best = possibleSources[0];
+			for (let i in possibleSources) {
+				let {id, distance, energy} = possibleSources[i];
+				if ((energy < creep.carryCapacity && best.energy < energy) || (energy >= creep.carryCapacity && best.distance > distance)) {
+					best = possibleSources[i];
+				}
+			}
+			creep.memory.sourceId = best.id;
 	        creep.memory.gathering = true;
 		} else {
 			let err;

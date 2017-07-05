@@ -19,7 +19,7 @@ module.exports = {
                 scoutTarget = r;
             } else if (Game.rooms[r]) {
                 for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-                    let path = PathFinder.search(spawn.pos, {pos:source.pos, range: 2});
+                    let path = PathFinder.search(spawn.pos, {pos:source.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
                     sourceList.push({source:source, path:path});
                 }
             }
