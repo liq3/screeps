@@ -167,7 +167,7 @@ global.myUtils.createRoadBetweenFlags = function() {
         let start = Game.flags.roadStart.pos;
         let end = Game.flags.roadEnd.pos;
         let path = PathFinder.search(start, {pos:end, range:0}, {swampCost:1});
-        for (let pos of path) {
+        for (let pos of path.path) {
             Game.rooms[pos.roomName].createConstructionSite(pos.x,pos.y, STRUCTURE_ROAD);
         }
     } else {

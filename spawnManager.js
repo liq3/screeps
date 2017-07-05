@@ -180,12 +180,12 @@ module.exports = {
             parts = parts.concat(Array(Math.max(1,numberParts)).fill(CARRY));
             parts = parts.concat(Array(Math.max(1,numberParts)).fill(MOVE));
         } else if (data.role == 'transporter' || data.role == 'upgradeHauler') {
-            let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
+            let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 150);
             if (data.role == 'transporter') {numberParts--;}
             if (partNumber > 0 && partNumber+1 < numberParts) {
                 numberParts = partNumber;
             }
-            parts = Array(numberParts).fill(CARRY);
+            parts = Array(numberParts*2).fill(CARRY);
             parts = parts.concat(Array(numberParts+1).fill(MOVE));
             parts.unshift(WORK);
         } else if (data.role == 'spawnHelper') {
