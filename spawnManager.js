@@ -138,6 +138,7 @@ module.exports = {
         let numberBuilders = sumCreeps ('builder', spawn.room);
         let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', spawn.room);
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
+        let numberGuards = sumCreeps('guard');
 
         if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || sumCreeps('transporter', spawn.room) == 0)) {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
@@ -153,6 +154,8 @@ module.exports = {
             this.createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
         } else if (transportTargetId && RCL >= 3) {
             this.createCreep(spawn, 'T', {role:'transporter', bossRoom:spawn.room.name, sourceId: transportTargetId}, transportPartCount);
+        } else if (numberGuards < 1) {
+            this.createCreep(spawn, 'G', {role:'guard'});
         } else if (numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (reserveTargetRoom && RCL > 2) {
@@ -206,6 +209,12 @@ module.exports = {
             for (let i = 0; i < Math.min(numberParts, 5); i++) {
                 parts = parts.concat([ATTACK,MOVE]);
             }
+        } else if (data.role == 'guard') {
+            let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 300) / 130);
+            for (let i = 0; i < numberParts; i++) {
+                parts = parts.concat([ATTACK,MOVE]);
+            }
+            parts.push(MOVE,HEAL);
         } else if (data.role == 'scout') {
             parts = [MOVE];
         } else if (data.role == 'claimer') {
