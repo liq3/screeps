@@ -26,7 +26,7 @@ module.exports = {
 						}
 					}
 					if (!target) {
-						creep.moveTo(source, {range:1});
+						creep.moveTo(source, {range:2});
 					} else if (err == ERR_NOT_IN_RANGE) {
 						creep.moveTo(target, {range:1});
 					}

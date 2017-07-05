@@ -17,8 +17,8 @@ for (let i of creepRoles) {
 
 debug = false;
 
-if (Memory.searchRooms == undefined) {
-    Memory.searchRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93','E63N93']};
+if (Memory.ownedRooms == undefined) {
+    Memory.ownedRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93','E63N93']};
 }
 
 module.exports.loop = function () {
@@ -170,7 +170,7 @@ global.myUtils.createRoadBetweenFlags = function() {
     if (Game.flags.roadStart && Game.flags.roadEnd) {
         let start = Game.flags.roadStart.pos;
         let end = Game.flags.roadEnd.pos;
-        let path = PathFinder.search(start, {pos:end, range:0}, {swampCost:1});
+        let path = PathFinder.search(start, {pos:end, range:0}, {swampCost:2});
         for (let pos of path.path) {
             Game.rooms[pos.roomName].createConstructionSite(pos.x,pos.y, STRUCTURE_ROAD);
         }
