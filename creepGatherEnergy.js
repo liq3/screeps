@@ -12,7 +12,7 @@ module.exports = function (creep) {
         energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
             r => r.resourceType == RESOURCE_ENERGY && r.amount > 0, range:1});
     }
-    if (!energy && creep.memory.role != 'transporter') {
+    if (!energy && creep.memory.role != 'hauler') {
         if (creep.memory.sourceId != undefined) {
             energy = Game.getObjectById(creep.memory.sourceId);
         } else {

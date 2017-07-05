@@ -7,7 +7,7 @@ const spawnManager = require('spawnManager');
 profiler.enable();
 
 let creepRoles = ['harvester','builder','attacker','miner','guard',
-    'transporter','stationaryUpgrader','scout','decoy','claimer', 'spawnHelper','upgradeHauler'];
+    'hauler','stationaryUpgrader','scout','decoy','claimer', 'spawnHelper','upgradeHauler'];
 
 let creepFunctions = {};
 for (let i of creepRoles) {
@@ -25,7 +25,7 @@ module.exports.loop = function () {
     profiler.wrap(function() {
     for(let i in Memory.creeps) {
         if(!Game.creeps[i]) {
-            if (Memory.creeps[i].role == 'transporter') {
+            if (Memory.creeps[i].role == 'hauler') {
                 let creep = Memory.creeps[i];
                 if (creep.gathering && Memory.energyPush[creep.targetId]) {
                     Memory.energyPush[creep.targetId].reserved -= creep.reserved;
@@ -137,22 +137,22 @@ global.myUtils.avgCpu = function() {
 
 global.myUtils.sourceInfo = function () {
     let searchRooms = [Game.spawns.Spawn1.room.name, 'E62N94', 'E61N93', 'E62N93'];
-    let transporterCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
+    let haulerCapacity = Math.floor(Game.spawns.Spawn1.room.energyCapacityAvailable / 150) * 100;
     for (let r of searchRooms) {
         if (Game.rooms[r]) {
             for (let source of Game.rooms[r].find(FIND_SOURCES)) {
                 let path = PathFinder.search(Game.spawns.Spawn1.pos, {pos:source.pos, range: 1}, {swampCost:10, plainCost:2, roomCallback:global.costMatrixCallback});
-                let desiredTransporters = Math.ceil( (source.energyCapacity / ENERGY_REGEN_TIME) / (transporterCapacity / path.cost / 3));
+                let desiredTransporters = Math.ceil( (source.energyCapacity / ENERGY_REGEN_TIME) / (haulerCapacity / path.cost / 3));
                 let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-                let transporters = _.filter(Game.creeps, c => c.memory.role == 'transporter'
+                let haulers = _.filter(Game.creeps, c => c.memory.role == 'hauler'
                     && c.memory.sourcePos.x == source.pos.x
                     && c.memory.sourcePos.y == source.pos.y
                     && c.memory.sourcePos.roomName == source.pos.roomName );
                 let names = "";
-                for (let n in transporters) {
+                for (let n in haulers) {
                     names = names + " " + n.name;
                 }
-                console.log(r+', '+source.pos.x+','+source.pos.y+' : '+ transporters.length +'/'+desiredTransporters+ ' Miners:' + miners.length +" Distance: " + path.cost + names);
+                console.log(r+', '+source.pos.x+','+source.pos.y+' : '+ haulers.length +'/'+desiredTransporters+ ' Miners:' + miners.length +" Distance: " + path.cost + names);
             }
         }
     }
@@ -200,7 +200,7 @@ global.CostMatrixCallback = profiler.registerFN(global.costMatrixCallback, 'glob
 global.myUtils.clearTransportMemory = function() {
     for (let i in Game.creeps) {
         let creep = Game.creeps[i];
-        if (creep.memory.role == 'transporter') {
+        if (creep.memory.role == 'hauler') {
             delete creep.memory.reserved;
             delete creep.memory.targetId;
         }

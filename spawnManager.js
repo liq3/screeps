@@ -35,7 +35,7 @@ module.exports = {
             }
             desiredTransportCapacity = Math.ceil( 3 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
             let transportCapacity = 0;
-            for (let creep of _.filter(Game.creeps, c => c.memory.role == 'transporter' && c.memory.sourceId == source.id)) {
+            for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler' && c.memory.sourceId == source.id)) {
                 for (let part of creep.body) {
                     if (part.type == CARRY) {
                         transportCapacity += 50;
@@ -140,7 +140,7 @@ module.exports = {
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
         let numberGuards = sumCreeps('guard');
 
-        if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || sumCreeps('transporter', spawn.room) == 0)) {
+        if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || sumCreeps('hauler', spawn.room) == 0)) {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
         } else if (spawnAttacker) {
             this.createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom}, attackerParts);
@@ -151,9 +151,9 @@ module.exports = {
         } else if (numberBuilders < 2 && RCL > 2) {
             this.createCreep(spawn, 'B', {role:'builder'});
         } else if (minerTargetId && RCL > 2) {
-            this.createCreep(spawn, 'Miner ', {role:'miner',sourceId:minerTargetId});
+            this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
         } else if (transportTargetId && RCL >= 3) {
-            this.createCreep(spawn, 'T', {role:'transporter', bossRoom:spawn.room.name, sourceId: transportTargetId}, transportPartCount);
+            this.createCreep(spawn, 'H', {role:'hauler', bossRoom:spawn.room.name, sourceId: transportTargetId}, transportPartCount);
         } else if (numberGuards < 1) {
             this.createCreep(spawn, 'G', {role:'guard'});
         } else if (numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
@@ -181,9 +181,9 @@ module.exports = {
             parts = Array(numberParts*10+extraWork).fill(WORK);
             parts = parts.concat(Array(Math.max(1,numberParts)).fill(CARRY));
             parts = parts.concat(Array(Math.max(1,numberParts)).fill(MOVE));
-        } else if (data.role == 'transporter' || data.role == 'upgradeHauler') {
+        } else if (data.role == 'hauler' || data.role == 'upgradeHauler') {
             let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 150);
-            if (data.role == 'transporter') {numberParts--;}
+            if (data.role == 'hauler') {numberParts--;}
             if (partNumber > 0 && partNumber+1 < numberParts) {
                 numberParts = partNumber;
             }
