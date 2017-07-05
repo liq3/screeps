@@ -41,7 +41,7 @@ module.exports = {
 			let possibleSources = [];
 			for (let room in Memory.ownedRooms) {
 				for (let r of Memory.ownedRooms[room]) {
-					if (Game.rooms[r]) {
+					if (Game.rooms[r] && room == bossRoom) {
 						for (let source of Game.rooms[r].find(FIND_SOURCES)) {
 							let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
 							let distance = path.cost/2;
@@ -55,10 +55,11 @@ module.exports = {
 							for (let r of source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY})) {
 								energy += r.amount;
 							}
+							let reserved = energy;
 							if (source.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c=>c.memory.role == 'miner'}).length > 0) {
 								energy += distance*6;
 							}
-							possibleSources.push({id:source.id, distance:distance, energy:energy});
+							possibleSources.push({id:source.id, distance:distance, energy:energy, r:reserved});
 						}
 					}
 				}
@@ -70,6 +71,7 @@ module.exports = {
 					best = possibleSources[i];
 				}
 			}
+			console.log(JSON.stringify(best), Game.time);
 			creep.memory.sourceId = best.id;
 	        creep.memory.gathering = true;
 		} else {
