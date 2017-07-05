@@ -44,7 +44,7 @@ module.exports = {
 			let target;
 			let roadSites = creep.pos.findInRange(FIND_CONSTRUCTION_SITES, 1, {filter: s=>s.structureType == STRUCTURE_ROAD});
 			if (roadSites.length > 0) {
-				err = creep.build(roadSite[0]);
+				err = creep.build(roadSites[0]);
 			}  else if (creep.pos.roomName != creep.memory.bossRoom) {
 				if (creep.memory.bossRoom) {
 					creep.moveTo(new RoomPosition(25,25,creep.memory.bossRoom), {range:22});

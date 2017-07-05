@@ -9,12 +9,11 @@ module.exports = {
         }
 
         let scoutTarget = null;
-        let searchRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93','E63N93']};
         let minerTargetId = null;
         let transportPartCount = 1;
         let transportTargetId;
         let sourceList = [];
-        for (let r of searchRooms[spawn.room.name]) {
+        for (let r of Memory.ownedRooms[spawn.room.name]) {
             if (Game.rooms[r] == null && scoutTarget == null
                     && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName == r).length == 0) {
                 scoutTarget = r;

@@ -6,7 +6,7 @@ const spawnManager = require('spawnManager');
 // This line monkey patches the global prototypes.
 profiler.enable();
 
-let creepRoles = ['harvester','builder','attacker','miner',
+let creepRoles = ['harvester','builder','attacker','miner','guard',
     'transporter','stationaryUpgrader','scout','decoy','claimer', 'spawnHelper','upgradeHauler'];
 
 let creepFunctions = {};
@@ -16,6 +16,10 @@ for (let i of creepRoles) {
 }
 
 debug = false;
+
+if (Memory.searchRooms == undefined) {
+    Memory.searchRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93','E63N93']};
+}
 
 module.exports.loop = function () {
     profiler.wrap(function() {
