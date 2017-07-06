@@ -44,6 +44,9 @@ module.exports = {
 					if (Game.rooms[r] && room == creep.memory.bossRoom) {
 						for (let source of Game.rooms[r].find(FIND_SOURCES)) {
 							let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+							if (path.incomplete) {
+								console.log(`Incomplete path: ${creep.pos} ${soucre.pos}`);
+							}
 							let distance = path.cost/2;
 							let energy = 0;
 							for (let creep of _.filter(Game.creeps, c=>c.memory.sourceId == source.id && c.memory.gathering)) {
@@ -89,7 +92,7 @@ module.exports = {
 				    creep.memory.role = 'recycle';
 				}
 			} else if (target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity})) {
-				err = creep.transfer(target);
+				err = creep.transfer(target, RESOURCE_ENERGY);
 			} else if (creep.room.storage && creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length > 0) {
 			    target = creep.room.storage;
 				err = creep.transfer(target, RESOURCE_ENERGY);
