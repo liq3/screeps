@@ -35,50 +35,50 @@ module.exports = {
 					}
 				}
 			} else {
-				creep.memory.role = 'recycle';
-			}
-	    } else if (!creep.memory.gathering && creep.carry.energy == 0) {
-			let possibleSources = [];
-			for (let room in Memory.ownedRooms) {
-				for (let r of Memory.ownedRooms[room]) {
-					if (Game.rooms[r] && room == creep.memory.bossRoom) {
-						for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-							let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
-							if (path.incomplete) {
-								console.log(`Incomplete path: ${creep.pos} ${soucre.pos}`);
+				let possibleSources = [];
+				for (let room in Memory.ownedRooms) {
+					for (let r of Memory.ownedRooms[room]) {
+						if (Game.rooms[r] && room == creep.memory.bossRoom) {
+							for (let source of Game.rooms[r].find(FIND_SOURCES)) {
+								let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+								if (path.incomplete) {
+									console.log(`Incomplete path: ${creep.pos} ${soucre.pos}`);
+								}
+								let distance = path.cost/2;
+								let energy = 0;
+								for (let creep of _.filter(Game.creeps, c=>c.memory.sourceId == source.id && c.memory.gathering)) {
+									energy -= creep.carryCapacity + creep.carry.energy;
+								}
+								for (let s of source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType == STRUCTURE_CONTAINER})) {
+									energy += s.store[RESOURCE_ENERGY];
+								}
+								for (let r of source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY})) {
+									energy += r.amount;
+								}
+								let reserved = energy;
+								if (source.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c=>c.memory.role == 'miner'}).length > 0) {
+									energy += distance*6;
+								}
+								possibleSources.push({id:source.id, distance:distance, energy:energy, r:reserved});
 							}
-							let distance = path.cost/2;
-							let energy = 0;
-							for (let creep of _.filter(Game.creeps, c=>c.memory.sourceId == source.id && c.memory.gathering)) {
-								energy -= creep.carryCapacity + creep.carry.energy;
-							}
-							for (let s of source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType == STRUCTURE_CONTAINER})) {
-								energy += s.store[RESOURCE_ENERGY];
-							}
-							for (let r of source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY})) {
-								energy += r.amount;
-							}
-							let reserved = energy;
-							if (source.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c=>c.memory.role == 'miner'}).length > 0) {
-								energy += distance*6;
-							}
-							possibleSources.push({id:source.id, distance:distance, energy:energy, r:reserved});
 						}
 					}
 				}
-			}
-			let best = possibleSources[0];
-			for (let i in possibleSources) {
-				let {id, distance, energy} = possibleSources[i];
-				if ((energy < creep.carryCapacity && best.energy < energy) || (energy >= creep.carryCapacity && best.distance > distance)) {
-					best = possibleSources[i];
+				let best = possibleSources[0];
+				for (let i in possibleSources) {
+					let {id, distance, energy} = possibleSources[i];
+					if ((energy < creep.carryCapacity && best.energy < energy) || (energy >= creep.carryCapacity && best.distance > distance)) {
+						best = possibleSources[i];
+					}
 				}
-			}
-			if (best.energy >= 0) {
-				console.log(JSON.stringify(best), Game.time);
-				creep.memory.sourceId = best.id;
-				creep.memory.gathering = true;
-			}
+				if (best.energy >= 0) {
+					console.log(JSON.stringify(best), Game.time);
+					creep.memory.sourceId = best.id;
+					creep.memory.gathering = true;
+				}
+	    	}
+		} else if (!creep.memory.gathering && creep.carry.energy == 0) {
+			this.doneDelivering(creep);
 		} else {
 			let err;
 			let target;
@@ -148,7 +148,7 @@ module.exports = {
 			 	creep.repair(creep.pos.lookFor(LOOK_STRUCTURES)[0]);
 			}
 		}
-	}
+	},
 	doneDelivering: function(creep) {
 		creep.memory.gathering = true;
 		delete creep.memory.job;
