@@ -96,7 +96,7 @@ module.exports = {
 				totalSpawn += c.carry.energy;
 			}
 			let desired = 0;
-			for (let c of creep.room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION})) {
+			for (let structure of creep.room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION})) {
 				desired += structure.energyCapacity - structure.energy;
 			}
 			if (totalSpawn < desired) {
