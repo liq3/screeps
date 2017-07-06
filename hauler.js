@@ -71,9 +71,11 @@ module.exports = {
 					best = possibleSources[i];
 				}
 			}
-			console.log(JSON.stringify(best), Game.time);
-			creep.memory.sourceId = best.id;
-	        creep.memory.gathering = true;
+			if (best.energy >= 0) {
+				console.log(JSON.stringify(best), Game.time);
+				creep.memory.sourceId = best.id;
+				creep.memory.gathering = true;
+			}
 		} else {
 			let err;
 			let target;
@@ -87,7 +89,7 @@ module.exports = {
 				    creep.memory.role = 'recycle';
 				}
 			} else if (target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity})) {
-				
+
 			} else if (creep.room.storage && creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length > 0) {
 			    target = creep.room.storage;
 				err = creep.transfer(target, RESOURCE_ENERGY);
