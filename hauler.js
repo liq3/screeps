@@ -151,6 +151,7 @@ module.exports = {
 	},
 	doneDelivering: function(creep) {
 		creep.memory.gathering = true;
+		creep.memory.sourceId = null;
 		delete creep.memory.job;
 	}
 };
