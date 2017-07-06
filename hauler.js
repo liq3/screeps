@@ -96,7 +96,12 @@ module.exports = {
 				totalSpawn += c.carry.energy;
 			}
 			let desired = 0;
-			for (let c of creep.room.find(FIND_MY_STRUCTURES, {filter: })
+			for (let c of creep.room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION})) {
+				desired += structure.energyCapacity - structure.energy;
+			}
+			if (totalSpawn < desired) {
+				creep.memory.job = 'spawn';
+			}
 		}
 		if (!creep.memory.job) {
 			creep.memory.job = 'source';
