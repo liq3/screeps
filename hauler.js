@@ -89,7 +89,7 @@ module.exports = {
 				    creep.memory.role = 'recycle';
 				}
 			} else if (target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity})) {
-
+				err = creep.transfer(target);
 			} else if (creep.room.storage && creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length > 0) {
 			    target = creep.room.storage;
 				err = creep.transfer(target, RESOURCE_ENERGY);
