@@ -139,7 +139,7 @@ global.myUtils.sourceInfo = function () {
     for (let r in Memory.ownedRooms) {
         for (let rr of Memory.ownedRooms[r]) {
             if (Game.rooms[rr]) {
-                for (Game.rooms[rr].find(FIND_SOURCES)) {
+                for (let source of Game.rooms[rr].find(FIND_SOURCES)) {
                     let desiredEnergy = 0;
                     for (let creep in _.filter(Game.creeps, c=>c.memory.role == 'hauler')) {
 

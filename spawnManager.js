@@ -34,7 +34,7 @@ module.exports = {
             desiredTransportCapacity += Math.ceil( 2.5 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
         }
         let transportCapacity = 0;
-        for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler')) {
+        for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler' && c.memory.bossRoom == spawn.room.name)) {
             transportCapacity += creep.carryCapacity;
         }
         if (transportCapacity < desiredTransportCapacity) {
@@ -227,6 +227,8 @@ module.exports = {
             console.log("Error spawning creep: " + name + parts);
         } else if (name == -3) {
             console.log("Error! Trying to spawn creep with same name");
+        } else if (name == -6 && spawn.room.energyAvailable == spawn.room.energyCapacityAvailable) {
+            console.log("Error! Trying to spawn creep that costs too much" + name + parts);
         }
         if (typeof(name) == 'string') {
             logStr = spawn.name + " spawning creep " + name + " in room " + spawn.room.name + " in " + parts.length*3 + " ticks." + JSON.stringify(data);
