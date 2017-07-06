@@ -123,7 +123,7 @@ module.exports.loop = function () {
         Memory.cpuTimes = [];
     }
     Memory.cpuTimes.push(Game.cpu.getUsed());
-    if (Memory.cpuTimes.length > 100) {
+    if (Memory.cpuTimes.length > 1000) {
         Memory.cpuTimes.shift();
     }
     });

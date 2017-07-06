@@ -76,24 +76,35 @@ module.exports = {
 		delete creep.memory.job;
 	},
 	getNewJob: function(creep) {
-		let totalSpawn = 0;
-		if (creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length == 0) {
-			for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn')) {
-				total += c.carry.energy;
-			}
-		}
 		let totalUpgrade = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_CONTAINER}).store[RESOURCE_ENERGY];
 		for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'upgrade')) {
-			total += c.carry.energy;
+			totalUpgrade += c.carry.energy;
 		}
-		if (totalUpgrade < 1500 && !(!creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000) {
+		let upgradeParts = 0;
+		for (let c of creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'stationaryUpgrader'})) {
+			upgradeParts += c.getActiveBodyparts(WORK);
+		}
+		let distance = creep.pos.findPathTo(creep.room.controller).length;
+		if (totalUpgrade - upgradeParts*distance < 1500 && !(!creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000)) {
 			creep.memory.job = 'upgrade';
 		}
-		if (!creep.memory.job && totalSpawn < creep.carry.energy) {
-			creep.memory.job = 'spawn';
+
+		if (!creep.memory.job) {
+			let totalSpawn = 0;
+			if (creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length == 0) {
+				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn')) {
+					totalSpawn += c.carry.energy;
+				}
+			}
+			if (totalSpawn < creep.carry.energy) {
+				creep.memory.job = 'spawn';
+			}
 		}
 		if (!creep.memory.job) {
 			creep.memory.job = 'source';
+		}
+		if (creep.memory.job) {
+			creep.memory.gathering = true;
 		}
 	},
 	gatherFromSource: function(creep) {
@@ -168,7 +179,6 @@ module.exports = {
 			if (best.energy >= 0) {
 				console.log(JSON.stringify(best), Game.time);
 				creep.memory.sourceId = best.id;
-				creep.memory.gathering = true;
 			}
 		}
 	}
