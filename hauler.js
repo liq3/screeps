@@ -92,22 +92,22 @@ module.exports = {
 				    creep.memory.role = 'recycle';
 				}
 			} else if (!creep.memory.job) {
-				let total = 0;
+				let totalSpawn = 0;
 				if (creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length == 0) {
 					for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn')) {
 						total += c.carry.energy;
 					}
 				}
-				if (total < creep.carry.energy) {
+
+				let totalUpgrade = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_CONTAINER}).store[RESOURCE_ENERGY];
+				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'upgrade')) {
+					total += c.carry.energy;
+				}
+				if (totalUpgrade < 1500 && !(!creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000) {
+					creep.memory.job = 'upgrade';
+				}
+				if (totalSpawn < creep.carry.energy) {
 					creep.memory.job = 'spawn';
-				} else {
-					total = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_CONTAINER}).store[RESOURCE_ENERGY];
-					for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'upgrade')) {
-						total += c.carry.energy;
-					}
-					if (total < 1500) {
-						creep.memory.job = 'upgrade';
-					}
 				}
 			}
 

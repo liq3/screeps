@@ -122,7 +122,7 @@ module.exports = {
             for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
                 creep.memory.role = 'recycle';
             }
-            upgradeHaulerParts = Math.ceil(desiredUpgradeHaulerCapacity / 50);
+            upgradeHaulerParts = Math.ceil(desiredUpgradeHaulerCapacity / 100);
         }
 
         var RCL = spawn.room.controller.level;
@@ -191,9 +191,14 @@ module.exports = {
             if (partNumber > 0 && partNumber+1 < numberParts) {
                 numberParts = partNumber;
             }
-            parts = Array(numberParts*2).fill(CARRY);
-            parts = parts.concat(Array(numberParts+1).fill(MOVE));
-            parts.unshift(WORK);
+            if (data.role == 'hauler') {
+                parts = Array(numberParts*2).fill(CARRY);
+                parts = parts.concat(Array(numberParts+1).fill(MOVE));
+                parts.unshift(WORK);
+            } else {
+                parts = Array(numberParts*2).fill(CARRY);
+                parts = parts.concat(Array(numberParts).fill(MOVE));
+            }
         } else if (data.role == 'spawnHelper') {
             let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 150);
             parts = Array(numberParts).fill(CARRY);
