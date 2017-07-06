@@ -91,28 +91,54 @@ module.exports = {
 				} else {
 				    creep.memory.role = 'recycle';
 				}
-			} else if (target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity})) {
-				err = creep.transfer(target, RESOURCE_ENERGY);
-			} else if (creep.room.storage && creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length > 0) {
-			    target = creep.room.storage;
-				err = creep.transfer(target, RESOURCE_ENERGY);
-				if (err == OK) {
-					creep.memory.gathering = true;
+			} else if (!creep.memory.job) {
+				let total = 0;
+				if (creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length == 0) {
+					for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn')) {
+						total += c.carry.energy;
+					}
 				}
-			} else {
+				if (total < creep.carry.energy) {
+					creep.memory.job = 'spawn';
+				} else {
+					total = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_CONTAINER}).store[RESOURCE_ENERGY];
+					for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'upgrade')) {
+						total += c.carry.energy;
+					}
+					if (total < 1500) {
+						creep.memory.job = 'upgrade';
+					}
+				}
+			}
+
+			if (target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity})) {
+				err = creep.transfer(target, RESOURCE_ENERGY);
+			} else if (creep.memory.job == 'spawn') {
 				target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {range:1, filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
 				if (target) {
 					err = creep.transfer(target, RESOURCE_ENERGY);
+				} else {
+					creep.memory.job = 'storage';
 				}
 				if (err == OK && creep.carry.energy == 0) {
-					creep.memory.gathering = true;
+					this.doneDelivering(creep);
 				}
-				if (!target) {
-					target = creep.room.storage;
-					err = creep.transfer(target, RESOURCE_ENERGY);
+			} else if (creep.memory.job == 'upgrade') {
+				target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER});
+	            if (target.length > 0) {
+	                err = creep.transfer(target[0], RESOURCE_ENERGY);
+	                if (err == ERR_NOT_IN_RANGE) {
+	                    creep.moveTo(target[0]);
+	                }
 					if (err == OK) {
-						creep.memory.gathering = true;
+						this.doneDelivering(creep);
 					}
+	            }
+			} else if (creep.room.storage) {
+			    target = creep.room.storage;
+				err = creep.transfer(target, RESOURCE_ENERGY);
+				if (err == OK) {
+					this.doneDelivering(creep);
 				}
 			}
 			if (err == ERR_NOT_IN_RANGE) {
@@ -122,5 +148,9 @@ module.exports = {
 			 	creep.repair(creep.pos.lookFor(LOOK_STRUCTURES)[0]);
 			}
 		}
+	}
+	doneDelivering: function(creep) {
+		creep.memory.gathering = true;
+		delete creep.memory.job;
 	}
 };
