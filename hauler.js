@@ -41,13 +41,13 @@ module.exports = {
 			let possibleSources = [];
 			for (let room in Memory.ownedRooms) {
 				for (let r of Memory.ownedRooms[room]) {
-					if (Game.rooms[r] && room == bossRoom) {
+					if (Game.rooms[r] && room == creep.memory.bossRoom) {
 						for (let source of Game.rooms[r].find(FIND_SOURCES)) {
 							let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
 							let distance = path.cost/2;
 							let energy = 0;
-							for (let creep of _.filter(Game.creeps, c=>c.sourceId == source.id && c.memory.gathering)) {
-								reserved -= creep.carryCapacity + creep.carry.energy;
+							for (let creep of _.filter(Game.creeps, c=>c.memory.sourceId == source.id && c.memory.gathering)) {
+								energy -= creep.carryCapacity + creep.carry.energy;
 							}
 							for (let s of source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType == STRUCTURE_CONTAINER})) {
 								energy += s.store[RESOURCE_ENERGY];
@@ -86,6 +86,8 @@ module.exports = {
 				} else {
 				    creep.memory.role = 'recycle';
 				}
+			} else if (target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity})) {
+				
 			} else if (creep.room.storage && creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length > 0) {
 			    target = creep.room.storage;
 				err = creep.transfer(target, RESOURCE_ENERGY);
