@@ -13,8 +13,9 @@ module.exports = {
 					creep.memory.gathering = false;
 				}
 			}
-		} else if (creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
-			creep.memory.gathering = false;
+			if (!creep.memory.job || creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
+				creep.memory.gathering = false;
+			}
 		} else if (!creep.memory.gathering && creep.carry.energy == 0) {
 			this.doneDelivering(creep);
 			this.getNewJob(creep);
@@ -91,14 +92,11 @@ module.exports = {
 
 		if (!creep.memory.job) {
 			let totalSpawn = 0;
-			if (creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length == 0) {
-				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn')) {
-					totalSpawn += c.carry.energy;
-				}
+			for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn')) {
+				totalSpawn += c.carry.energy;
 			}
-			if (totalSpawn < creep.carry.energy) {
-				creep.memory.job = 'spawn';
-			}
+			let desired = 0;
+			for (let c of creep.room.find(FIND_MY_STRUCTURES, {filter: })
 		}
 		if (!creep.memory.job) {
 			creep.memory.job = 'source';
