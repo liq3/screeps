@@ -168,11 +168,23 @@ module.exports = {
             parts = Array(Math.min(6,numberParts)).fill(WORK);
             parts = parts.concat([CARRY,MOVE,MOVE]);
         } else if (data.role == 'stationaryUpgrader') {
-            let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 1100);
-            let extraWork = Math.floor(spawn.room.energyCapacityAvailable / 100 - numberParts);
-            parts = Array(numberParts*10+extraWork).fill(WORK);
-            parts = parts.concat(Array(Math.max(1,numberParts)).fill(CARRY));
-            parts = parts.concat(Array(Math.max(1,numberParts)).fill(MOVE));
+            let cost = 100;
+            let maxCost = spawn.room.energyCapacityAvailable;
+            parts = [];
+            while (cost < maxCost) {
+                for (let i = 0; i < 10 && cost+100 <= maxCost; i++, cost += 100) {
+                    parts.unshift(WORK);
+                }
+                if (cost < maxCost) {
+                    parts.push(MOVE);
+                    cost += 50;
+                }
+                if (cost< maxCost) {
+                    parts.push(CARRY);
+                    cost += 50;
+                }
+            }
+            parts.push(CARRY,MOVE);
         } else if (data.role == 'hauler' || data.role == 'upgradeHauler') {
             let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 150);
             if (data.role == 'hauler') {numberParts--;}
@@ -228,7 +240,7 @@ module.exports = {
         } else if (name == -3) {
             console.log("Error! Trying to spawn creep with same name");
         } else if (name == -6 && spawn.room.energyAvailable == spawn.room.energyCapacityAvailable) {
-            console.log("Error! Trying to spawn creep that costs too much" + name + parts);
+            console.log("Error! Trying to spawn creep that costs too much" + data.role + parts);
         }
         if (typeof(name) == 'string') {
             logStr = spawn.name + " spawning creep " + name + " in room " + spawn.room.name + " in " + parts.length*3 + " ticks." + JSON.stringify(data);
