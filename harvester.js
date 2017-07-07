@@ -10,9 +10,11 @@ module.exports = {
     } else if (!creep.memory.gathering && creep.carry.energy == 0) {
         creep.memory.gathering = true;
     } else {
-		var target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-			s => s.structureType == STRUCTURE_EXTENSION && s.energy < s.energyCapacity})
-        if (target == null) {
+		let target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity});
+		if (!target) {
+			target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_EXTENSION && s.energy < s.energyCapacity})
+		}
+        if (!target) {
             target = creep.pos.findClosestByPath(FIND_MY_SPAWNS, {filter: s => s.energy < s.energyCapacity });
         }
         if (!target) {
