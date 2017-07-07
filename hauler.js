@@ -102,6 +102,7 @@ module.exports = {
 			if (totalSpawn < desired) {
 				creep.memory.job = 'spawn';
 			}
+			//console.log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
 		}
 		if (!creep.memory.job) {
 			creep.memory.job = 'source';

@@ -42,8 +42,8 @@ module.exports = {
         }
 
         let reserveTargetRoom = null;
-        for (let r of ['E62N94', 'E61N93']) {
-            if (Game.rooms[r]) {
+        for (let r of Memory.ownedRooms[spawn.room.name]) {
+            if (Game.rooms[r] && !Game.rooms[r].controller.my) {
                 let a = _.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length;
                 if (a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) {
                     reserveTargetRoom = r;

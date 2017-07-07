@@ -25,14 +25,6 @@ module.exports.loop = function () {
     profiler.wrap(function() {
     for(let i in Memory.creeps) {
         if(!Game.creeps[i]) {
-            if (Memory.creeps[i].role == 'hauler') {
-                let creep = Memory.creeps[i];
-                if (creep.gathering && Memory.energyPush[creep.targetId]) {
-                    Memory.energyPush[creep.targetId].reserved -= creep.reserved;
-                } else if (Memory.energyPull[creep.targetId]) {
-                    Memory.energyPull[creep.targetId].reserved -= creep.reserved;
-                }
-            }
             delete Memory.creeps[i];
         }
     }
@@ -40,48 +32,6 @@ module.exports.loop = function () {
     for (let i in Game.spawns) {
         if (!Game.spawns[i].spawning) {
             spawnManager.spawnCreeps(Game.spawns[i]);
-        }
-    }
-
-    if (Memory.energyPush == null) {
-        Memory.energyPush = {};
-    } else {
-        for (let i in Memory.energyPush) {
-            if(!Game.getObjectById(i)) {
-                delete Memory.energyPush[i];
-            }
-        }
-    }
-
-    if (Memory.energyPull == null) {
-        Memory.energyPull = {};
-    } else {
-        for (let i in Memory.energyPull) {
-            if(!Game.getObjectById(i)) {
-                delete Memory.energyPull[i];
-            }
-        }
-    }
-
-    for (let i of ['E61N94','E62N94','E62N93']) {
-        let room = Game.rooms[i];
-        let pushTargets = room.find(FIND_DROPPED_RESOURCES, {filter: c => c.resourceType == RESOURCE_ENERGY});
-        pushTarget = pushTargets.concat(room.find(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER && s.pos.findInRange(FIND_SOURCES, 2).length > 0}));
-        for (let pt of pushTargets) {
-            if (!(pt.id in Memory.energyPush)) {
-                Memory.energyPush[pt.id] = {reserved:0};
-            }
-        }
-
-        let pullStructures = room.find(FIND_MY_STRUCTURES, {filter:
-            s => s.structureType == STRUCTURE_STORAGE || s.structureType == STRUCTURE_SPAWN ||
-                s.structureType == STRUCTURE_TOWER || s.structureType == STRUCTURE_EXTENSION});
-        pullStructures = pullStructures.concat(room.find(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER && s.pos.getRangeTo(s.room.controller) <= 2}));
-        pullStructures = pullStructures.concat(_.filter(Game.creeps, c => c.memory.role == 'builder'));
-        for (let structure of pullStructures) {
-            if (!(structure.id in Memory.energyPull)) {
-                Memory.energyPull[structure.id] = {id:structure.id, reserved:0};
-            }
         }
     }
 
