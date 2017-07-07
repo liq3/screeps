@@ -30,8 +30,9 @@ module.exports = {
             let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
             if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3)))) {
                 minerTargetId = source.id;
+            } else if (miners.length > 0) {
+                desiredTransportCapacity += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
             }
-            desiredTransportCapacity += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
         }
         let transportCapacity = 0;
         for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler' && c.memory.bossRoom == spawn.room.name)) {
@@ -153,10 +154,10 @@ module.exports = {
             this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
         } else if (numberBuilders < 2 && RCL > 2) {
             this.createCreep(spawn, 'B', {role:'builder'});
-        } else if (minerTargetId && RCL > 2) {
-            this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
         } else if (spawnHauler && RCL >= 3) {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:spawn.room.name});
+        } else if (minerTargetId && RCL > 2) {
+            this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
         } else if (numberGuards < 1) {
             this.createCreep(spawn, 'G', {role:'guard'});
         } else if (false && numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
