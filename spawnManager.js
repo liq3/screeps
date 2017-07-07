@@ -98,6 +98,17 @@ module.exports = {
             }
         }
 
+        searchRooms = [];
+        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'decoy');
+        for (let i in searchRooms) {
+            searchRooms[i] = searchRooms[i].pos.roomName;
+        }
+        let decoyTargetRoom;
+        for (let r of searchRooms) {
+            decoyTargetRoom = r;
+            break;
+        }
+
         let upgradeWorkParts = 0;
         for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'stationaryUpgrader'})) {
             for (let part in creep.body) {
@@ -152,8 +163,8 @@ module.exports = {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (reserveTargetRoom && RCL > 2) {
             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
-        } else if (false) {
-            this.createCreep(spawn, 'D', {role:'decoy', targetPos:{x:25,y:1,roomName:'E62N92'}});
+        } else if (decoyTargetRoom) {
+            this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
         } else if ((numberStationaryUpgraders < 3 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
         } else if (false && upgradeHaulerParts) {
@@ -209,10 +220,11 @@ module.exports = {
             parts = [WORK,CARRY,MOVE,MOVE];
             data.gathering = true;
         } else if (data.role == 'decoy') {
-            let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
-            for (let i = 0; i < Math.min(8,numberParts); i++) {
-                parts = parts.concat([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE]);
-            }
+            parts = [TOUGH,MOVE];
+            // let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
+            // for (let i = 0; i < Math.min(8,numberParts); i++) {
+            //     parts = parts.concat([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE]);
+            // }
         } else if (data.role == 'attacker') {
             let numberParts = partNumber ? partNumber : Math.floor(spawn.room.energyCapacityAvailable / 130);
             for (let i = 0; i < Math.min(numberParts, 5); i++) {
