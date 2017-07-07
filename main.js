@@ -69,6 +69,11 @@ module.exports.loop = function () {
         spawn.recycleCreep(spawn.pos.findClosestByRange( FIND_MY_CREEPS, {filter: c => c.memory.role == 'recycle'}));
     }
 
+    let orders = Game.market.getAllOrders(o => o.order.resourceType == RESOURCE_ENERGY && o.type == ORDER_BUY && o.price >= 0.18);
+    if (orders.length > 0) {
+        console.log(JSON.stringify(orders));
+    }
+
     if (Memory.cpuTimes == undefined) {
         Memory.cpuTimes = [];
     }

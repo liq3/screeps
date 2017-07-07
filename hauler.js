@@ -193,7 +193,7 @@ module.exports = {
 				}
 			}
 			if (best.energy >= 0) {
-				console.log(JSON.stringify(best), Game.time);
+				//console.log(JSON.stringify(best), Game.time);
 				creep.memory.sourceId = best.id;
 			}
 		}
