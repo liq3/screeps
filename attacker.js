@@ -2,14 +2,16 @@ module.exports = {
 
 	run: function (creep) {
 	    if (creep.pos.roomName == creep.memory.targetRoom) {
-	        var target = creep.pos.findClosestByPath(FIND_HOSTILE_CREEPS);
-	        if (target == null) {
+			let hostileCreeps = creep.room.find(FIND_HOSTILE_CREEPS);
+			let hostileTowers = creep.room.find(FIND_HOSTILE_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_TOWER});
+	        let target = creep.pos.findClosestByPath(hostileCreeps.concat(hostileTowers));
+	        if (!target) {
 	            target = creep.pos.findClosestByPath(FIND_HOSTILE_SPAWNS);
-	            if (target == null) {
-	                target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
-	            }
-	        }
-	        if(target != null) {
+			}
+	        if (!target) {
+                target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
+            }
+	        if(target) {
 				creep.attack(target);
 	            creep.moveTo(target);
 	        } else {
