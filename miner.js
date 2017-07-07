@@ -16,7 +16,7 @@ module.exports = {
                 creep.moveTo(container, {range:0});
             } else if (!container) {
                 if (creep.pos.getRangeTo(source) > 1) {
-                    cerep.moveTo(source, {range:1});
+                    creep.moveTo(source, {range:1});
                 } else {
                     let sites = source.pos.findInRange(FIND_CONSTRUCTION_SITES, 1);
                     if (sites.length == 0) {

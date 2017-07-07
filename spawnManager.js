@@ -143,7 +143,7 @@ module.exports = {
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
         let numberGuards = sumCreeps('guard');
 
-        if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || sumCreeps('hauler', spawn.room) == 0)) {
+        if (numberHarvesters < 5 && (sumCreeps('miner', spawn.room) == 0 || _.filter(Game.creeps, c=>c.memory.role=='hauler' && c.memory.bossRoom==spawn.room.name).length == 0)) {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
         } else if (spawnAttacker) {
             this.createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom}, attackerParts);
