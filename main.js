@@ -76,9 +76,12 @@ module.exports.loop = function () {
             orders.sort((a,b) => b.price - a.price);
             for (let order of orders) {
                 if (order.amount > 100) {
-                    let sendCost = Game.market.calcTransactionCost(1000000,'E61N94',order.roomName) / 1000000;
-                    let sendAmount = order.amount * order.amount / (order.amount * (1+sendCost));
-                    let err = Game.market.deal(order.id, Math.min(order.amount, sendAmount), 'E61N94');
+                    let sendAmount = order.amount;
+                    if (Game.market.calcTransactionCost(order.amount, 'E61N94',order.roomName) + order.amount > Game.rooms['E61N94'].terminal.store[RESOURCE_ENERGY]) {
+                        let sendCost = Game.market.calcTransactionCost(1000000,'E61N94',order.roomName) / 1000000;
+                        sendAmount = order.amount * order.amount / (order.amount * (1+sendCost));
+                    }
+                    let err = Game.market.deal(order.id, sendAmount, 'E61N94');
                     console.log(`Deal: ${err}. ${sendAmount} for ${order.price} total ${order.amount*order.price}`);
                 }
             }
