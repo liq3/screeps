@@ -233,10 +233,10 @@ module.exports = {
             }
         } else if (data.role == 'guard') {
             let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 300) / 130);
-            for (let i = 0; i < numberParts; i++) {
-                parts = parts.concat([ATTACK,MOVE]);
-            }
-            parts.push(MOVE,HEAL);
+            parts = Array(numberParts+1).fill(MOVE);
+            parts = parts.concat(Array(numberParts).fill(ATTACK-2));
+            parts.push(HEAL);
+            parts.push(ATTACK,ATTACK);
         } else if (data.role == 'scout') {
             parts = [MOVE];
         } else if (data.role == 'claimer') {

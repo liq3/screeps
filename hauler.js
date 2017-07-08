@@ -97,7 +97,7 @@ module.exports = {
 				upgradeParts += c.getActiveBodyparts(WORK);
 			}
 			let distance = creep.pos.findPathTo(creep.room.controller).length;
-			if (totalUpgrade - upgradeParts*distance < 1500 && !(!creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000)) {
+			if (totalUpgrade - upgradeParts*distance < 1500 && !creep.room.storage || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000)) {
 				creep.memory.job = 'upgrade';
 			}
 		}
@@ -188,7 +188,7 @@ module.exports = {
 			let best = possibleSources[0];
 			for (let i in possibleSources) {
 				let {id, distance, energy} = possibleSources[i];
-				if ((energy < creep.carryCapacity && best.energy < energy) || (energy >= creep.carryCapacity && best.distance > distance)) {
+				if ((energy >= creep.carryCapacity && best.distance > distance) || best.energy < creep.carryCapacity) {
 					best = possibleSources[i];
 				}
 			}

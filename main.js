@@ -69,14 +69,16 @@ module.exports.loop = function () {
         spawn.recycleCreep(spawn.pos.findClosestByRange( FIND_MY_CREEPS, {filter: c => c.memory.role == 'recycle'}));
     }
 
-    let orders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_ENERGY && order.type == ORDER_BUY && order.price >= 0.018);
-    if (orders.length > 0) {
-        console.log(JSON.stringify(orders));
-        if (Game.market.credits < 1000) {
+    if (Game.market.credits < 1000) {
+        let orders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_ENERGY && order.type == ORDER_BUY && order.price >= 0.018);
+        if (orders.length > 0) {
+            console.log(JSON.stringify(orders));
             orders.sort((a,b) => b.price - a.price);
             for (let order of orders) {
-                let err = Game.market.deal(order.id, order.amount, 'E61N94');
-                console.log(`Deal: ${err}. ${order.amount} for ${order.price} total ${order.amount*order.price}`);
+                if (order.amount > 100) {
+                    let err = Game.market.deal(order.id, order.amount, 'E61N94');
+                    console.log(`Deal: ${err}. ${order.amount} for ${order.price} total ${order.amount*order.price}`);
+                }
             }
         }
     }
