@@ -99,6 +99,22 @@ module.exports = {
             }
         }
 
+        let spawnAttackerRanged = false;
+        let attackerRangedTargetRoom;
+        searchRooms = [];
+        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attackRanged');
+        for (let i in searchRooms) {
+            searchRooms[i] = searchRooms[i].pos.roomName;
+        }
+        for (let r of searchRooms) {
+            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'attackerRanged').length;
+            if (attackers == 0) {
+                spawnAttackerRanged = true;
+                attackerRangedTargetRoom = r;
+                break;
+            }
+        }
+
         searchRooms = [];
         searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'decoy');
         for (let i in searchRooms) {
@@ -148,6 +164,8 @@ module.exports = {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
         } else if (spawnAttacker) {
             this.createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom}, attackerParts);
+        } else if (spawnAttackerRanged) {
+            this.createCreep(spawn, 'AR', {role:'attackerRanged',targetRoom:attackerRangedTargetRoom});
         } else if (scoutTarget) {
             this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
         } else if (claimTargetRoom) {
@@ -237,6 +255,10 @@ module.exports = {
             parts = parts.concat(Array(numberParts-2).fill(ATTACK));
             parts.push(HEAL);
             parts.push(ATTACK,ATTACK);
+        } else if (data.role == 'attackerRanged') {
+            let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 200);
+            parts = Array(numberParts).fill(MOVE);
+            parts = parts.concat(Array(numberParts).fill(RANGED_ATTACK));
         } else if (data.role == 'scout') {
             parts = [MOVE];
         } else if (data.role == 'claimer') {

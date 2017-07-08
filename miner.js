@@ -28,7 +28,7 @@ module.exports = {
                     }
                 }
             }
-            if (container && container.hits < container.hitsMax && creep.energy > 30) {
+            if (container && container.hits < container.hitsMax && creep.carry.energy > 30) {
                 creep.repair(container);
             } else {
                 let error = creep.harvest(source);
