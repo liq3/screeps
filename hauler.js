@@ -88,17 +88,20 @@ module.exports = {
 		}
 
 		if (!creep.memory.job) {
-			let totalUpgrade = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_CONTAINER}).store[RESOURCE_ENERGY];
-			for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'upgrade')) {
-				totalUpgrade += c.carry.energy;
-			}
-			let upgradeParts = 0;
-			for (let c of creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'stationaryUpgrader'})) {
-				upgradeParts += c.getActiveBodyparts(WORK);
-			}
-			let distance = creep.pos.findPathTo(creep.room.controller).length;
-			if (totalUpgrade - upgradeParts*distance < 1500 && !creep.room.storage || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000)) {
-				creep.memory.job = 'upgrade';
+			let totalUpgrade = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_CONTAINER});
+			if (totalUpgrade) {
+				totalUpgrade = totalUpgrade.store[RESOURCE_ENERGY];
+				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'upgrade')) {
+					totalUpgrade += c.carry.energy;
+				}
+				let upgradeParts = 0;
+				for (let c of creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'stationaryUpgrader'})) {
+					upgradeParts += c.getActiveBodyparts(WORK);
+				}
+				let distance = creep.pos.findPathTo(creep.room.controller).length;
+				if (totalUpgrade - upgradeParts*distance < 1500 && !creep.room.storage || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000)) {
+					creep.memory.job = 'upgrade';
+				}
 			}
 		}
 
