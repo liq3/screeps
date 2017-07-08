@@ -234,7 +234,7 @@ module.exports = {
         } else if (data.role == 'guard') {
             let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 300) / 130);
             parts = Array(numberParts+1).fill(MOVE);
-            parts = parts.concat(Array(numberParts).fill(ATTACK-2));
+            parts = parts.concat(Array(numberParts-2).fill(ATTACK));
             parts.push(HEAL);
             parts.push(ATTACK,ATTACK);
         } else if (data.role == 'scout') {
