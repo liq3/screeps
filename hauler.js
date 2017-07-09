@@ -15,8 +15,8 @@ module.exports = {
 			} else if (creep.memory.job == 'pickup') {
 				let target = Game.getObjectById(creep.memory.targetId);
 				let err = creep.pickup(target);
-				if (err == OK) {
-					this.doneDelivering(creep);
+				if (err == OK || target == null) {
+					creep.memory.gathering = false;
 				}
 				if (err == ERR_NOT_IN_RANGE) {
 					creep.moveTo(target)
@@ -131,8 +131,12 @@ module.exports = {
 		if (!creep.memory.job) {
 			let pickups = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5, {filter: r => r.resourceType == RESOURCE_ENERGY});
 			if (pickups.length > 0) {
-				creep.memory.targetId = pickups[0].id;
-				creep.memory.job = 'pickup';
+				for (let pickup of pickups) {
+					if (pickup.amount > 100) {
+						creep.memory.targetId = pickup.id;
+						creep.memory.job = 'pickup';
+					}
+				}
 			}
 		}
 		if (!creep.memory.job) {
