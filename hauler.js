@@ -12,6 +12,15 @@ module.exports = {
 				} else if (err == OK && creep.room.storage.store[RESOURCE_ENERGY] > creep.carryCapacity) {
 					creep.memory.gathering = false;
 				}
+			} else if (creep.memory.job == 'pickup') {
+				let target = Game.getObjectById(creep.memory.targetId);
+				let err = creep.pickup(target);
+				if (err == OK) {
+					this.doneDelivering(creep);
+				}
+				if (err == ERR_NOT_IN_RANGE) {
+					creep.moveTo(target)
+				}
 			}
 			if (!creep.memory.job || creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
 				creep.memory.gathering = false;
@@ -118,6 +127,13 @@ module.exports = {
 				creep.memory.job = 'spawn';
 			}
 			//console.log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
+		}
+		if (!creep.memory.job) {
+			let pickups = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5, {filter: r => r.resourceType == RESOURCE_ENERGY});
+			if (pickups.length > 0) {
+				creep.memory.targetId = pickups[0].id;
+				creep.memory.job = 'pickup';
+			}
 		}
 		if (!creep.memory.job) {
 			creep.memory.job = 'source';
