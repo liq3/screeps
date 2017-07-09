@@ -15,7 +15,7 @@ module.exports = {
 			} else if (creep.memory.job == 'pickup') {
 				let target = Game.getObjectById(creep.memory.targetId);
 				let err = creep.pickup(target);
-				if (err == OK || target == null) {
+				if (err == OK || target == null || target.amount < 100) {
 					creep.memory.gathering = false;
 				}
 				if (err == ERR_NOT_IN_RANGE) {
