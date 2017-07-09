@@ -106,16 +106,40 @@ global.myUtils.avgCpu = function() {
 
 global.myUtils.sourceInfo = function () {
     for (let r in Memory.ownedRooms) {
+        let desiredEnergy = 0;
         for (let rr of Memory.ownedRooms[r]) {
             if (Game.rooms[rr]) {
                 for (let source of Game.rooms[rr].find(FIND_SOURCES)) {
-                    let desiredEnergy = 0;
-                    for (let creep in _.filter(Game.creeps, c=>c.memory.role == 'hauler')) {
-
-                    }
+                    let path = PathFinder.search(Game.rooms[r].find(FIND_MY_SPAWNS)[0].pos, {pos:source.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+                    desiredEnergy += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
                 }
             }
         }
+        console.log(`Desired energy total for ${Memory.ownedRooms[r]}: ${desiredEnergy}`);
+    }
+}
+
+global.myUtils.partInfo = function () {
+    for (let r in Memory.ownedRooms) {
+        let parts = 0;
+        let desiredCapacity = 0;
+        let spawn = Game.rooms[r].find(FIND_MY_SPAWNS)[0];
+        for (let rr of Memory.ownedRooms[r]) {
+            if (Game.rooms[rr]) {
+                for (let source of Game.rooms[rr].find(FIND_SOURCES)) {
+                    let path = PathFinder.search(spawn.pos, {pos:source.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+                    desiredCapacity += Math.ceil(Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME)/100);
+                    parts += 9;
+                }
+                if (rr != r) {
+                    parts += 4;
+                }
+            }
+        }
+        let haulerCapacity = Math.floor((spawn.room.energyCapacityAvailable - 150) / 150);
+        let desiredHaulerAmount = Math.ceil(desiredCapacity / haulerCapacity);
+        parts += desiredHaulerAmount * (haulerCapacity * 3 + 2);
+        console.log(`Room: ${r} Parts: ${parts}`);
     }
 }
 
