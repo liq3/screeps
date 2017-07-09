@@ -12,11 +12,11 @@ module.exports = {
                 target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
             }
 	        if(target) {
-				creep.attack(target);
+				creep.rangedAttack(target);
 				if (creep.pos.getRangeTo(target) < 3) {
-		            let path = PathFinder.search(creep.pos, {pos:target, range:3}, {flee:true});
+		            let path = PathFinder.search(creep.pos, {pos:target.pos, range:3}, {flee:true});
 					creep.moveByPath(path.path);
-				} else {
+				} else if (creep.pos.getRangeTo(target) > 3) {
 					creep.moveTo(target);
 				}
 	        } else {

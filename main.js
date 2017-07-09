@@ -6,7 +6,7 @@ const spawnManager = require('spawnManager');
 // This line monkey patches the global prototypes.
 profiler.enable();
 
-let creepRoles = ['harvester','builder','attacker','miner','guard',
+let creepRoles = ['harvester','builder','attacker','attackerRanged','miner','guard',
     'hauler','stationaryUpgrader','scout','decoy','claimer', 'spawnHelper','upgradeHauler'];
 
 let creepFunctions = {};
@@ -69,7 +69,7 @@ module.exports.loop = function () {
         spawn.recycleCreep(spawn.pos.findClosestByRange( FIND_MY_CREEPS, {filter: c => c.memory.role == 'recycle'}));
     }
 
-    if (Game.market.credits < 1000) {
+    if (Game.cpu.bucket > 5000 && Game.market.credits < 1000) {
         let orders = Game.market.getAllOrders(order => order.resourceType == RESOURCE_ENERGY && order.type == ORDER_BUY && order.price >= 0.018);
         if (orders.length > 0) {
             console.log(JSON.stringify(orders));
