@@ -184,7 +184,7 @@ module.exports = {
             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
         } else if (decoyTargetRoom) {
             this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
-        } else if ((numberStationaryUpgraders < 3 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / 50000)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
+        } else if ((numberStationaryUpgraders < 2 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / (100 * spawn.room.energyCapacityAvailable)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3)) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
         } else if (false && upgradeHaulerParts) {
             this.createCreep(spawn, 'UH', {role:'upgradeHauler'}, upgradeHaulerParts);
