@@ -285,6 +285,7 @@ module.exports = {
         if (typeof(name) == 'string') {
             logStr = spawn.name + " spawning creep " + name + " in room " + spawn.room.name + " in " + parts.length*3 + " ticks." + JSON.stringify(data);
             console.log(logStr);
+            Memory.spawnTimes[spawn.id].push({tick:Game.time, time:parts.length*3});
         }
         return name;
     },

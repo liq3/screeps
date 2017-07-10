@@ -67,6 +67,15 @@ module.exports.loop = function () {
     for (let i in Game.spawns) {
         let spawn = Game.spawns[i];
         spawn.recycleCreep(spawn.pos.findClosestByRange( FIND_MY_CREEPS, {filter: c => c.memory.role == 'recycle'}));
+        if (Memory.spawnTimes == undefined) {
+            Memory.spawnTimes = [];
+            if (!Memory.spawnTimes[spawn.id]) {
+                Memory.spawnTimes[spawn.id] = [];
+            }
+        }
+        if (Memory.spawnTimes[spawn.id].length > 100) {
+            Memory.spawnTimes[spawn.id].shift();
+        }
     }
 
     if (Game.cpu.bucket > 5000 && Game.market.credits < 1000) {
@@ -102,6 +111,17 @@ global.myUtils = {};
 
 global.myUtils.avgCpu = function() {
     console.log(_.sum(Memory.cpuTimes) / Memory.cpuTimes.length);
+}
+
+global.myUtils.getSpawnTimes = function() {
+    for (let i in Game.spawns) {
+        let spawn = Game.spawns[i];
+        let totalTimeSpawning = 0;
+        for (let {tick, time} of Memory.spawnTimes[spawn.id]) {
+            totalTimeSpawning += time;
+        }
+        console.log(`Spawn: ${spawn.id} Time: ${totalTime} / ${Game.time - Memory.spawnTimes[spawn.id][0].time}`);
+    }
 }
 
 global.myUtils.sourceInfo = function () {
