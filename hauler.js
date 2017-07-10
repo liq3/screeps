@@ -99,7 +99,7 @@ module.exports = {
 		if (!creep.memory.job) {
 			let upgradeContainer = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_CONTAINER});
 			if (upgradeContainer) {
-				let totalUpgrade = totalUpgrade.store[RESOURCE_ENERGY];
+				let totalUpgrade = upgradeContainer.store[RESOURCE_ENERGY];
 				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'upgrade')) {
 					totalUpgrade += c.carry.energy;
 				}
