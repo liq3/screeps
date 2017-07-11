@@ -125,6 +125,9 @@ global.myUtils.getSpawnTimes = function() {
 }
 
 global.myUtils.toggleJobDisplay = function() {
+    if (Memory.visuals == undefined) {
+        Memory.visuals = {};
+    }
     if (Memory.visuals.displayJobs != undefined) {
         Memory.visuals.displayJobs = !Memory.visuals.displayJobs;
     } else {

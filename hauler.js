@@ -87,7 +87,7 @@ module.exports = {
 		}
 		if (Memory.visuals.displayJobs) {
 			let text = creep.memory.job || 'idle';
-			RoomVisual.text(text, creep.pos);
+			creep.room.visual.text(text, creep.pos);
 		}
 	},
 	doneDelivering: function(creep) {
