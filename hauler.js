@@ -85,6 +85,10 @@ module.exports = {
 			 	creep.repair(creep.pos.lookFor(LOOK_STRUCTURES)[0]);
 			}
 		}
+		if (Memory.visuals.displayJobs) {
+			let text = creep.memory.job || 'idle';
+			RoomVisual.text(text, creep.pos);
+		}
 	},
 	doneDelivering: function(creep) {
 		creep.memory.gathering = true;

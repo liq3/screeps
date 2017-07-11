@@ -124,6 +124,14 @@ global.myUtils.getSpawnTimes = function() {
     }
 }
 
+global.myUtils.toggleJobDisplay = function() {
+    if (Memory.visuals.displayJobs != undefined) {
+        Memory.visuals.displayJobs = !Memory.visuals.displayJobs;
+    } else {
+        Memory.visuals.displayJobs = false;
+    }
+}
+
 global.myUtils.sourceInfo = function () {
     for (let r in Memory.ownedRooms) {
         let desiredEnergy = 0;
