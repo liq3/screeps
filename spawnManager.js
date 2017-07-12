@@ -28,7 +28,7 @@ module.exports = {
         let desiredTransportCapacity = 0;
         for (let {source,path} of sourceList) {
             let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-            if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3)))) {
+            if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(r in Memory.dangerRooms)) {
                 minerTargetId = source.id;
             } else if (miners.length > 0) {
                 desiredTransportCapacity += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
@@ -46,7 +46,7 @@ module.exports = {
         for (let r of Memory.ownedRooms[spawn.room.name]) {
             if (Game.rooms[r] && !Game.rooms[r].controller.my) {
                 let a = _.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length;
-                if (a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) {
+                if ((a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) && !(r in Memory.dangerRooms)) {
                     reserveTargetRoom = r;
                     break;
                 }
