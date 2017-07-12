@@ -264,7 +264,7 @@ module.exports = {
             } else if (data.job == 'attackRanged' || data.job == 'guard') {
                 let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 300) / 260);
                 parts = Array(numberParts).fill(TOUGH);
-                parts = Array(numberParts*2+1).fill(MOVE);
+                parts = parts.concat(Array(numberParts*2+1).fill(MOVE));
                 parts = parts.concat(Array(numberParts).fill(RANGED_ATTACK));
                 parts.push(HEAL,RANGED_ATTACK);
             }  else if (data.job == 'guard') {
