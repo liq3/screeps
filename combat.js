@@ -45,11 +45,11 @@ module.exports = {
 			}
 			if(target) {
 				let err = creep.rangedAttack(target);
-				if (creep.pos.getRangeTo(target) < 3) {
+				if (creep.pos.getRangeTo(target) > 3 || (target instanceof Creep && (target.getActiveBodyparts(ATTACK) == 0))) {
+					creep.moveTo(target);
+				} else if (creep.pos.getRangeTo(target) < 3) {
 					let path = PathFinder.search(creep.pos, {pos:target.pos, range:3}, {flee:true});
 					creep.moveByPath(path.path);
-				} else if (creep.pos.getRangeTo(target) > 3) {
-					creep.moveTo(target);
 				}
 				if (creep.hits < creep.hitsMax) {
 					creep.heal(creep);
