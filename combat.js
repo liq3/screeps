@@ -81,7 +81,8 @@ module.exports = {
 			}
 		}
 		if (target) {
-			if (creep.attack(target) != OK) {
+			creep.rangedAttack(target);
+			if (creep.hits < creep.hitsMax) {
 				creep.heal(creep);
 			}
 			creep.moveTo(target);
