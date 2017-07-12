@@ -6,8 +6,8 @@ const spawnManager = require('spawnManager');
 // This line monkey patches the global prototypes.
 profiler.enable();
 
-let creepRoles = ['harvester','builder','attacker','attackerRanged','miner','guard',
-    'hauler','stationaryUpgrader','scout','decoy','claimer', 'spawnHelper','upgradeHauler'];
+let creepRoles = ['harvester','builder','combat','miner',
+    'hauler','stationaryUpgrader','scout','decoy','claimer','spawnHelper','upgradeHauler'];
 
 let creepFunctions = {};
 for (let i of creepRoles) {
@@ -36,7 +36,7 @@ module.exports.loop = function () {
     }
 
     let dangerRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'danger');
-    for (let i in searchRooms) {
+    for (let i in dangerRooms) {
         dangerRooms[i] = dangerRooms[i].pos.roomName;
     }
     Memory.dangerRooms = dangerRooms;

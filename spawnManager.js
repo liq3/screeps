@@ -46,7 +46,7 @@ module.exports = {
         for (let r of Memory.ownedRooms[spawn.room.name]) {
             if (Game.rooms[r] && !Game.rooms[r].controller.my) {
                 let a = _.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length;
-                if ((a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) && !(r in Memory.dangerRooms)) {
+                if ((a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) && !(source.pos.roomName in Memory.dangerRooms)) {
                     reserveTargetRoom = r;
                     break;
                 }
@@ -163,9 +163,9 @@ module.exports = {
         if (numberHarvesters < 5 && (_.filter(Game.creeps, c=>c.memory.role=='hauler' && c.memory.bossRoom==spawn.room.name).length == 0)) {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
         } else if (spawnAttacker) {
-            this.createCreep(spawn, 'A', {role:'attacker',targetRoom:attackerTargetRoom}, attackerParts);
+            this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
         } else if (spawnAttackerRanged) {
-            this.createCreep(spawn, 'AR', {role:'attackerRanged',targetRoom:attackerRangedTargetRoom});
+            this.createCreep(spawn, 'AR', {role:'combat',targetRoom:attackerRangedTargetRoom, job:'attackRanged'});
         } else if (scoutTarget) {
             this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
         } else if (claimTargetRoom) {
@@ -176,8 +176,8 @@ module.exports = {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:spawn.room.name});
         } else if (minerTargetId && RCL > 2) {
             this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
-        } else if (numberGuards < 1) {
-            this.createCreep(spawn, 'G', {role:'guard'});
+        } else if (numberGuards < 2) {
+            this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
         } else if (false && numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (reserveTargetRoom && RCL > 2) {
@@ -244,21 +244,23 @@ module.exports = {
             // for (let i = 0; i < Math.min(8,numberParts); i++) {
             //     parts = parts.concat([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE]);
             // }
-        } else if (data.role == 'attacker') {
-            let numberParts = partNumber ? partNumber : Math.floor(spawn.room.energyCapacityAvailable / 130);
-            for (let i = 0; i < Math.min(numberParts, 5); i++) {
-                parts = parts.concat([ATTACK,MOVE]);
+        } else if (data.role == 'combat') {
+            if (data.job == 'attacker') {
+                let numberParts = partNumber ? partNumber : Math.floor(spawn.room.energyCapacityAvailable / 130);
+                for (let i = 0; i < Math.min(numberParts, 5); i++) {
+                    parts = parts.concat([ATTACK,MOVE]);
+                }
+            } else if (data.job == 'attackerRanged' || data.job == 'guard') {
+                let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 450) / 200);
+                parts = Array(numberParts+1).fill(MOVE);
+                parts = parts.concat(Array(numberParts).fill(RANGED_ATTACK));
+                parts = parts.concat([HEAL,RANGED_ATTACK])
+            }  else if (data.job == 'guard') {
+                let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 450) / 130);
+                parts = Array(numberParts+1).fill(MOVE);
+                parts = parts.concat(Array(numberParts).fill(ATTACK));
+                parts.push(HEAL,RANGED_ATTACK);
             }
-        } else if (data.role == 'guard') {
-            let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 450) / 130);
-            parts = Array(numberParts+1).fill(MOVE);
-            parts = parts.concat(Array(numberParts).fill(ATTACK));
-            parts.push(HEAL,RANGED_ATTACK);
-        } else if (data.role == 'attackerRanged') {
-            let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 450) / 200);
-            parts = Array(numberParts+1).fill(MOVE);
-            parts = parts.concat(Array(numberParts).fill(RANGED_ATTACK));
-            parts = parts.concat([HEAL,RANGED_ATTACK])
         } else if (data.role == 'scout') {
             parts = [MOVE];
         } else if (data.role == 'claimer') {
