@@ -35,7 +35,7 @@ module.exports = {
 	jobAttackRanged: function (creep) {
 		if (Game.flags.squad && creep.pos.roomName != Game.flags.squad.pos.roomName) {
 			creep.moveTo(Game.flags.squad.pos, {range:2});
-		} else if (creep.pos.roomName == creep.memory.targetRoom) {
+		} else if (creep.pos.roomName == creep.memory.targetRoom || (Game.flags.squad && creep.pos.roomName == Game.flags.squad.pos.roomName)) {
 			let hostileCreeps = creep.room.find(FIND_HOSTILE_CREEPS);
 			let hostileTowers = creep.room.find(FIND_HOSTILE_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_TOWER});
 			let target = creep.pos.findClosestByPath(hostileCreeps.concat(hostileTowers));
