@@ -250,15 +250,15 @@ module.exports = {
                 parts = parts.concat([ATTACK,MOVE]);
             }
         } else if (data.role == 'guard') {
-            let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 300) / 130);
+            let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 450) / 130);
             parts = Array(numberParts+1).fill(MOVE);
-            parts = parts.concat(Array(numberParts-2).fill(ATTACK));
-            parts.push(HEAL);
-            parts.push(ATTACK,ATTACK);
+            parts = parts.concat(Array(numberParts).fill(ATTACK));
+            parts.push(HEAL,RANGED_ATTACK);
         } else if (data.role == 'attackerRanged') {
-            let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 200);
-            parts = Array(numberParts).fill(MOVE);
+            let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 450) / 200);
+            parts = Array(numberParts+1).fill(MOVE);
             parts = parts.concat(Array(numberParts).fill(RANGED_ATTACK));
+            parts = parts.concat([HEAL,RANGED_ATTACK])
         } else if (data.role == 'scout') {
             parts = [MOVE];
         } else if (data.role == 'claimer') {

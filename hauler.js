@@ -112,7 +112,8 @@ module.exports = {
 					upgradeParts += c.getActiveBodyparts(WORK);
 				}
 				let distance = creep.pos.findPathTo(upgradeContainer).length;
-				if (upgradeContainer.storeCapacity - (totalUpgrade - upgradeParts*distance) < creep.carryCapacity && (!creep.room.storage || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
+				let metric = upgradeContainer.storeCapacity - (totalUpgrade - upgradeParts*distance);
+				if (metric > creep.carryCapacity && (!creep.room.storage || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
 					creep.memory.job = 'upgrade';
 				}
 			}
