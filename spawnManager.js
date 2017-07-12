@@ -106,8 +106,11 @@ module.exports = {
         let desiredAttackers = [];
         for (let i in searchRooms) {
             let flagName = attackFlags[i].name.split(" ");
-            if (flagName.length > 1 && let num = parseInt(flagName[1])) {
-                desiredAttackers[i] = num;
+            if (flagName.length > 1) {
+                let num = parseInt(flagName[1]);
+                if (num) {
+                    desiredAttackers[i] = num;
+                }
             } else {
                 desiredAttackers[i] = 1;
             }
