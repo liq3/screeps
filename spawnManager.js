@@ -28,7 +28,7 @@ module.exports = {
         let desiredTransportCapacity = 0;
         for (let {source,path} of sourceList) {
             let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-            if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(r in Memory.dangerRooms)) {
+            if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(source.pos.roomName in Memory.dangerRooms)) {
                 minerTargetId = source.id;
             } else if (miners.length > 0) {
                 desiredTransportCapacity += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
@@ -46,7 +46,7 @@ module.exports = {
         for (let r of Memory.ownedRooms[spawn.room.name]) {
             if (Game.rooms[r] && !Game.rooms[r].controller.my) {
                 let a = _.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length;
-                if ((a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) && !(source.pos.roomName in Memory.dangerRooms)) {
+                if ((a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) && !(r in Memory.dangerRooms)) {
                     reserveTargetRoom = r;
                     break;
                 }
@@ -75,7 +75,7 @@ module.exports = {
         let spawnAttacker = false;
         let attackerTargetRoom = null;
         for (let r of searchRooms) {
-            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'attacker').length;
+            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.job == 'attack' && c.memory.role == 'combat').length;
             if (attackers == 0) {
                 spawnAttacker = true;
                 attackerTargetRoom = r;
@@ -90,7 +90,7 @@ module.exports = {
         }
         let attackerParts;
         for (let r of searchRooms) {
-            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'attacker').length;
+            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.job == 'attack' && c.memory.role == `combat`).length;
             if (attackers == 0) {
                 spawnAttacker = true;
                 attackerTargetRoom = r;
@@ -102,13 +102,21 @@ module.exports = {
         let spawnAttackerRanged = false;
         let attackerRangedTargetRoom;
         searchRooms = [];
-        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attackRanged');
+        let attackFlags = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attackRanged');
+        let desiredAttackers = [];
         for (let i in searchRooms) {
-            searchRooms[i] = searchRooms[i].pos.roomName;
+            let flagName = attackFlags[i].name.split(" ");
+            if (flagName.length > 1 && let num = parseInt(flagName[1])) {
+                desiredAttackers[i] = num;
+            } else {
+                desiredAttackers[i] = 1;
+            }
+            searchRooms[i] = attackFlags[i].pos.roomName;
         }
-        for (let r of searchRooms) {
-            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'attackerRanged').length;
-            if (attackers == 0) {
+        for (let i in searchRooms) {
+            let r = searchRooms[i];
+            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'combat' && c.memory.job == 'attackRanged').length;
+            if (attackers < desiredAttackers[i]) {
                 spawnAttackerRanged = true;
                 attackerRangedTargetRoom = r;
                 break;
@@ -250,11 +258,11 @@ module.exports = {
                 for (let i = 0; i < Math.min(numberParts, 5); i++) {
                     parts = parts.concat([ATTACK,MOVE]);
                 }
-            } else if (data.job == 'attackerRanged' || data.job == 'guard') {
+            } else if (data.job == 'attackRanged' || data.job == 'guard') {
                 let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 450) / 200);
                 parts = Array(numberParts+1).fill(MOVE);
                 parts = parts.concat(Array(numberParts).fill(RANGED_ATTACK));
-                parts = parts.concat([HEAL,RANGED_ATTACK])
+                parts.push(HEAL,RANGED_ATTACK);
             }  else if (data.job == 'guard') {
                 let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 450) / 130);
                 parts = Array(numberParts+1).fill(MOVE);

@@ -7,6 +7,8 @@ module.exports = {
 			this.jobGuard(creep);
 		} else if (creep.memory.job == 'attackRanged') {
 			this.jobAttackRanged(creep);
+		} else {
+			console.log(`${creep.name} Error with job memory`);
 		}
 	},
 	jobAttack: function(creep) {
