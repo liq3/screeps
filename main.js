@@ -35,6 +35,12 @@ module.exports.loop = function () {
         }
     }
 
+    let dangerRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'danger');
+    for (let i in searchRooms) {
+        dangerRooms[i] = dangerRooms[i].pos.roomName;
+    }
+    Memory.dangerRooms = dangerRooms;
+
 	for(let name in Game.creeps) {
 	    let creep = Game.creeps[name];
 

@@ -155,6 +155,10 @@ module.exports = {
 		if (creep.memory.sourceId) {
 			let source = Game.getObjectById(creep.memory.sourceId);
 			if (source) {
+				if (source.room.name in Memory.dangerRooms) {
+					this.doneDelivering(creep);
+					return;
+				}
 				let target;
 				let containers = source.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0});
 				var err;
@@ -187,7 +191,7 @@ module.exports = {
 			let possibleSources = [];
 			for (let room in Memory.ownedRooms) {
 				for (let r of Memory.ownedRooms[room]) {
-					if (Game.rooms[r] && room == creep.memory.bossRoom) {
+					if (Game.rooms[r] && room == creep.memory.bossRoom && !(r in Memory.dangerRooms)) {
 						for (let source of Game.rooms[r].find(FIND_SOURCES)) {
 							let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
 							if (path.incomplete) {
