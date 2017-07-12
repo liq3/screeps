@@ -169,7 +169,7 @@ module.exports = {
         let numberBuilders = sumCreeps ('builder', spawn.room);
         let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', spawn.room);
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
-        let numberGuards = sumCreeps('guard');
+        let numberGuards = _(Game.creeps).filter( c => c.memory.job == 'guard').length;
 
         if (numberHarvesters < 5 && (_.filter(Game.creeps, c=>c.memory.role=='hauler' && c.memory.bossRoom==spawn.room.name).length == 0)) {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
@@ -187,7 +187,7 @@ module.exports = {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:spawn.room.name});
         } else if (minerTargetId && RCL > 2) {
             this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
-        } else if (numberGuards < 2) {
+        } else if (numberGuards < 3) {
             this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
         } else if (false && numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
