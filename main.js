@@ -18,7 +18,7 @@ for (let i of creepRoles) {
 debug = false;
 
 if (Memory.ownedRooms == undefined) {
-    Memory.ownedRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93','E63N93']};
+    Memory.ownedRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93','E63N93','E62N92']};
 }
 
 module.exports.loop = function () {
