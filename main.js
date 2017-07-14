@@ -33,11 +33,31 @@ module.exports.loop = function () {
         }
     }
 
-    let dangerRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'danger');
-    for (let i in dangerRooms) {
-        dangerRooms[i] = dangerRooms[i].pos.roomName;
+    for (let room in Game.rooms) {
+        if (Game.rooms[room] && !Game.rooms[room].controller.my) {
+            let danger = false;
+            let hostileCreeps = Game.rooms[room].find(FIND_HOSTILE_CREEPS));
+            for (let creep in hostileCreeps) {
+                if (creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0) {
+                    danger = true;
+                    break;
+                }
+            }
+            if (danger) {
+                Memory.dangerRooms.push(room);
+            } else if (Memory.dangerRooms.includes(room)){
+                Memory.dangerRooms.splice(Memory.dangerRooms.indexOf(room), 1);
+            }
+        }
     }
-    Memory.dangerRooms = dangerRooms;
+
+    let dangerFlags = _.filter(Game.flags, f => f.name.split(" ")[0] == 'danger');
+    for (let i in dangerFlags) {
+        let room = dangerFlags[i].pos.roomName;
+        if (!Memory.dangerRooms.includes(room)) {
+            Memory.dangerRooms.push(room);
+        }
+    }
 
 	for(let name in Game.creeps) {
 	    let creep = Game.creeps[name];
