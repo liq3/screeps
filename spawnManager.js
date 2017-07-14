@@ -104,7 +104,7 @@ module.exports = {
         searchRooms = [];
         let attackFlags = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attackRanged');
         let desiredAttackers = [];
-        for (let i in searchRooms) {
+        for (let i in attackFlags) {
             let flagName = attackFlags[i].name.split(" ");
             if (flagName.length > 1) {
                 let num = parseInt(flagName[1]);
@@ -197,8 +197,6 @@ module.exports = {
             this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
         } else if ((numberStationaryUpgraders < 2 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / (100 * spawn.room.energyCapacityAvailable)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3))) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
-        } else if (false && upgradeHaulerParts) {
-            this.createCreep(spawn, 'UH', {role:'upgradeHauler'}, upgradeHaulerParts);
         }
     },
 
@@ -265,7 +263,7 @@ module.exports = {
                 let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 300) / 260);
                 parts = Array(numberParts).fill(TOUGH);
                 parts = parts.concat(Array(numberParts*2+1).fill(MOVE));
-                parts = parts.concat(Array(numberParts).fill(RANGED_ATTACK));
+                parts = parts.concat(Array(numberParts-1).fill(RANGED_ATTACK));
                 parts.push(HEAL,RANGED_ATTACK);
             }  else if (data.job == 'guard') {
                 let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 450) / 130);

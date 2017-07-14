@@ -224,7 +224,7 @@ module.exports = {
 					best = possibleSources[i];
 				}
 			}
-			if (best.energy >= 0) {
+			if (best.energy >= creep.carryCapacity) {
 				//console.log(JSON.stringify(best), Game.time);
 				creep.memory.sourceId = best.id;
 			}
