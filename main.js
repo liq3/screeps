@@ -34,18 +34,18 @@ module.exports.loop = function () {
     }
 
     for (let room in Game.rooms) {
-        if (Game.rooms[room] && !Game.rooms[room].controller.my) {
+        if (Game.rooms[room] && Game.rooms.controller && !Game.rooms[room].controller.my) {
             let danger = false;
-            let hostileCreeps = Game.rooms[room].find(FIND_HOSTILE_CREEPS));
-            for (let creep in hostileCreeps) {
+            let hostileCreeps = Game.rooms[room].find(FIND_HOSTILE_CREEPS);
+            for (let creep of hostileCreeps) {
                 if (creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0) {
                     danger = true;
                     break;
                 }
             }
-            if (danger) {
+            if (danger && !Memory.dangerRooms.includes(room)) {
                 Memory.dangerRooms.push(room);
-            } else if (Memory.dangerRooms.includes(room)){
+            } else if (!danger && Memory.dangerRooms.includes(room)){
                 Memory.dangerRooms.splice(Memory.dangerRooms.indexOf(room), 1);
             }
         }
@@ -99,6 +99,19 @@ module.exports.loop = function () {
         }
         if (Memory.spawnTimes[spawn.id].length > 100) {
             Memory.spawnTimes[spawn.id].shift();
+        }
+    }
+
+    for (let i in Game.rooms) {
+        let room = Game.rooms[i];
+        if (room.controller && room.controller.my) {
+            if (!room.controller.safeMode && !room.controller.safeModeCooldown && room.controller.safeModeAvalable > 0) {
+                if (room.find(FIND_HOSTILE_CREEPS).length > 0) {
+                    if (room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType != STRUCTURE_RAMPART && s.structureType != STRUCTURE_EXTENSION && s.hits < s.hitsMax}).length > 0) {
+                        room.controller.activateSafeMode();
+                    }
+                }
+            }
         }
     }
 
