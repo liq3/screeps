@@ -53,9 +53,6 @@ module.exports = {
 					let path = PathFinder.search(creep.pos, {pos:target.pos, range:3}, {flee:true});
 					creep.moveByPath(path.path);
 				}
-				if (creep.hits < creep.hitsMax) {
-					creep.heal(creep);
-				}
 			} else if (Game.flags.squad) {
 				creep.moveTo(Game.flags.squad.pos, {range:2});
 			} else {
@@ -64,6 +61,12 @@ module.exports = {
 		} else {
 			creep.moveTo(new RoomPosition(25,25,creep.memory.targetRoom), {range: 22});
 		}
+		if (creep.hits < creep.hitsMax) {
+			creep.heal(creep);
+		}
+	},
+	healNearby: function(creep) {
+
 	},
 	jobGuard: function (creep) {
 		var target = Game.getObjectById(creep.memory.targetId);

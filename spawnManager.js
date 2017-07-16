@@ -254,7 +254,7 @@ module.exports = {
             //     parts = parts.concat([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE]);
             // }
         } else if (data.role == 'combat') {
-            if (data.job == 'attacker') {
+            if (data.job == 'attack') {
                 let numberParts = partNumber ? partNumber : Math.floor(spawn.room.energyCapacityAvailable / 130);
                 for (let i = 0; i < Math.min(numberParts, 5); i++) {
                     parts = parts.concat([ATTACK,MOVE]);
@@ -288,7 +288,7 @@ module.exports = {
         }
         error = spawn.createCreep(parts, this.getName(name), data);
         if (error == -10) {
-            console.log("Error spawning creep: " + name + error + parts);
+            console.log("Error spawning creep: " + error + JSON.stringify(data) + parts);
         } else if (error == -3) {
             console.log("Error! Trying to spawn creep with same name");
         } else if (error == -6 && spawn.room.energyAvailable == spawn.room.energyCapacityAvailable) {
