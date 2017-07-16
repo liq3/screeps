@@ -286,20 +286,20 @@ module.exports = {
                 data.gathering = true;
             }
         }
-        name = spawn.createCreep(parts, this.getName(name), data);
-        if (name == -10) {
-            console.log("Error spawning creep: " + name + parts);
-        } else if (name == -3) {
+        error = spawn.createCreep(parts, this.getName(name), data);
+        if (error == -10) {
+            console.log("Error spawning creep: " + name + error + parts);
+        } else if (error == -3) {
             console.log("Error! Trying to spawn creep with same name");
-        } else if (name == -6 && spawn.room.energyAvailable == spawn.room.energyCapacityAvailable) {
+        } else if (error == -6 && spawn.room.energyAvailable == spawn.room.energyCapacityAvailable) {
             console.log("Error! Trying to spawn creep that costs too much" + data.role + parts);
         }
-        if (typeof(name) == 'string') {
-            logStr = spawn.name + " spawning creep " + name + " in room " + spawn.room.name + " in " + parts.length*3 + " ticks." + JSON.stringify(data);
+        if (typeof(error) == 'string') {
+            logStr = spawn.name + " spawning creep " + error + " in room " + spawn.room.name + " in " + parts.length*3 + " ticks." + JSON.stringify(data);
             console.log(logStr);
             Memory.spawnTimes[spawn.id].push({tick:Game.time, time:parts.length*3});
         }
-        return name;
+        return error;
     },
 
     getName: function(name, num) {
