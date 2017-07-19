@@ -28,8 +28,12 @@ module.exports.loop = function () {
     }
 
     for (let i in Game.spawns) {
-        if (!Game.spawns[i].spawning) {
-            spawnManager.spawnCreeps(Game.spawns[i]);
+        try {
+            if (!Game.spawns[i].spawning) {
+                spawnManager.spawnCreeps(Game.spawns[i]);
+            }
+        } catch (err) {
+            console.log(err.stack || err);
         }
     }
 
