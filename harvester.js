@@ -17,7 +17,7 @@ module.exports = {
         if (!target) {
             target = creep.pos.findClosestByPath(FIND_MY_SPAWNS, {filter: s => s.energy < s.energyCapacity });
         }
-		if (!target) {
+		if (!target || creep.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'harvester'}).length > 5) {
 			target = creep.pos.findClosestByPath(FIND_MY_CONSTRUCTION_SITES);
 		}
         if (!target || creep.room.controller.level < 2) {
