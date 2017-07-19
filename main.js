@@ -17,7 +17,7 @@ for (let i of creepRoles) {
 
 debug = false;
 
-Memory.ownedRooms = {'E61N94': ['E61N94', 'E62N94','E61N93'], 'E62N93': ['E62N93','E63N93','E62N92']};
+Memory.ownedRooms = {'W14S72': []};
 
 module.exports.loop = function () {
     profiler.wrap(function() {
@@ -93,6 +93,10 @@ module.exports.loop = function () {
         spawn.recycleCreep(spawn.pos.findClosestByRange( FIND_MY_CREEPS, {filter: c => c.memory.role == 'recycle'}));
         if (Memory.spawnTimes == undefined) {
             Memory.spawnTimes = [];
+            if (!Memory.spawnTimes[spawn.id]) {
+                Memory.spawnTimes[spawn.id] = [];
+            }
+        } else {
             if (!Memory.spawnTimes[spawn.id]) {
                 Memory.spawnTimes[spawn.id] = [];
             }

@@ -17,7 +17,7 @@ module.exports = {
         if (!target) {
             target = creep.pos.findClosestByPath(FIND_MY_SPAWNS, {filter: s => s.energy < s.energyCapacity });
         }
-        if (!target) {
+        if (!target || creep.room.controller.level < 2) {
             target = creep.room.controller;
         }
 
