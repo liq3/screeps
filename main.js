@@ -17,7 +17,7 @@ for (let i of creepRoles) {
 
 debug = false;
 
-Memory.ownedRooms = {'W14S72': []};
+Memory.ownedRooms = {'W2N22': []};
 
 module.exports.loop = function () {
     profiler.wrap(function() {
