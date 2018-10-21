@@ -300,7 +300,11 @@ module.exports = {
         if (typeof(error) == 'string') {
             logStr = spawn.name + " spawning creep " + error + " in room " + spawn.room.name + " in " + parts.length*3 + " ticks." + JSON.stringify(data);
             console.log(logStr);
-            Memory.spawnTimes[spawn.id].push({tick:Game.time, time:parts.length*3});
+            try {
+                Memory.spawnTimes[spawn.id].push({tick:Game.time, time:parts.length*3});
+            } catch (err) {
+                console.log(err)
+            }
         }
         return error;
     },
