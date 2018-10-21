@@ -17,7 +17,11 @@ for (let i of creepRoles) {
 
 debug = false;
 
-Memory.ownedRooms = {'W2N22': []};
+//Memory.ownedRooms = {'blah': []};
+Memory.ownedRooms = {};
+for (let i in Game.spawns) {
+    Memory.ownedRooms[Game.spawns[i].room.name] = []
+}
 
 module.exports.loop = function () {
     profiler.wrap(function() {
