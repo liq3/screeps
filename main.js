@@ -18,10 +18,6 @@ for (let i of creepRoles) {
 debug = false;
 
 //Memory.ownedRooms = {'blah': []};
-Memory.ownedRooms = {};
-for (let i in Game.spawns) {
-    Memory.ownedRooms[Game.spawns[i].room.name] = []
-}
 
 module.exports.loop = function () {
     profiler.wrap(function() {
@@ -29,6 +25,11 @@ module.exports.loop = function () {
         if(!Game.creeps[i]) {
             delete Memory.creeps[i];
         }
+    }
+
+    Memory.ownedRooms = {};
+    for (let i in Game.spawns) {
+        Memory.ownedRooms[Game.spawns[i].room.name] = []
     }
 
     for (let i in Game.spawns) {
