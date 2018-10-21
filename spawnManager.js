@@ -175,7 +175,7 @@ module.exports = {
         let numberGuards = _(Game.creeps).filter( c => c.memory.job == 'guard').length;
         let numberMiners = sumCreeps('miner', spawn.room)
 
-        if ((numberHarvesters < 5 || spawn.room.energyCapacityAvailable < 500) && numberMiners >= 2) {
+        if ((numberHarvesters < 5 || spawn.room.energyCapacityAvailable < 500) && numberMiners <= 1) {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
         } else if (spawnAttacker) {
             this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
@@ -189,7 +189,7 @@ module.exports = {
             this.createCreep(spawn, 'B', {role:'builder'});
         } else if (spawnHauler && RCL >= 2) {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:spawn.room.name});
-        } else if (minerTargetId && RCL >= 2 && spawn.room.energyCapacity >= 500) {
+        } else if (minerTargetId && RCL >= 2 && spawn.room.energyCapacityAvailable >= 500) {
             this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
         } else if (numberGuards < 3) {
             this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
