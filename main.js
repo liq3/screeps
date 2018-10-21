@@ -27,6 +27,10 @@ module.exports.loop = function () {
         }
     }
 
+    if (Memory.dangerRooms == undefined) {
+        Memory.dangerRooms = []
+    }
+
     Memory.ownedRooms = {};
     for (let i in Game.spawns) {
         Memory.ownedRooms[Game.spawns[i].room.name] = [Game.spawns[i].room.name]
