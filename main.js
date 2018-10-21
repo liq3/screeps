@@ -29,7 +29,7 @@ module.exports.loop = function () {
 
     Memory.ownedRooms = {};
     for (let i in Game.spawns) {
-        Memory.ownedRooms[Game.spawns[i].room.name] = []
+        Memory.ownedRooms[Game.spawns[i].room.name] = [Game.spawns[i].room.name]
     }
 
     for (let i in Game.spawns) {
