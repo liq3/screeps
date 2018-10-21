@@ -174,7 +174,8 @@ module.exports = {
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
         let numberGuards = _(Game.creeps).filter( c => c.memory.job == 'guard').length;
 
-        if ((numberHarvesters < 5 || spawn.room.energyCapacityAvailable < 500) && (_.filter(Game.creeps, c=>c.memory.role=='hauler' && c.memory.bossRoom==spawn.room.name).length == 0)) {
+        if ((numberHarvesters < 5 || spawn.room.energyCapacityAvailable < 500)
+            && (_.filter(Game.creeps, c=>c.memory.role=='hauler' && c.memory.bossRoom==spawn.room.name).length == 0)) {
             this.createCreep(spawn, 'Harvester ', {role:'harvester'});
         } else if (spawnAttacker) {
             this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
@@ -186,9 +187,9 @@ module.exports = {
             this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
         } else if (numberBuilders < 1 && RCL > 1) {
             this.createCreep(spawn, 'B', {role:'builder'});
-        } else if (spawnHauler && RCL >= 3) {
+        } else if (spawnHauler && RCL >= 2) {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:spawn.room.name});
-        } else if (minerTargetId && RCL > 2) {
+        } else if (minerTargetId && RCL >= 2 && spawn.room.energyCapacity >= 500) {
             this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
         } else if (numberGuards < 3) {
             this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
