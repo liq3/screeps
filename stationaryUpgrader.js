@@ -1,8 +1,8 @@
 module.exports = {
 
 	run: function (creep) {
-		if (creep.memory.bossRoom != creep.room.name) {
-			creep.moveTo(new RoomPosition(25,25,creep.memory.bossRoom), {range:22});)
+		if (creep.makeSureInBossRoom()) {
+			return
 		}
 		var target;
 		var error = creep.transfer(creep.room.controller,RESOURCE_ENERGY);

@@ -39,8 +39,7 @@ module.exports = {
 			if (roadSites.length > 0) {
 				err = creep.build(roadSites[0]);
 			}  else if (creep.pos.roomName != creep.memory.bossRoom) {
-				if (creep.memory.bossRoom) {
-					creep.moveTo(new RoomPosition(25,25,creep.memory.bossRoom), {range:22});
+				if (creep.makeSureInBossRoom) {
 				} else {
 				    creep.memory.role = 'recycle';
 				}
