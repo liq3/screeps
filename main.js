@@ -1,10 +1,16 @@
+const useProfiler = false
+
 // Any modules that you use that modify the game's prototypes should be require'd
 // before you require the profiler.
-const profiler = require('screeps-profiler');
+if (useProfiler) {
+    var profiler = require('screeps-profiler');
+}
 const spawnManager = require('spawnManager');
 
 // This line monkey patches the global prototypes.
-profiler.enable();
+if (useProfiler) {
+    profiler.enable();
+}
 
 let creepRoles = ['harvester','builder','combat','miner',
     'hauler','stationaryUpgrader','scout','decoy','claimer','spawnHelper','upgradeHauler'];
@@ -12,7 +18,9 @@ let creepRoles = ['harvester','builder','combat','miner',
 let creepFunctions = {};
 for (let i of creepRoles) {
     creepFunctions[i] = require(i);
-    profiler.registerObject(creepFunctions[i], i);
+    if (useProfiler) {
+        profiler.registerObject(creepFunctions[i], i);
+    }
 }
 
 debug = false;
@@ -26,8 +34,7 @@ Creep.prototype.makeSureInBossRoom = function () {
 };
 //Memory.ownedRooms = {'blah': []};
 
-module.exports.loop = function () {
-    profiler.wrap(function() {
+mainLoop = function() {
     for(let i in Memory.creeps) {
         if(!Game.creeps[i]) {
             delete Memory.creeps[i];
@@ -165,7 +172,12 @@ module.exports.loop = function () {
     if (Memory.cpuTimes.length > 1000) {
         Memory.cpuTimes.shift();
     }
-    });
+}
+
+if (useProfiler) {
+    module.exports.loop = profiler.wrap(mainLoop);
+} else {
+    module.exports.loop = mainLoop
 }
 
 global.myUtils = {};
@@ -252,7 +264,7 @@ global.myUtils.createRoadBetweenFlags = function() {
             Game.rooms[pos.roomName].createConstructionSite(pos.x,pos.y, STRUCTURE_ROAD);
         }
     } else {
-        console.log("Flags not set properly!");
+        console.log('Flags not set properly! Need "roadStart" and "roadEnd"');
     }
 }
 
@@ -272,7 +284,9 @@ global.costMatrixCallback = function(roomName) {
     return costMatrix;
 }
 
-global.CostMatrixCallback = profiler.registerFN(global.costMatrixCallback, 'global.costMatrixCallback');
+if (useProfiler) {
+    global.CostMatrixCallback = profiler.registerFN(global.costMatrixCallback, 'global.costMatrixCallback');
+}
 
 global.myUtils.clearTransportMemory = function() {
     for (let i in Game.creeps) {

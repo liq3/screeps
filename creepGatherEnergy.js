@@ -29,7 +29,7 @@ module.exports = function (creep) {
         let error;
         if (energy instanceof Resource) {
             error = creep.pickup(energy);
-        } else if (energy instanceof StructureStorage) {
+        } else if (energy instanceof Structure) {
             error = creep.withdraw(energy, RESOURCE_ENERGY);
         } else if (energy instanceof Source) {
             error = creep.harvest(energy)
