@@ -19,7 +19,7 @@ debug = false;
 
 Creep.prototype.makeSureInBossRoom = function () {
    if (this.memory.bossRoom != this.room.name) {
-       let err = this.moveTo(new RoomPosition(25,25,this.memory.bossRoom), {range:22});)
+       let err = this.moveTo(new RoomPosition(25,25,this.memory.bossRoom), {range:22});
        return true
    }
    return false

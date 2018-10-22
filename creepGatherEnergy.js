@@ -15,7 +15,7 @@ module.exports = function (creep) {
     if (!energy) {
         energy = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter:
             s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 50
-                && s.pos.findInRange(FIND_SOURCES).length >= 1})
+                && s.pos.findInRange(FIND_SOURCES, 1).length >= 1})
     }
     if (!energy && creep.memory.role != 'hauler') {
         if (creep.memory.sourceId != undefined) {
