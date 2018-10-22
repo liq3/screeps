@@ -203,7 +203,7 @@ module.exports = {
         } else if (decoyTargetRoom) {
             this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
         } else if ((numberStationaryUpgraders < 2 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / (100 * spawn.room.energyCapacityAvailable)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3))) {
-            this.createCreep(spawn, 'SU', {role:'stationaryUpgrader'});
+            this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', boosRoom:spawn.room.name});
         }
     },
 
