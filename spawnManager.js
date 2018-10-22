@@ -31,7 +31,10 @@ module.exports = {
             if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
                 minerTargetId = source.id;
             } else if (miners.length > 0) {
-                desiredTransportCapacity += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
+                let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_CONTAINER});
+                if (containers.length > 0) {
+                    desiredTransportCapacity += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
+                }
             }
         }
         let transportCapacity = 0;
@@ -176,7 +179,7 @@ module.exports = {
         let numberMiners = sumCreeps('miner', spawn.room)
 
         if ((numberHarvesters < 5 || spawn.room.energyCapacityAvailable < 500) && numberMiners <= 1) {
-            this.createCreep(spawn, 'Harvester ', {role:'harvester'});
+            this.createCreep(spawn, 'Harvester ', {role:'harvester',bossRoom:spawn.room.name});
         } else if (spawnAttacker) {
             this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
         } else if (spawnAttackerRanged) {

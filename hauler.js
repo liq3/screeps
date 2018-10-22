@@ -5,13 +5,17 @@ module.exports = {
 		if (creep.memory.gathering) {
 			if (creep.memory.job == 'source') {
 				this.gatherFromSource(creep);
-			} else if (creep.room.storage && (creep.memory.job == 'upgrade' || creep.memory.job == 'spawn' || creep.memory.job == 'deliverEnergyToTerminal')) {
-				let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
-				if (err == ERR_NOT_IN_RANGE) {
-					creep.moveTo(creep.room.storage);
-				} else if (err == OK && creep.room.storage.store[RESOURCE_ENERGY] > creep.carryCapacity) {
-					creep.memory.gathering = false;
-				}
+			} else if ((creep.memory.job == 'upgrade' || creep.memory.job == 'spawn' || creep.memory.job == 'deliverEnergyToTerminal')) {
+			    if (creep.room.storage) {
+    				let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
+    				if (err == ERR_NOT_IN_RANGE) {
+    					creep.moveTo(creep.room.storage);
+    				} else if (err == OK && creep.room.storage.store[RESOURCE_ENERGY] > creep.carryCapacity) {
+    					creep.memory.gathering = false;
+    				}
+			    } else {
+			        gatherEnergy(creep)
+			    }
 			} else if (creep.memory.job == 'pickup') {
 				let target = Game.getObjectById(creep.memory.targetId);
 				let err = creep.pickup(target);
@@ -101,7 +105,8 @@ module.exports = {
 		}
 
 		if (!creep.memory.job) {
-			let upgradeContainer = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_CONTAINER});
+			let upgradeContainer = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES,
+				{filter: s=>s.structureType == STRUCTURE_CONTAINER && s.pos.inRangeTo(s.room.controller, 3)});
 			if (upgradeContainer) {
 				let totalUpgrade = upgradeContainer.store[RESOURCE_ENERGY];
 				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'upgrade')) {

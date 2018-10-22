@@ -3,7 +3,9 @@ module.exports = {
 
 	run: function (creep) {
 
-	if(creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
+	if (creep.memory.bossRoom != creep.room.name) {
+		creep.moveTo(new RoomPosition(25,25,creep.memory.bossRoom), {range:22})
+	} else if (creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
 		gatherEnergy(creep);
 	} else if (creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
         creep.memory.gathering = false;

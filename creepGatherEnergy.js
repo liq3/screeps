@@ -12,6 +12,11 @@ module.exports = function (creep) {
         energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
             r => r.resourceType == RESOURCE_ENERGY && r.amount > 0, range:1});
     }
+    if (!energy) {
+        energy = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter:
+            s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 50
+                && s.pos.findInRange(FIND_SOURCES).length >= 1})
+    }
     if (!energy && creep.memory.role != 'hauler') {
         if (creep.memory.sourceId != undefined) {
             energy = Game.getObjectById(creep.memory.sourceId);
