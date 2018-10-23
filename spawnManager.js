@@ -163,7 +163,9 @@ module.exports = {
         let numberMiners = sumCreeps('miner', spawn.room)
         let numberHaulers = sumCreeps('haulers', spawn.room)
 
-        if (spawnAttacker) {
+        if (numberHaulers < 2) {
+            this.createCreep(spawn, 'H', {role:'smallHauler', bossRoom:spawn.room.name});
+        } else if (spawnAttacker) {
             this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
         } else if (spawnAttackerRanged) {
             this.createCreep(spawn, 'AR', {role:'combat',targetRoom:attackerRangedTargetRoom, job:'attackRanged'});
@@ -226,6 +228,9 @@ module.exports = {
                 parts = parts.concat(Array(numberParts).fill(CARRY));
                 parts = parts.concat(Array(numberParts).fill(MOVE));
             }
+        } else if (data.role == 'smallHauler') {
+            parts = [WORK, MOVE, MOVE, CARRY]
+            data.role = 'hauler'
         } else if (data.role == 'spawnHelper') {
             let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 150);
             parts = Array(numberParts).fill(CARRY);
