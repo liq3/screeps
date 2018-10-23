@@ -12,8 +12,8 @@ if (useProfiler) {
     profiler.enable();
 }
 
-let creepRoles = ['harvester','builder','combat','miner',
-    'hauler','stationaryUpgrader','scout','decoy','claimer','spawnHelper','upgradeHauler'];
+let creepRoles = ['builder','combat','miner',
+    'hauler','stationaryUpgrader','scout','decoy','claimer','spawnHelper'];
 
 let creepFunctions = {};
 for (let i of creepRoles) {
