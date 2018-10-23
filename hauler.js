@@ -81,7 +81,8 @@ module.exports = {
 					this.doneDelivering(creep);
 				}
 			} else {
-				this.getNewJob(creep)
+				this.doneDelivering(creep);
+				this.getNewJob(creep);
 			}
 			if (err == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target, {range:1});
