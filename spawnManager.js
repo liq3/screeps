@@ -218,10 +218,10 @@ module.exports = {
             parts.push(CARRY,MOVE);
         } else if (data.role == 'hauler') {
             if (spawn.room.energyCapacityAvailable >= 550) {
-                let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 150);
+                let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 200) / 150);
                 parts = [WORK]
-                parts = parts.concat(Array(numberParts*2).fill(CARRY));
-                parts = parts.concat(Array(numberParts).fill(MOVE));
+                parts = parts.concat(Array(numberParts*2+1).fill(CARRY));
+                parts = parts.concat(Array(numberParts+1).fill(MOVE));
             } else {
                 let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 150) / 100);
                 parts = [WORK, MOVE]
