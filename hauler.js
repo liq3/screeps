@@ -80,6 +80,8 @@ module.exports = {
 				if (err == OK) {
 					this.doneDelivering(creep);
 				}
+			} else {
+				this.getNewJob(creep)
 			}
 			if (err == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target, {range:1});
