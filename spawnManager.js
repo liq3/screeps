@@ -43,7 +43,7 @@ module.exports = {
         for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler' && c.memory.bossRoom == spawn.room.name)) {
             transportCapacity += creep.carryCapacity;
         }
-        if (spawn.energyCapacityAvailable < 550) {
+        if (spawn.room.energyCapacityAvailable < 550) {
             desiredTransportCapacity /= 2;
         }
         if (transportCapacity < desiredTransportCapacity) {
@@ -217,7 +217,7 @@ module.exports = {
             }
             parts.push(CARRY,MOVE);
         } else if (data.role == 'hauler') {
-            if (spawn.energyCapacityAvailable >= 550) {
+            if (spawn.room.energyCapacityAvailable >= 550) {
                 let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 150);
                 parts = [WORK]
                 parts = parts.concat(Array(numberParts*2).fill(CARRY));
