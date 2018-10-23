@@ -104,6 +104,21 @@ module.exports = {
 		}
 
 		if (!creep.memory.job) {
+			let totalSpawn = 0;
+			for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn')) {
+				totalSpawn += c.carry.energy;
+			}
+			let desired = 0;
+			for (let structure of creep.room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION})) {
+				desired += structure.energyCapacity - structure.energy;
+			}
+			if (totalSpawn < desired) {
+				creep.memory.job = 'spawn';
+			}
+			//console.log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
+		}
+		
+		if (!creep.memory.job) {
 			let upgradeContainer = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES,
 				{filter: s=>s.structureType == STRUCTURE_CONTAINER && s.pos.inRangeTo(s.room.controller, 3)});
 			if (upgradeContainer) {
@@ -123,20 +138,6 @@ module.exports = {
 			}
 		}
 
-		if (!creep.memory.job) {
-			let totalSpawn = 0;
-			for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn')) {
-				totalSpawn += c.carry.energy;
-			}
-			let desired = 0;
-			for (let structure of creep.room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION})) {
-				desired += structure.energyCapacity - structure.energy;
-			}
-			if (totalSpawn < desired) {
-				creep.memory.job = 'spawn';
-			}
-			//console.log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
-		}
 		if (!creep.memory.job) {
 			let pickups = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5, {filter: r => r.resourceType == RESOURCE_ENERGY});
 			if (pickups.length > 0) {
