@@ -161,7 +161,7 @@ module.exports = {
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
         let numberGuards = _(Game.creeps).filter( c => c.memory.job == 'guard').length;
         let numberMiners = sumCreeps('miner', spawn.room)
-        let numberHaulers = sumCreeps('haulers', spawn.room)
+        let numberHaulers = sumCreeps('hauler', spawn.room)
 
         if (numberHaulers < 2) {
             this.createCreep(spawn, 'H', {role:'smallHauler', bossRoom:spawn.room.name});
