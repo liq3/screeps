@@ -26,6 +26,7 @@ module.exports = {
 
         sourceList.sort((a,b) => a.path.cost - b.path.cost );
         let desiredTransportCapacity = 0;
+        let numberContainers = 0;
         for (let {source,path} of sourceList) {
             let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
             if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
@@ -34,12 +35,16 @@ module.exports = {
                 let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_CONTAINER});
                 if (containers.length > 0) {
                     desiredTransportCapacity += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
+                    numberContainers += 1;
                 }
             }
         }
         let transportCapacity = 0;
         for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler' && c.memory.bossRoom == spawn.room.name)) {
             transportCapacity += creep.carryCapacity;
+        }
+        if (spawn.energyCapacityAvailable < 550) {
+            desiredTransportCapacity /= 2;
         }
         if (transportCapacity < desiredTransportCapacity) {
             spawnHauler = true;
@@ -149,27 +154,6 @@ module.exports = {
             }
         }
 
-        let upgradeContainer = spawn.room.controller.pos.findClosestByRange(FIND_STRUCTURES, {filter: s => s.structureType == STRUCTURE_CONTAINER});
-        if (upgradeContainer && spawn.room.storage) {
-            let upgradeHaulerDistance = PathFinder.search(spawn.room.storage.pos, {pos:upgradeContainer.pos, range:0}).cost * 2;
-            let desiredUpgradeHaulerCapacity = upgradeHaulerDistance * upgradeWorkParts;
-            let currentUpgradeHaulerCapacity = 0;
-            for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
-                for (let part in creep.body) {
-                    if (creep.body[part].type == CARRY) {
-                        currentUpgradeHaulerCapacity += 50;
-                    }
-                }
-            }
-            let upgradeHaulerParts;
-            if (desiredUpgradeHaulerCapacity > currentUpgradeHaulerCapacity) {
-                for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'upgradeHauler'})) {
-                    creep.memory.role = 'recycle';
-                }
-                upgradeHaulerParts = Math.ceil(desiredUpgradeHaulerCapacity / 100);
-            }
-        }
-
         var RCL = spawn.room.controller.level;
         let numberHarvesters = sumCreeps('harvester', spawn.room);
         let numberBuilders = sumCreeps ('builder', spawn.room);
@@ -177,10 +161,9 @@ module.exports = {
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
         let numberGuards = _(Game.creeps).filter( c => c.memory.job == 'guard').length;
         let numberMiners = sumCreeps('miner', spawn.room)
+        let numberHaulers = sumCreeps('haulers', spawn.room)
 
-        if ((numberHarvesters < 5 || spawn.room.energyCapacityAvailable < 500) && numberMiners <= 1) {
-            this.createCreep(spawn, 'Harvester ', {role:'harvester',bossRoom:spawn.room.name});
-        } else if (spawnAttacker) {
+        if (spawnAttacker) {
             this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
         } else if (spawnAttackerRanged) {
             this.createCreep(spawn, 'AR', {role:'combat',targetRoom:attackerRangedTargetRoom, job:'attackRanged'});
@@ -190,7 +173,7 @@ module.exports = {
             this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
         } else if (numberBuilders < 1 && RCL > 1) {
             this.createCreep(spawn, 'B', {role:'builder'});
-        } else if (spawnHauler && RCL >= 2) {
+        } else if (spawnHauler || ((spawn.room.energyCapacityAvailable < 550 || numberContainers < 1) && numberHaulers < 5)) {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:spawn.room.name});
         } else if (minerTargetId && RCL >= 2 && spawn.room.energyCapacityAvailable >= 550) {
             this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
@@ -203,7 +186,7 @@ module.exports = {
         } else if (decoyTargetRoom) {
             this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
         } else if ((numberStationaryUpgraders < 2 && spawn.room.storage && numberStationaryUpgraders < Math.ceil(spawn.room.storage.store[RESOURCE_ENERGY] / (100 * spawn.room.energyCapacityAvailable)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3))) {
-            this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', boosRoom:spawn.room.name});
+            this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', bossRoom:spawn.room.name});
         }
     },
 
@@ -231,18 +214,16 @@ module.exports = {
                 }
             }
             parts.push(CARRY,MOVE);
-        } else if (data.role == 'hauler' || data.role == 'upgradeHauler') {
-            let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 150);
-            if (data.role == 'hauler') {numberParts--;}
-            if (partNumber > 0 && partNumber+1 < numberParts) {
-                numberParts = partNumber;
-            }
-            if (data.role == 'hauler') {
-                parts = Array(numberParts*2).fill(CARRY);
-                parts = parts.concat(Array(numberParts+1).fill(MOVE));
-                parts.unshift(WORK);
+        } else if (data.role == 'hauler') {
+            if (spawn.energyCapacityAvailable >= 550) {
+                let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 100) / 150);
+                parts = [WORK]
+                parts = parts.concat(Array(numberParts*2).fill(CARRY));
+                parts = parts.concat(Array(numberParts).fill(MOVE));
             } else {
-                parts = Array(numberParts*2).fill(CARRY);
+                let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 150) / 100);
+                parts = [WORK, MOVE]
+                parts = parts.concat(Array(numberParts).fill(CARRY));
                 parts = parts.concat(Array(numberParts).fill(MOVE));
             }
         } else if (data.role == 'spawnHelper') {
