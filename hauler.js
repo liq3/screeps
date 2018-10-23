@@ -51,7 +51,7 @@ module.exports = {
 				target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {range:1, filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
 				if (target) {
 					err = creep.transfer(target, RESOURCE_ENERGY);
-				} else {
+				} else if (creep.room.storage) {
 					creep.memory.job = 'storage';
 				}
 				if (err == OK && creep.carry.energy == 0) {
@@ -117,7 +117,7 @@ module.exports = {
 			}
 			//console.log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
 		}
-		
+
 		if (!creep.memory.job) {
 			let upgradeContainer = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES,
 				{filter: s=>s.structureType == STRUCTURE_CONTAINER && s.pos.inRangeTo(s.room.controller, 3)});
