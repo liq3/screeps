@@ -43,9 +43,6 @@ module.exports = {
         for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler' && c.memory.bossRoom == spawn.room.name)) {
             transportCapacity += creep.carryCapacity;
         }
-        if (spawn.room.energyCapacityAvailable < 550) {
-            desiredTransportCapacity /= 2;
-        }
         if (transportCapacity < desiredTransportCapacity) {
             spawnHauler = true;
         }
