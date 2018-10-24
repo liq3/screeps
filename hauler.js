@@ -153,7 +153,7 @@ module.exports = {
 		}
 
 		if (!creep.memory.job && creep.carry.energy == creep.carryCapacity) {
-			creep.memory.job = storage
+			creep.memory.job = 'storage'
 		}
 
 		if (!creep.memory.job && creep.carry.energy < creep.carryCapacity) {
