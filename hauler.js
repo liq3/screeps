@@ -74,7 +74,7 @@ module.exports = {
 				if (err == OK) {
 					this.doneDelivering(creep);
 				}
-			} else if (creep.room.storage) {
+			} else if (creep.memory.job == 'storage' && creep.room.storage && creep.room.storage.isActive()) {
 			    target = creep.room.storage;
 				err = creep.transfer(target, RESOURCE_ENERGY);
 				if (err == OK) {
