@@ -163,6 +163,8 @@ module.exports = {
                         best.memory.role = 'recycle'
                     }
                     best = creep
+                } else {
+                    creep.memory.role = 'recycle'
                 }
             }
         }
