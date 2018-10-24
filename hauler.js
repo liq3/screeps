@@ -14,7 +14,7 @@ module.exports = {
 				if (err == ERR_NOT_IN_RANGE) {
 					creep.moveTo(target)
 				}
-			} else {
+			} else if (creep.memory.job != 'storage') {
 			    if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
     				let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
     				if (err == ERR_NOT_IN_RANGE) {
