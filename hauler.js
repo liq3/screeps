@@ -6,7 +6,7 @@ module.exports = {
 			if (creep.memory.job == 'source') {
 				this.gatherFromSource(creep);
 			} else if ((creep.memory.job == 'upgrade' || creep.memory.job == 'spawn' || creep.memory.job == 'deliverEnergyToTerminal')) {
-			    if (creep.room.storage) {
+			    if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
     				let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
     				if (err == ERR_NOT_IN_RANGE) {
     					creep.moveTo(creep.room.storage);
