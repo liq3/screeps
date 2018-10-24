@@ -4,7 +4,7 @@ module.exports = function (creep) {
         var energy = Game.getObjectById(id);
     }
     if (!energy) {
-        if (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 0) {
+        if (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > creep.carryCapacity) {
             energy = creep.room.storage;
         }
     }
