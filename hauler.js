@@ -179,6 +179,7 @@ module.exports = {
 			creep.memory.gathering = creep.carry.energy < creep.carryCapacity;
 			creep.memory.jobAssignedTime = Game.time
 			creep.say(creep.memory.job)
+			creep.run(creep)
 		}
 	},
 	gatherFromSource: function(creep) {
