@@ -151,9 +151,24 @@ module.exports = {
             }
         }
 
+        let desiredBuilders = 1;
+        let numberBuilders = sumCreeps ('builder', spawn.room);
+        if (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
+            desiredBuilders = 3;
+        } else if (numberBuilders > desiredBuilders) {
+            best = null
+            for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c => c.memory.role == 'builder'})) {
+                if (best == null || best.ticksToLive < creep.ticksToLive) {
+                    if (best != null) {
+                        best.memory.role = 'recycle'
+                    }
+                    best = creep
+                }
+            }
+        }
+
         var RCL = spawn.room.controller.level;
         let numberHarvesters = sumCreeps('harvester', spawn.room);
-        let numberBuilders = sumCreeps ('builder', spawn.room);
         let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', spawn.room);
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
         let numberGuards = _(Game.creeps).filter( c => c.memory.job == 'guard').length;
@@ -170,12 +185,12 @@ module.exports = {
             this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
         } else if (claimTargetRoom) {
             this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
-        } else if (numberBuilders < 1 && RCL >= 4 && spawn.room.storage) {
-            this.createCreep(spawn, 'B', {role:'builder'});
         } else if (spawnHauler || (spawn.room.energyCapacityAvailable < 550 && numberHaulers < 5)) {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:spawn.room.name});
         } else if (minerTargetId && RCL >= 2 && spawn.room.energyCapacityAvailable >= 550) {
             this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
+        } else if (numberBuilders < desiredBuilders) {
+            this.createCreep(spawn, 'B', {role:'builder'});
         } else if (numberGuards < 3) {
             this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
         } else if (false && numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
