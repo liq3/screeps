@@ -5,8 +5,16 @@ module.exports = {
 		if (creep.memory.gathering) {
 			if (creep.memory.job == 'source') {
 				this.gatherFromSource(creep);
-			} else if ((creep.memory.job == 'upgrade' || creep.memory.job == 'spawn'
-						|| creep.memory.job == 'deliverEnergyToTerminal' || creep.memory.job == 'praise')) {
+			} else if (creep.memory.job == 'pickup') {
+				let target = Game.getObjectById(creep.memory.targetId);
+				let err = creep.pickup(target);
+				if (err == OK || target == null || target.amount < 100) {
+					creep.memory.gathering = false;
+				}
+				if (err == ERR_NOT_IN_RANGE) {
+					creep.moveTo(target)
+				}
+			} else {
 			    if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
     				let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
     				if (err == ERR_NOT_IN_RANGE) {
@@ -17,15 +25,6 @@ module.exports = {
 			    } else {
 			        gatherEnergy(creep)
 			    }
-			} else if (creep.memory.job == 'pickup') {
-				let target = Game.getObjectById(creep.memory.targetId);
-				let err = creep.pickup(target);
-				if (err == OK || target == null || target.amount < 100) {
-					creep.memory.gathering = false;
-				}
-				if (err == ERR_NOT_IN_RANGE) {
-					creep.moveTo(target)
-				}
 			}
 			if (!creep.memory.job || creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
 				creep.memory.gathering = false;
@@ -48,7 +47,7 @@ module.exports = {
 
 
 			target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER
-				&& s.energy < s.energyCapacity/ (1 ? creep.memory.job == 'tower' : 2)})
+				&& s.energy < s.energyCapacity/ (creep.memory.job == 'tower' ? 1 : 2)})
 			if (target) {
 				err = creep.transfer(target, RESOURCE_ENERGY);
 			} else if (creep.memory.job == 'spawn') {
@@ -112,7 +111,7 @@ module.exports = {
 		delete creep.memory.job;
 	},
 	getNewJob: function(creep) {
-		if (creep.room.find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity})) {
+		if (creep.room.find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity}).length > 0) {
 			creep.memory.job = 'tower'
 		}
 		if (!creep.memory.job && creep.room.controller.progress > creep.room.controller.progressTotal) {
