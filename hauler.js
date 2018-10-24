@@ -157,6 +157,7 @@ module.exports = {
 		}
 		if (creep.memory.job) {
 			creep.memory.gathering = true;
+			creep.memory.jobAssignedTime = Game.time
 		}
 	},
 	gatherFromSource: function(creep) {
@@ -236,6 +237,10 @@ module.exports = {
 				//console.log(JSON.stringify(best), Game.time);
 				creep.memory.sourceId = best.id;
 			}
+		}
+		if (!creep.memory.sourceId && (Game.time - creep.memory.jobAssignedTime) >= 10) {
+			creep.doneDelivering(creep)
+			creep.getNewJob(creep)
 		}
 	}
 };
