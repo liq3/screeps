@@ -84,7 +84,7 @@ module.exports = {
 			} else if (creep.memory.job == 'praise') {
 				target = creep.room.controller;
 				err = creep.transfer(target, RESOURCE_ENERGY);
-				if (err == OK) {
+				if (err == OK && creep.store.energy == 0) {
 					this.doneDelivering(creep);
 				}
 			} else {
