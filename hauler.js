@@ -2,7 +2,7 @@ var gatherEnergy = require("creepGatherEnergy");
 module.exports = {
 
 	run: function (creep) {
-		if (creep.memory.gathering) {
+		if (creep.memory.gathering && creep.memory.job) {
 			if (creep.memory.job == 'source') {
 				this.gatherFromSource(creep);
 			} else if (creep.memory.job == 'pickup') {
