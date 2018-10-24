@@ -23,7 +23,7 @@ for (let i of creepRoles) {
     }
 }
 
-debug = false;
+var debug = false;
 
 Creep.prototype.makeSureInBossRoom = function () {
    if (this.memory.bossRoom != this.room.name) {
@@ -34,7 +34,7 @@ Creep.prototype.makeSureInBossRoom = function () {
 };
 //Memory.ownedRooms = {'blah': []};
 
-mainLoop = function() {
+let mainLoop = function() {
     for(let i in Memory.creeps) {
         if(!Game.creeps[i]) {
             delete Memory.creeps[i];

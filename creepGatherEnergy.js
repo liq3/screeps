@@ -17,7 +17,7 @@ module.exports = function (creep) {
             s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 50
                 && s.pos.findInRange(FIND_SOURCES, 1).length >= 1})
     }
-    if (!energy && creep.memory.role != 'hauler') {
+    if (!energy) {
         if (creep.memory.sourceId != undefined) {
             energy = Game.getObjectById(creep.memory.sourceId);
         } else {
@@ -29,6 +29,11 @@ module.exports = function (creep) {
         let error;
         if (energy instanceof Resource) {
             error = creep.pickup(energy);
+            if (error == OK) {
+                let container = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter:
+                            s => s.structureType == STRUCTURE_CONTAINER && s.pos.findInRange(FIND_SOURCES, 1).length >= 1})
+                creep.withdraw(container, RESOURCE_ENERGY);
+            }
         } else if (energy instanceof Structure) {
             error = creep.withdraw(energy, RESOURCE_ENERGY);
         } else if (energy instanceof Source) {
