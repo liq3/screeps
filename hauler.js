@@ -152,7 +152,11 @@ module.exports = {
 			}
 		}
 
-		if (!creep.memory.job) {
+		if (!creep.memory.job && creep.carry.energy == creep.carryCapacity) {
+			creep.memory.job = storage
+		}
+
+		if (!creep.memory.job && creep.carry.energy < creep.carryCapacity) {
 			let pickups = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5, {filter: r => r.resourceType == RESOURCE_ENERGY});
 			if (pickups.length > 0) {
 				for (let pickup of pickups) {
@@ -167,8 +171,9 @@ module.exports = {
 			creep.memory.job = 'source';
 		}
 		if (creep.memory.job) {
-			creep.memory.gathering = true;
+			creep.memory.gathering = creep.carry.energy < creep.carryCapacity;
 			creep.memory.jobAssignedTime = Game.time
+			creep.say(creep.memory.job)
 		}
 	},
 	gatherFromSource: function(creep) {
