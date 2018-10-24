@@ -5,7 +5,8 @@ module.exports = {
 		if (creep.memory.gathering) {
 			if (creep.memory.job == 'source') {
 				this.gatherFromSource(creep);
-			} else if ((creep.memory.job == 'upgrade' || creep.memory.job == 'spawn' || creep.memory.job == 'deliverEnergyToTerminal')) {
+			} else if ((creep.memory.job == 'upgrade' || creep.memory.job == 'spawn'
+						|| creep.memory.job == 'deliverEnergyToTerminal' || creep.memory.job == 'praise')) {
 			    if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
     				let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
     				if (err == ERR_NOT_IN_RANGE) {
@@ -80,6 +81,12 @@ module.exports = {
 				if (err == OK) {
 					this.doneDelivering(creep);
 				}
+			} else if (creep.memory.job == 'praise') {
+				target = creep.room.controller;
+				err = creep.transfer(target, RESOURCE_ENERGY);
+				if (err == OK) {
+					this.doneDelivering(creep);
+				}
 			} else {
 				this.doneDelivering(creep);
 				this.getNewJob(creep);
@@ -102,7 +109,11 @@ module.exports = {
 		delete creep.memory.job;
 	},
 	getNewJob: function(creep) {
-		if (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 10000 && creep.room.terminal && creep.room.terminal.store[RESOURCE_ENERGY] < 10000) {
+		if (creep.room.controller.progress > creep.room.controller.progressTotal) {
+			creep.memory.job = 'praise'
+		}
+
+		if (!creep.memory.job && creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 10000 && creep.room.terminal && creep.room.terminal.store[RESOURCE_ENERGY] < 10000) {
 			creep.memory.job = 'deliverEnergyToTerminal';
 		}
 
