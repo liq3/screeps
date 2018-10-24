@@ -46,7 +46,10 @@ module.exports = {
 				}
 			}
 
-			if (target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity/2})) {
+
+			target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER
+				&& s.energy < s.energyCapacity/ (1 ? creep.memory.job == 'tower' : 2)})
+			if (target) {
 				err = creep.transfer(target, RESOURCE_ENERGY);
 			} else if (creep.memory.job == 'spawn') {
 				target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {range:1, filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
@@ -109,7 +112,10 @@ module.exports = {
 		delete creep.memory.job;
 	},
 	getNewJob: function(creep) {
-		if (creep.room.controller.progress > creep.room.controller.progressTotal) {
+		if (creep.room.find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity})) {
+			creep.memory.job = 'tower'
+		}
+		if (!creep.memory.job && creep.room.controller.progress > creep.room.controller.progressTotal) {
 			creep.memory.job = 'praise'
 		}
 
