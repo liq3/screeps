@@ -172,7 +172,7 @@ module.exports = {
             this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
         } else if (numberBuilders < 1 && RCL > 4 && creep.room.storage) {
             this.createCreep(spawn, 'B', {role:'builder'});
-        } else if (spawnHauler || ((spawn.room.energyCapacityAvailable < 550 || numberContainers < 1) && numberHaulers < 5)) {
+        } else if (spawnHauler || (spawn.room.energyCapacityAvailable < 550 && numberHaulers < 5)) {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:spawn.room.name});
         } else if (minerTargetId && RCL >= 2 && spawn.room.energyCapacityAvailable >= 550) {
             this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
