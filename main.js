@@ -3,17 +3,7 @@
 const useProfiler = false
 
 require('prototype_creep')
-// Any modules that you use that modify the game's prototypes should be require'd
-// before you require the profiler.
-if (useProfiler) {
-    var profiler = require('screeps-profiler');
-}
 const spawnManager = require('spawnManager');
-
-// This line monkey patches the global prototypes.
-if (useProfiler) {
-    profiler.enable();
-}
 
 let creepRoles = ['builder','combat','miner',
     'hauler','stationaryUpgrader','scout','decoy','claimer','spawnHelper'];
@@ -21,9 +11,6 @@ let creepRoles = ['builder','combat','miner',
 let creepFunctions = {};
 for (let i of creepRoles) {
     creepFunctions[i] = require(i);
-    if (useProfiler) {
-        profiler.registerObject(creepFunctions[i], i);
-    }
 }
 
 var debug = false;
@@ -170,11 +157,7 @@ let mainLoop = function() {
     }
 }
 
-if (useProfiler) {
-    module.exports.loop = profiler.wrap(mainLoop);
-} else {
-    module.exports.loop = mainLoop
-}
+module.exports.loop = mainLoop
 
 global.myUtils = {};
 
@@ -280,10 +263,6 @@ global.costMatrixCallback = function(roomName) {
     return costMatrix;
 }
 
-if (useProfiler) {
-    global.CostMatrixCallback = profiler.registerFN(global.costMatrixCallback, 'global.costMatrixCallback');
-}
-
 global.myUtils.clearTransportMemory = function() {
     for (let i in Game.creeps) {
         let creep = Game.creeps[i];
@@ -304,4 +283,14 @@ global.myUtils.countParts = function(rooms) {
         }
     }
     console.log (ret + " parts.");
+}
+
+if (useProfiler) {
+    const profiler = require('screeps-profiler');
+    profiler.enable();
+    for (let i in creepRoles) {
+        profiler.registerObject(creepFunctions[i], i);
+    }
+    global.CostMatrixCallback = profiler.registerFN(global.costMatrixCallback, 'global.costMatrixCallback');
+    module.exports.loop = profiler.wrap(mainLoop);
 }
