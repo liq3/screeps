@@ -288,7 +288,7 @@ global.myUtils.countParts = function(rooms) {
 if (useProfiler) {
     const profiler = require('screeps-profiler');
     profiler.enable();
-    for (let i in creepRoles) {
+    for (let i of creepRoles) {
         profiler.registerObject(creepFunctions[i], i);
     }
     global.CostMatrixCallback = profiler.registerFN(global.costMatrixCallback, 'global.costMatrixCallback');
