@@ -272,7 +272,7 @@ module.exports = {
 		}
 		if (!creep.memory.sourceId && (Game.time - creep.memory.jobAssignedTime) >= 10) {
 			this.doneDelivering(creep)
-			creep.getNewJob(creep)
+			this.getNewJob(creep)
 		}
 	}
 };
