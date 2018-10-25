@@ -2,6 +2,7 @@
 
 const useProfiler = false
 
+require('prototype_creep.js')
 // Any modules that you use that modify the game's prototypes should be require'd
 // before you require the profiler.
 if (useProfiler) {
@@ -27,13 +28,6 @@ for (let i of creepRoles) {
 
 var debug = false;
 
-Creep.prototype.makeSureInBossRoom = function () {
-   if (this.memory.bossRoom != this.room.name) {
-       let err = this.moveTo(new RoomPosition(25,25,this.memory.bossRoom), {range:22});
-       return true
-   }
-   return false
-};
 //Memory.ownedRooms = {'blah': []};
 
 let mainLoop = function() {

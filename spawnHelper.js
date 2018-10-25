@@ -1,4 +1,3 @@
-var gatherEnergy = require("creepGatherEnergy");
 module.exports = {
 
 	run: function (creep) {

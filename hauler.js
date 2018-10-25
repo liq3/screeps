@@ -1,4 +1,3 @@
-var gatherEnergy = require("creepGatherEnergy");
 module.exports = {
 
 	run: function (creep) {
@@ -23,7 +22,7 @@ module.exports = {
     					creep.memory.gathering = false;
     				}
 			    } else {
-			        gatherEnergy(creep)
+			        creep.gatherEnergy(creep)
 			    }
 			}
 			if (!creep.memory.job || creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
