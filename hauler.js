@@ -205,7 +205,7 @@ module.exports = {
 					withdrawAmount = null;
 				}
 
-				if (creep.memory.gathering) {
+				if (creep.memory.gathering && err != ERR_NOT_IN_RANGE) {
 				   	let containers = source.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0});
 				   	if (containers.length > 0) {
 				   		target = containers[0];
