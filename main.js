@@ -1,3 +1,5 @@
+// spawns, creeps, flags, rooms have .memory
+
 const useProfiler = false
 
 // Any modules that you use that modify the game's prototypes should be require'd
