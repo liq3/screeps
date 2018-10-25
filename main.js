@@ -2,7 +2,7 @@
 
 const useProfiler = false
 
-require('prototype_creep.js')
+require('prototype_creep')
 // Any modules that you use that modify the game's prototypes should be require'd
 // before you require the profiler.
 if (useProfiler) {
