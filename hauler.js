@@ -191,20 +191,29 @@ module.exports = {
 				}
 				let target;
 				var err;
+				let withdrawAmount = 0;
 				let droppedEnergy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY});
 				if (droppedEnergy.length > 0) {
 					target = droppedEnergy[0];
 					err = creep.pickup(target);
 					if (err == OK && creep.carryCapacity - creep.carry.energy < target.amount) {
 						creep.memory.gathering = false;
+					} else {
+						withdrawAmount = creep.carryCapacity - creep.carry.energy - target.amount
 					}
+				} else {
+					withdrawAmount = null;
 				}
 
 				if (creep.memory.gathering) {
 				   	let containers = source.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0});
 				   	if (containers.length > 0) {
 				   		target = containers[0];
-				   		err = creep.withdraw(target, RESOURCE_ENERGY, creep.carryCapacity - creep.carry.energy - droppedEnergy[0].amount);
+						if (withdrawAmount) {
+							err = creep.withdraw(target, RESOURCE_ENERGY, withdrawAmount);
+						} else {
+							err = creep.withdraw(target, RESOURCE_ENERGY);
+						}
 				   		if (err == OK && creep.carryCapacity - creep.carry.energy < target.store[RESOURCE_ENERGY]) {
 				   			creep.memory.gathering = false;
 				   		}
