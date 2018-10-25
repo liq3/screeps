@@ -199,13 +199,16 @@ module.exports = {
 						creep.memory.gathering = false;
 					}
 				}
-				let containers = source.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0});
-				if (containers.length > 0) {
-					target = containers[0];
-					err = creep.withdraw(target, RESOURCE_ENERGY);
-					if (err == OK && creep.carryCapacity - creep.carry.energy < target.store[RESOURCE_ENERGY]) {
-						creep.memory.gathering = false;
-					}
+
+				if (creep.memory.gathering) {
+				   	let containers = source.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0});
+				   	if (containers.length > 0) {
+				   		target = containers[0];
+				   		err = creep.withdraw(target, RESOURCE_ENERGY, creep.carryCapacity - creep.carry.energy - droppedEnergy[0].amount);
+				   		if (err == OK && creep.carryCapacity - creep.carry.energy < target.store[RESOURCE_ENERGY]) {
+				   			creep.memory.gathering = false;
+				   		}
+				   	}
 				}
 				if (!target) {
 					creep.moveTo(source, {range:2});
@@ -259,7 +262,7 @@ module.exports = {
 			}
 		}
 		if (!creep.memory.sourceId && (Game.time - creep.memory.jobAssignedTime) >= 10) {
-			creep.doneDelivering(creep)
+			this.doneDelivering(creep)
 			creep.getNewJob(creep)
 		}
 	}
