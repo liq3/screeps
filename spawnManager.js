@@ -34,11 +34,19 @@ module.exports = {
             } else if (miners.length > 0) {
                 let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_CONTAINER});
                 if (containers.length > 0) {
-                    desiredTransportCapacity += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
+                    desiredTransportCapacity += Math.ceil( 2 * (2 * path.cost) * source.energyCapacity / ENERGY_REGEN_TIME);
                     numberContainers += 1;
                 }
             }
         }
+        let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', spawn.room);
+        if (numberStationaryUpgraders > 0) {
+            let path = PathFinder.search(spawn.pos, {pos:spawn.room.controller.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+            for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role == 'stationaryUpgrader'})) {
+                desiredTransportCapacity += 2 * path.cost * praiser.getActiveBodyparts(WORK)
+            }
+        }
+
         let transportCapacity = 0;
         for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler' && c.memory.bossRoom == spawn.room.name)) {
             transportCapacity += creep.carryCapacity;
@@ -171,7 +179,6 @@ module.exports = {
 
         var RCL = spawn.room.controller.level;
         let numberHarvesters = sumCreeps('harvester', spawn.room);
-        let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', spawn.room);
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
         let numberGuards = _(Game.creeps).filter( c => c.memory.job == 'guard').length;
         let numberMiners = sumCreeps('miner', spawn.room)
