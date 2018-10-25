@@ -191,20 +191,20 @@ module.exports = {
 					return;
 				}
 				let target;
-				let containers = source.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0});
 				var err;
-				if (containers.length > 0) {
-					target = containers[0];
-					err = creep.withdraw(target, RESOURCE_ENERGY);
-					if (err == OK && creep.carryCapacity - creep.carry.energy < target.store[RESOURCE_ENERGY]) {
-						creep.memory.gathering = false;
-					}
-				}
 				let droppedEnergy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY});
 				if (droppedEnergy.length > 0) {
 					target = droppedEnergy[0];
 					err = creep.pickup(target);
 					if (err == OK && creep.carryCapacity - creep.carry.energy < target.amount) {
+						creep.memory.gathering = false;
+					}
+				}
+				let containers = source.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 0});
+				if (containers.length > 0) {
+					target = containers[0];
+					err = creep.withdraw(target, RESOURCE_ENERGY);
+					if (err == OK && creep.carryCapacity - creep.carry.energy < target.store[RESOURCE_ENERGY]) {
 						creep.memory.gathering = false;
 					}
 				}
