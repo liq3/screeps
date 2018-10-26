@@ -60,7 +60,9 @@ Creep.prototype.gatherEnergy = function () {
 
 
 Creep.prototype.makeSureInBossRoom = function () {
-   if (this.memory.bossRoom != this.room.name) {
+   if (this.memory.bossRoom == undefined) {
+       return true
+   } else if (this.memory.bossRoom != this.room.name) {
        let err = this.moveTo(new RoomPosition(25,25,this.memory.bossRoom), {range:22});
        return true
    }

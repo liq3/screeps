@@ -73,6 +73,7 @@ module.exports = {
             room = Game.rooms[searchRooms[i]]
             if (room && room.controller.my && room.controller.level >= 1) {
                 room.createConstructionSite(Game.flags.claim.pos, STRUCTURE_SPAWN)
+                spawn.memory.supportNewRoom = Game.flags.claim.room.name
                 Game.flags.claim.remove()
             }
         }
@@ -182,12 +183,21 @@ module.exports = {
             }
         }
 
+        if (spawn.memory.supportNewRoom != undefined) {
+            if (Game.rooms[spawn.memory.supportNewRoom].find(FIND_MY_STRUCTURES, {filter: s=> s.structure.type == 'STRUCTURE_SPAWN'}).length > 0) {
+                delete spawn.memory.supportNewRoom
+            } else {
+                var numberNewRoomBuilders = _(Game.creeps).filter(c => c.memory.role == 'builder' && c.memory.bossRoom == spawn.memory.supportNewRoom).length
+            }
+        }
+
         var RCL = spawn.room.controller.level;
         let numberHarvesters = sumCreeps('harvester', spawn.room);
         let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
         let numberGuards = _(Game.creeps).filter( c => c.memory.job == 'guard').length;
         let numberMiners = sumCreeps('miner', spawn.room)
         let numberHaulers = sumCreeps('hauler', spawn.room)
+
 
         if (numberHaulers < 2) {
             this.createCreep(spawn, 'H', {role:'smallHauler', bossRoom:spawn.room.name});
@@ -204,9 +214,11 @@ module.exports = {
         } else if (minerTargetId && RCL >= 2 && spawn.room.energyCapacityAvailable >= 550) {
             this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
         } else if (numberBuilders < desiredBuilders) {
-            this.createCreep(spawn, 'B', {role:'builder'});
+            this.createCreep(spawn, 'B', {role:'builder', bossRoom:spawn.room.name});
         } else if (numberGuards < 3) {
             this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
+        } else if (numberNewRoomBuilders < 5) {
+            this.createCreep(spawn, 'B', {role:'builder', bossRoom:spawn.memory.supportNewRoom});
         } else if (false && numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (reserveTargetRoom && RCL > 2) {

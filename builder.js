@@ -75,6 +75,7 @@ module.exports = {
 			} else if (err != 0) {
 			    //console.log(err + " " + target);
 			}
+			creep.makeSureInBossRoom()
 	    }
 	},
 	getScore: function(target, creep) {
