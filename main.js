@@ -33,10 +33,10 @@ let mainLoop = function() {
         Memory.ownedRooms[Game.spawns[i].room.name] = [Game.spawns[i].room.name]
     }
 
-    for (let i in Game.spawns) {
+    for (let i in Game.rooms) {
         try {
-            if (!Game.spawns[i].spawning && Game.cpu.bucket > 1000) {
-                spawnManager.spawnCreeps(Game.spawns[i]);
+            if (Game.rooms[i].controller.my && Game.cpu.bucket > 1000) {
+                spawnManager.spawnCreeps(Game.rooms[i]);
             }
         } catch (err) {
             console.log(err.stack || err);

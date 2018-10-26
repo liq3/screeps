@@ -1,5 +1,10 @@
 module.exports = {
-    spawnCreeps: function(spawn) {
+    spawnCreeps: function(room) {
+        let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_SPAWN && !s.spawning})[0]
+        if (!spawn) {
+            return
+        }
+
         function sumCreeps(role, room) {
             if (room == undefined) {
                 return _.sum(Game.creeps, c => c.memory.role == role);
@@ -8,17 +13,18 @@ module.exports = {
             }
         }
 
+        let firstSpawn = room.find(FIND_MY_STRUCTURES, {structureType: STRUCTURE_SPAWN})[0]
         let scoutTarget = null;
         let minerTargetId = null;
         let spawnHauler = false;
         let sourceList = [];
-        for (let r of Memory.ownedRooms[spawn.room.name]) {
+        for (let r of Memory.ownedRooms[room.name]) {
             if (Game.rooms[r] == null && scoutTarget == null
                     && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName == r).length == 0) {
                 scoutTarget = r;
             } else if (Game.rooms[r]) {
                 for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-                    let path = PathFinder.search(spawn.pos, {pos:source.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+                    let path = PathFinder.search(firstSpawn.pos, {pos:source.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
                     sourceList.push({source:source, path:path});
                 }
             }
@@ -39,16 +45,16 @@ module.exports = {
                 }
             }
         }
-        let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', spawn.room);
+        let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', room);
         if (numberStationaryUpgraders > 0) {
-            let path = PathFinder.search(spawn.pos, {pos:spawn.room.controller.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+            let path = PathFinder.search(firstSpawn.pos, {pos:room.controller.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
             for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role == 'stationaryUpgrader'})) {
                 desiredTransportCapacity += 2 * path.cost * praiser.getActiveBodyparts(WORK)
             }
         }
 
         let transportCapacity = 0;
-        for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler' && c.memory.bossRoom == spawn.room.name)) {
+        for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler' && c.memory.bossRoom == room.name)) {
             transportCapacity += creep.carryCapacity;
         }
         if (transportCapacity < desiredTransportCapacity) {
@@ -56,7 +62,7 @@ module.exports = {
         }
 
         let reserveTargetRoom = null;
-        for (let r of Memory.ownedRooms[spawn.room.name]) {
+        for (let r of Memory.ownedRooms[room.name]) {
             if (Game.rooms[r] && !Game.rooms[r].controller.my) {
                 let a = _.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length;
                 if ((a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) && !(Memory.dangerRooms.includes(r))) {
@@ -157,7 +163,7 @@ module.exports = {
         }
 
         let upgradeWorkParts = 0;
-        for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'stationaryUpgrader'})) {
+        for (let creep of room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'stationaryUpgrader'})) {
             for (let part in creep.body) {
                 if (creep.body[part].type == WORK) {
                     upgradeWorkParts += 1;
@@ -166,12 +172,12 @@ module.exports = {
         }
 
         let desiredBuilders = 1;
-        let numberBuilders = sumCreeps ('builder', spawn.room);
-        if (spawn.room.find(FIND_CONSTRUCTION_SITES).length > 0) {
+        let numberBuilders = sumCreeps ('builder', room);
+        if (room.find(FIND_CONSTRUCTION_SITES).length > 0) {
             desiredBuilders = 3;
         } else if (numberBuilders > desiredBuilders) {
             best = null
-            for (let creep of spawn.room.find(FIND_MY_CREEPS, {filter: c => c.memory.role == 'builder'})) {
+            for (let creep of room.find(FIND_MY_CREEPS, {filter: c => c.memory.role == 'builder'})) {
                 if (best == null || best.ticksToLive < creep.ticksToLive) {
                     if (best != null) {
                         best.memory.role = 'recycle'
@@ -191,16 +197,16 @@ module.exports = {
             }
         }
 
-        var RCL = spawn.room.controller.level;
-        let numberHarvesters = sumCreeps('harvester', spawn.room);
-        let numberSpawnHelpers = sumCreeps('spawnHelper', spawn.room);
+        var RCL = room.controller.level;
+        let numberHarvesters = sumCreeps('harvester', room);
+        let numberSpawnHelpers = sumCreeps('spawnHelper', room);
         let numberGuards = _(Game.creeps).filter( c => c.memory.job == 'guard').length;
-        let numberMiners = sumCreeps('miner', spawn.room)
-        let numberHaulers = sumCreeps('hauler', spawn.room)
+        let numberMiners = sumCreeps('miner', room)
+        let numberHaulers = sumCreeps('hauler', room)
 
 
         if (numberHaulers < 2) {
-            this.createCreep(spawn, 'H', {role:'smallHauler', bossRoom:spawn.room.name});
+            this.createCreep(spawn, 'H', {role:'smallHauler', bossRoom:room.name});
         } else if (spawnAttacker) {
             this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
         } else if (spawnAttackerRanged) {
@@ -209,24 +215,24 @@ module.exports = {
             this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
         } else if (claimTargetRoom) {
             this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
-        } else if (spawnHauler || (spawn.room.energyCapacityAvailable < 550 && numberHaulers < 5)) {
-            this.createCreep(spawn, 'H', {role:'hauler', bossRoom:spawn.room.name});
-        } else if (minerTargetId && RCL >= 2 && spawn.room.energyCapacityAvailable >= 550) {
+        } else if (spawnHauler || (room.energyCapacityAvailable < 550 && numberHaulers < 5)) {
+            this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
+        } else if (minerTargetId && RCL >= 2 && room.energyCapacityAvailable >= 550) {
             this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
         } else if (numberBuilders < desiredBuilders) {
-            this.createCreep(spawn, 'B', {role:'builder', bossRoom:spawn.room.name});
+            this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
         } else if (numberGuards < 3) {
             this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
         } else if (numberNewRoomBuilders < 5) {
             this.createCreep(spawn, 'B', {role:'builder', bossRoom:spawn.memory.supportNewRoom});
-        } else if (false && numberSpawnHelpers < 1 && spawn.room.storage && spawn.room.storage.store[RESOURCE_ENERGY] > 5000) {
+        } else if (false && numberSpawnHelpers < 1 && room.storage && room.storage.store[RESOURCE_ENERGY] > 5000) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (reserveTargetRoom && RCL > 2) {
             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
         } else if (decoyTargetRoom) {
             this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
-        } else if ((spawn.room.storage && numberStationaryUpgraders < Math.ceil((spawn.room.storage.store[RESOURCE_ENERGY]-50000) / (20 * spawn.room.energyCapacityAvailable)) || (spawn.room.storage == undefined && numberStationaryUpgraders < 3))) {
-            this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', bossRoom:spawn.room.name});
+        } else if ((room.storage && numberStationaryUpgraders < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)) || (room.storage == undefined && numberStationaryUpgraders < 3))) {
+            this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', bossRoom:room.name});
         }
     },
 
