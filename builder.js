@@ -6,6 +6,7 @@ module.exports = {
 			creep.gatherEnergy(creep);
 	    } else if (creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
 	        creep.memory.gathering = false;
+			delete creep.memory.energyId;
 	    } else if (!creep.memory.gathering && creep.carry.energy == 0) {
 	        creep.memory.gathering = true;
 	    } else {

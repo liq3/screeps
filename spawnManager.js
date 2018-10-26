@@ -187,7 +187,7 @@ module.exports = {
             if (Game.rooms[spawn.memory.supportNewRoom].find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == 'STRUCTURE_SPAWN'}).length > 0) {
                 delete spawn.memory.supportNewRoom
             } else {
-                var numberNewRoomBuilders = _(Game.creeps).filter(c => c.memory.role == 'builder' && c.memory.bossRoom == spawn.memory.supportNewRoom).length
+                var numberNewRoomBuilders = _.filter(Game.creeps, c => c.memory.role == 'builder' && c.memory.bossRoom == spawn.memory.supportNewRoom).length
             }
         }
 
