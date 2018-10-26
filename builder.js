@@ -14,6 +14,9 @@ module.exports = {
 			if (target instanceof Structure && target.hits == target.hitsMax) {
 				creep.memory.targetId = null;
 			}
+			if (creep.room.controller.level <= 1) {
+				target = creep.room.controller
+			}
 	        if(!target || Game.time - creep.memory.jobStartTime > 100) {
 				let possible = {best:1000000, id:null};
 				for (let r in Game.rooms) {
@@ -67,10 +70,11 @@ module.exports = {
 			var err;
 			if(target instanceof ConstructionSite) {
 				err = creep.build(target);
-			} else {
+			} else if (target instanceof StructureController) {
+				err = creep.upgrade(target);
+			} else if (target instanceof Structure){
 				err = creep.repair(target);
 			}
-
 			if (err == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target);
 			} else if (err != 0) {
