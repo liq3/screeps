@@ -294,5 +294,5 @@ if (useProfiler) {
         profiler.registerObject(creepFunctions[i], i);
     }
     global.CostMatrixCallback = profiler.registerFN(global.costMatrixCallback, 'global.costMatrixCallback');
-    module.exports.loop = profiler.wrap(mainLoop);
+    module.exports.loop = () => profiler.wrap(mainLoop);
 }
