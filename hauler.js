@@ -1,7 +1,9 @@
 module.exports = {
 
 	run: function (creep) {
-		creep._first = true
+		if (creep._first == undefined) {
+			creep._first = true
+		}
 		if (creep.memory.gathering && creep.memory.job) {
 			if (creep.memory.job == 'source') {
 				this.gatherFromSource(creep);
