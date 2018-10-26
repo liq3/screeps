@@ -293,6 +293,7 @@ if (useProfiler) {
     for (let i of creepRoles) {
         profiler.registerObject(creepFunctions[i], i);
     }
+    profiler.registerObject(spawnManager, 'spawnManager')
     global.CostMatrixCallback = profiler.registerFN(global.costMatrixCallback, 'global.costMatrixCallback');
     module.exports.loop = () => profiler.wrap(mainLoop);
 }

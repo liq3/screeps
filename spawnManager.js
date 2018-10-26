@@ -79,7 +79,7 @@ module.exports = {
             room = Game.rooms[searchRooms[i]]
             if (room && room.controller.my && room.controller.level >= 1) {
                 room.createConstructionSite(Game.flags.claim.pos, STRUCTURE_SPAWN)
-                spawn.memory.supportNewRoom = Game.flags.claim.room.name
+                room.memory.supportNewRoom = Game.flags.claim.room.name
                 Game.flags.claim.remove()
             }
         }
@@ -189,11 +189,11 @@ module.exports = {
             }
         }
 
-        if (spawn.memory.supportNewRoom != undefined) {
-            if (Game.rooms[spawn.memory.supportNewRoom].find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == 'STRUCTURE_SPAWN'}).length > 0) {
-                delete spawn.memory.supportNewRoom
+        if (room.memory.supportNewRoom != undefined) {
+            if (Game.rooms[room.memory.supportNewRoom].find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == 'STRUCTURE_SPAWN'}).length > 0) {
+                delete room.memory.supportNewRoom
             } else {
-                var numberNewRoomBuilders = _.filter(Game.creeps, c => c.memory.role == 'builder' && c.memory.bossRoom == spawn.memory.supportNewRoom).length
+                var numberNewRoomBuilders = _.filter(Game.creeps, c => c.memory.role == 'builder' && c.memory.bossRoom == room.memory.supportNewRoom).length
             }
         }
 
@@ -224,7 +224,7 @@ module.exports = {
         } else if (numberGuards < 3) {
             this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
         } else if (numberNewRoomBuilders < 5) {
-            this.createCreep(spawn, 'B', {role:'builder', bossRoom:spawn.memory.supportNewRoom});
+            this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.memory.supportNewRoom});
         } else if (false && numberSpawnHelpers < 1 && room.storage && room.storage.store[RESOURCE_ENERGY] > 5000) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (reserveTargetRoom && RCL > 2) {
