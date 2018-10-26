@@ -35,7 +35,7 @@ let mainLoop = function() {
 
     for (let i in Game.spawns) {
         try {
-            if (!Game.spawns[i].spawning) {
+            if (!Game.spawns[i].spawning && Game.cpu.bucket > 1000) {
                 spawnManager.spawnCreeps(Game.spawns[i]);
             }
         } catch (err) {
@@ -73,12 +73,14 @@ let mainLoop = function() {
 	    let creep = Game.creeps[name];
 
         try {
-            if (creepFunctions[creep.memory.role] != undefined) {
-                creepFunctions[creep.memory.role].run(creep);
-            } else if (creep.memory.role == 'recycle') {
-                creep.moveTo(creep.pos.findClosestByPath(FIND_MY_SPAWNS));
-            } else {
-                console.log("Undefined function for role: " + creep.memory.role);
+            if (Game.cpu.bucket > 500) {
+                if (creepFunctions[creep.memory.role] != undefined) {
+                    creepFunctions[creep.memory.role].run(creep);
+                } else if (creep.memory.role == 'recycle') {
+                    creep.moveTo(creep.pos.findClosestByPath(FIND_MY_SPAWNS));
+                } else {
+                    console.log("Undefined function for role: " + creep.memory.role);
+                }
             }
         } catch (err) {
             console.log(err.stack || err);
