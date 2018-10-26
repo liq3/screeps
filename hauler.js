@@ -1,7 +1,7 @@
 module.exports = {
 
 	run: function (creep) {
-		this._first = true
+		creep._first = true
 		if (creep.memory.gathering && creep.memory.job) {
 			if (creep.memory.job == 'source') {
 				this.gatherFromSource(creep);
@@ -178,7 +178,7 @@ module.exports = {
 			creep.memory.gathering = creep.carry.energy < creep.carryCapacity;
 			creep.memory.jobAssignedTime = Game.time
 			creep.say(creep.memory.job)
-			if (this._first) {
+			if (creep._first) {
 				this._first = false
 				this.run(creep)
 			}
