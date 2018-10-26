@@ -31,6 +31,8 @@ module.exports = {
 		} else if (!creep.memory.gathering && creep.carry.energy == 0) {
 			this.doneDelivering(creep);
 			this.getNewJob(creep);
+		} else if (creep.makeSureInBossRoom()) {
+
 		} else {
 			let err;
 			let target;
