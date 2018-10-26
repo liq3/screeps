@@ -71,7 +71,7 @@ module.exports = {
 			if(target instanceof ConstructionSite) {
 				err = creep.build(target);
 			} else if (target instanceof StructureController) {
-				err = creep.upgrade(target);
+				err = creep.transfer(target, RESOURCE_ENERGY);
 			} else if (target instanceof Structure){
 				err = creep.repair(target);
 			}
