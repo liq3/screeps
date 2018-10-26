@@ -14,7 +14,7 @@ module.exports = {
 			if (target instanceof Structure && target.hits == target.hitsMax) {
 				creep.memory.targetId = null;
 			}
-			if (creep.room.controller.level <= 1) {
+			if (creep.room.controller && creep.room.controller.level <= 1) {
 				target = creep.room.controller
 			}
 	        if(!target || Game.time - creep.memory.jobStartTime > 100) {
