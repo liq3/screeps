@@ -126,10 +126,7 @@ module.exports = {
 			for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn')) {
 				totalSpawn += c.carry.energy;
 			}
-			let desired = 0;
-			for (let structure of creep.room.find(FIND_MY_STRUCTURES, {filter: s => (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.isActive()})) {
-				desired += structure.energyCapacity - structure.energy;
-			}
+			let desired = creep.room.energyCapacityAvailable - creep.room.energyAvailable
 			if (totalSpawn < desired) {
 				creep.memory.job = 'spawn';
 			}
