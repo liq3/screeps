@@ -70,7 +70,7 @@ module.exports = {
         searchRooms = _.filter(Game.flags, f => f.name == 'claim');
         for (let i in searchRooms) {
             searchRooms[i] = searchRooms[i].pos.roomName;
-            room = Game.rooms[searchRoom[i]]
+            room = Game.rooms[searchRooms[i]]
             if (room && room.controller.my && room.controller.level >= 1) {
                 room.createConstructionSite(Game.flags.claim.pos, STRUCTURE_SPAWN)
                 Game.flags.claim.remove()
