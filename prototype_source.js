@@ -1,4 +1,4 @@
-Object.defineProperty(StructureSource.prototype, 'container', {
+Object.defineProperty(Source.prototype, 'container', {
     get: function() {
         if (!this._container) {
             if (!this.memory.containerId) {
