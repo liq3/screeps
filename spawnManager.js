@@ -27,7 +27,7 @@ module.exports = {
         let minerTargetId = null;
         let spawnHauler = false;
         let desiredTransportCapacity = 0;
-        if (numberStationaryUpgrades > 1 || room.storage) {
+        if (numberStationaryUpgraders > 1 || room.storage) {
             let sourceList = [];
             for (let r of Memory.ownedRooms[room.name]) {
                 if (Game.rooms[r] == null && scoutTarget == null

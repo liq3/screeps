@@ -1,6 +1,6 @@
 // spawns, creeps, flags, rooms have .memory
 
-const useProfiler = false
+const useProfiler = true
 
 require('prototype_creep')
 const spawnManager = require('spawnManager');
