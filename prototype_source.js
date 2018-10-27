@@ -4,7 +4,7 @@ Object.defineProperty(Source.prototype, 'memory', {
             try {
                 this._memory = Memory.sources[source]
             } catch (e) {
-                if (e typeof typeError) {
+                if (e instanceof typeError) {
                     Memory.sources[source] = {}
                 } else {
                     throw e;
@@ -34,7 +34,7 @@ Object.defineProperty(Source.prototype, 'container', {
             }
             return this._container
         } catch (e) {
-            if (e typeof TypeError) {
+            if (e instanceof TypeError) {
                 Memory.
             } else {
                 throw e;
