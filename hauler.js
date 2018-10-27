@@ -198,9 +198,9 @@ module.exports = {
 				let target;
 				var err;
 				let withdrawAmount = 0;
-				let droppedEnergy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY})[0];
-				if (droppedEnergy) {
-					target = droppedEnergy;
+				let droppedEnergy = source.container.pos.lookFor(LOOK_RESOURCES);
+				if (droppedEnergy.length) {
+					target = droppedEnergy[0];
 					err = creep.pickup(target);
 					if (err == OK && creep.carryCapacity - creep.carry.energy < target.amount) {
 						creep.memory.gathering = false;
