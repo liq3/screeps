@@ -103,6 +103,65 @@ module.exports = {
         }
 
         searchRooms = [];
+        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attack');
+        for (let i in searchRooms) {
+            searchRooms[i] = searchRooms[i].pos.roomName;
+        }
+        let spawnAttacker = false;
+        let attackerTargetRoom = null;
+        for (let r of searchRooms) {
+            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.job == 'attack' && c.memory.role == 'combat').length;
+            if (attackers == 0) {
+                spawnAttacker = true;
+                attackerTargetRoom = r;
+                break;
+            }
+        }
+
+        searchRooms = [];
+        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'harass');
+        for (let i in searchRooms) {
+            searchRooms[i] = searchRooms[i].pos.roomName;
+        }
+        let attackerParts;
+        for (let r of searchRooms) {
+            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.job == 'attack' && c.memory.role == `combat`).length;
+            if (attackers == 0) {
+                spawnAttacker = true;
+                attackerTargetRoom = r;
+                attackerParts = 1;
+                break;
+            }
+        }
+
+        let spawnAttackerRanged = false;
+        let attackerRangedTargetRoom;
+        searchRooms = [];
+        let attackFlags = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attackRanged');
+        let desiredAttackers = [];
+        for (let i in attackFlags) {
+            let flagName = attackFlags[i].name.split(" ");
+            if (flagName.length > 1) {
+                let num = parseInt(flagName[1]);
+                if (num) {
+                    desiredAttackers[i] = num;
+                }
+            } else {
+                desiredAttackers[i] = 1;
+            }
+            searchRooms[i] = attackFlags[i].pos.roomName;
+        }
+        for (let i in searchRooms) {
+            let r = searchRooms[i];
+            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'combat' && c.memory.job == 'attackRanged').length;
+            if (attackers < desiredAttackers[i]) {
+                spawnAttackerRanged = true;
+                attackerRangedTargetRoom = r;
+                break;
+            }
+        }
+
+        searchRooms = [];
         searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'decoy');
         for (let i in searchRooms) {
             searchRooms[i] = searchRooms[i].pos.roomName;
@@ -149,10 +208,10 @@ module.exports = {
 
         if (numberHaulers < 2) {
             this.createCreep(spawn, 'H', {role:'smallHauler', bossRoom:room.name});
-        } else if ((info = shouldSpawnAttacker())) {
-            this.createCreep(spawn, 'A', {role:'combat',targetRoom:info.attackerTargetRoom,job:'attack'}, info.attackerParts);
-        } else if ((targetRoom = shouldSpawnAttackerRanged())) {
-            this.createCreep(spawn, 'AR', {role:'combat',targetRoom:targetRoom, job:'attackRanged'});
+        } else if (spawnAttacker) {
+            this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
+        } else if (spawnAttackerRanged) {
+            this.createCreep(spawn, 'AR', {role:'combat',targetRoom:attackerRangedTargetRoom, job:'attackRanged'});
         } else if (scoutTarget) {
             this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
         } else if (claimTargetRoom) {
@@ -175,60 +234,6 @@ module.exports = {
             this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
         } else if ((room.storage && numberStationaryUpgraders < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)) || (room.storage == undefined && numberStationaryUpgraders < 3))) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', bossRoom:room.name});
-        }
-    },
-
-    shouldSpawnAttacker: function() {
-        var searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attack');
-        for (let i in searchRooms) {
-            searchRooms[i] = searchRooms[i].pos.roomName;
-        }
-        let spawnAttacker = false;
-        let attackerTargetRoom = null;
-        for (let r of searchRooms) {
-            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.job == 'attack' && c.memory.role == 'combat').length;
-            if (attackers == 0) {
-                return {attackerTargetRoom: r, attackerParts: 0}
-            }
-        }
-
-        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'harass');
-        for (let i in searchRooms) {
-            searchRooms[i] = searchRooms[i].pos.roomName;
-        }
-        let attackerParts;
-        for (let r of searchRooms) {
-            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.job == 'attack' && c.memory.role == `combat`).length;
-            if (attackers == 0) {
-                return {attackerTargetRoom: r, attackerParts: 1}
-            }
-        }
-    },
-
-    shouldSpawnAttackerRanged: function() {
-        let spawnAttackerRanged = false;
-        let attackerRangedTargetRoom;
-        let searchRooms = [];
-        let attackFlags = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attackRanged');
-        let desiredAttackers = [];
-        for (let i in attackFlags) {
-            let flagName = attackFlags[i].name.split(" ");
-            if (flagName.length > 1) {
-                let num = parseInt(flagName[1]);
-                if (num) {
-                    desiredAttackers[i] = num;
-                }
-            } else {
-                desiredAttackers[i] = 1;
-            }
-            searchRooms[i] = attackFlags[i].pos.roomName;
-        }
-        for (let i in searchRooms) {
-            let r = searchRooms[i];
-            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'combat' && c.memory.job == 'attackRanged').length;
-            if (attackers < desiredAttackers[i]) {
-                return r
-            }
         }
     },
 
