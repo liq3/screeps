@@ -54,7 +54,7 @@ module.exports = {
 			}
 
 			if (creep.memory.job == 'tower') {
-				if (!target || target.energy == target.energyCapacity) {
+				if (!target || (target.energy && target.energy == target.energyCapacity))  {
 					target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER
 						&& s.energy < s.energyCapacity});
 					creep.memory.target = target.id;
@@ -64,7 +64,7 @@ module.exports = {
 					this.doneDelivering(creep)
 				}
 			} else if (creep.memory.job == 'spawn') {
-				if (!target || target.energy == target.energyCapacity) {
+				if (!target || (target.energy && target.energy == target.energyCapacity)) {
 					target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
 					creep.memory.target = target.id;
 				}
@@ -75,7 +75,7 @@ module.exports = {
 					}
 				}
 			} else if (creep.memory.job == 'upgrade') {
-				if (!target || target.energy == target.energyCapacity) {
+				if (!target || (target.energy && target.energy == target.energyCapacity))  {
 					target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {structureType: STRUCTURE_CONTAINER})[0];
 					creep.memory.target = target.id;
 				}
