@@ -162,7 +162,7 @@ module.exports = {
 			}
 		}
 
-		if (!creep.memory.job && creep.carry.energy == creep.carryCapacity) {
+		if (!creep.memory.job && creep.room.storage && creep.carry.energy == creep.carryCapacity) {
 			creep.memory.job = 'storage'
 		}
 
