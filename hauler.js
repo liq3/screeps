@@ -224,12 +224,14 @@ module.exports = {
 				if (creep.memory.gathering && err != ERR_NOT_IN_RANGE) {
 				   	if (source.container) {
 				   		target = source.container;
-						if (withdrawAmount) {
-							err = creep.withdraw(target, RESOURCE_ENERGY, withdrawAmount);
-						} else {
-							err = creep.withdraw(target, RESOURCE_ENERGY);
+						if (creep.carryCapacity - creep.carry.energy <= target.store[RESOURCE_ENERGY] + withdrawAmount) {
+							if (withdrawAmount) {
+								err = creep.withdraw(target, RESOURCE_ENERGY, withdrawAmount);
+							} else {
+								err = creep.withdraw(target, RESOURCE_ENERGY);
+							}
 						}
-				   		if (err == OK && creep.carryCapacity - creep.carry.energy < target.store[RESOURCE_ENERGY]) {
+				   		if (err == OK) {
 				   			creep.memory.gathering = false;
 				   		}
 				   	}
