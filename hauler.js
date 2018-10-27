@@ -59,7 +59,7 @@ module.exports = {
 			if (target) {
 				err = creep.transfer(target, RESOURCE_ENERGY);
 			} else if (creep.memory.job == 'spawn') {
-				target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {range:1, filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
+				target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
 				if (target) {
 					err = creep.transfer(target, RESOURCE_ENERGY);
 				} else if (creep.room.storage) {
@@ -94,7 +94,7 @@ module.exports = {
 			} else if (creep.memory.job == 'praise') {
 				target = creep.room.controller;
 				err = creep.transfer(target, RESOURCE_ENERGY);
-				if (err == OK && creep.store.energy == 0) {
+				if (err == OK && creep.carry.energy == 0) {
 					this.doneDelivering(creep);
 				}
 			} else {
