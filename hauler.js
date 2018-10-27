@@ -42,7 +42,7 @@ module.exports = {
 
 		} else {
 			let err;
-			let target;
+			let target = Game.getObjectById(creep.memory.target);
 			let roadSites = creep.pos.findInRange(FIND_CONSTRUCTION_SITES, 1, {filter: s=>s.structureType == STRUCTURE_ROAD});
 			if (roadSites.length > 0) {
 				err = creep.build(roadSites[0]);
@@ -53,27 +53,36 @@ module.exports = {
 				}
 			}
 
-
-			target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER
-				&& s.energy < s.energyCapacity/ (creep.memory.job == 'tower' ? 1 : 2)})
-			if (target) {
+			if (creep.memory.job == 'tower') {
+				if (!target || target.energy == target.energyCapacity) {
+					target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER
+						&& s.energy < s.energyCapacity});
+					creep.memory.target = target.id;
+				}
 				err = creep.transfer(target, RESOURCE_ENERGY);
+				if (err == OK) {
+					this.doneDelivering(creep)
+				}
 			} else if (creep.memory.job == 'spawn') {
-				target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
+				if (!target || target.energy == target.energyCapacity) {
+					target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
+					creep.memory.target = target.id;
+				}
 				if (target) {
 					err = creep.transfer(target, RESOURCE_ENERGY);
-				} else if (creep.room.storage) {
-					creep.memory.job = 'storage';
-				}
-				if (err == OK && creep.carry.energy == 0) {
-					this.doneDelivering(creep);
+					if (err == OK && creep.carry.energy == 0) {
+						this.doneDelivering(creep);
+					}
 				}
 			} else if (creep.memory.job == 'upgrade') {
-				target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: s=>s.structureType == STRUCTURE_CONTAINER});
-	            if (target.length > 0) {
-	                err = creep.transfer(target[0], RESOURCE_ENERGY);
+				if (!target || target.energy == target.energyCapacity) {
+					target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {structureType: STRUCTURE_CONTAINER})[0];
+					creep.memory.target = target.id;
+				}
+	            if (target) {
+	                err = creep.transfer(target, RESOURCE_ENERGY);
 	                if (err == ERR_NOT_IN_RANGE) {
-	                    creep.moveTo(target[0]);
+	                    creep.moveTo(target);
 	                }
 					if (err == OK) {
 						this.doneDelivering(creep);
@@ -117,6 +126,7 @@ module.exports = {
 		creep.memory.gathering = true;
 		creep.memory.sourceId = null;
 		delete creep.memory.job;
+		delete creep.memory.target;
 	},
 	getNewJob: function(creep) {
 		if (creep.room.find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity}).length > 0) {
