@@ -37,7 +37,8 @@ let mainLoop = function() {
 
     for (let i in Game.rooms) {
         try {
-            if (Game.rooms[i].controller.my && Game.cpu.bucket > 1000) {
+            if (Game.rooms[i].controller.my && Game.cpu.bucket > 1000
+            && Game.rooms[i].find(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_SPAWN && !s.spawning})[0] != undefined) {
                 spawnManager.spawnCreeps(Game.rooms[i]);
             }
         } catch (err) {
