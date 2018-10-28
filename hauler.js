@@ -100,7 +100,7 @@ module.exports = {
 					} else if (err == ERR_INVALID_TARGET) {
 						delete creep.memory.target;
 					} else {
-						console.log(`weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
+						console.log(`${creep.name}: weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
 					}
 	            }
 			} else if (creep.memory.job == 'deliverEnergyToTerminal') {
