@@ -84,7 +84,7 @@ module.exports = {
 				}
 			} else if (creep.memory.job == 'upgrade') {
 				if (!target || (target.energy && target.energy == target.energyCapacity))  {
-					target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {structureType: STRUCTURE_CONTAINER})[0];
+					target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType: STRUCTURE_CONTAINER}})[0];
 					if (!target) {
 						this.doneDelivering(creep);
 					} else {
