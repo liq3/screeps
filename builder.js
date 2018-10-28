@@ -55,6 +55,9 @@ module.exports = {
 					if (itr.structureType == STRUCTURE_SPAWN) {
 					    score -= 200;
 					}
+					if (itr.structureType == STRUCTURE_STORAGE) {
+						score -= 10000
+					}
 					if (score < possible.best) {
 						possible.best = score;
 						possible.id = itr.id;
