@@ -111,7 +111,7 @@ let mainLoop = function() {
         let spawn = Game.spawns[i];
         spawn.recycleCreep(spawn.pos.findClosestByRange( FIND_MY_CREEPS, {filter: c => c.memory.role == 'recycle'}));
         if (Memory.spawnTimes == undefined) {
-            Memory.spawnTimes = [];
+            Memory.spawnTimes = {};
             if (!Memory.spawnTimes[spawn.id]) {
                 Memory.spawnTimes[spawn.id] = [];
             }
