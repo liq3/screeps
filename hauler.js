@@ -98,7 +98,7 @@ module.exports = {
 	                } else if (err == OK) {
 						this.doneDelivering(creep);
 					} else {
-						console.log(`weird error while delivering energy to the praise box ${err}`)
+						console.log(`weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
 					}
 	            }
 			} else if (creep.memory.job == 'deliverEnergyToTerminal') {
