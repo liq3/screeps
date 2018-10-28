@@ -180,9 +180,13 @@ module.exports = {
         }
 
         let desiredBuilders = 1;
-        if (room.find(FIND_CONSTRUCTION_SITES).length > 0) {
-            desiredBuilders = 3;
-        } else if (numberBuilders > desiredBuilders) {
+        for (let r in Memory.ownedRooms[room.name]) {
+            if (room.find(FIND_CONSTRUCTION_SITES).length > 0) {
+                desiredBuilders = 3;
+                break
+            }
+        }
+        if (numberBuilders > desiredBuilders) {
             best = null
             for (let creep of room.find(FIND_MY_CREEPS, {filter: c => c.memory.role == 'builder'})) {
                 if (best == null || best.ticksToLive < creep.ticksToLive) {
