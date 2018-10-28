@@ -210,7 +210,7 @@ module.exports = {
             this.createCreep(spawn, 'H', {role:'smallHauler', bossRoom:room.name});
         } else if (attackerTargetRoom) {
             this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
-        } else if (attackerTargetRoomRanged) {
+        } else if (attackerRangedTargetRoom) {
             this.createCreep(spawn, 'AR', {role:'combat',targetRoom:attackerRangedTargetRoom, job:'attackRanged'});
         } else if (scoutTarget) {
             this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
