@@ -180,7 +180,7 @@ module.exports = {
         }
 
         let desiredBuilders = 1;
-        for (let r in Memory.ownedRooms[room.name]) {
+        for (let r of Memory.ownedRooms[room.name]) {
             if (room.find(FIND_CONSTRUCTION_SITES).length > 0) {
                 desiredBuilders = 3;
                 break
