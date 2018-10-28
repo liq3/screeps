@@ -278,7 +278,7 @@ module.exports = {
 							let distance = path.cost/2;
 							let energy = 0;
 							for (let creep of _.filter(Game.creeps, c=>c.memory.sourceId == source.id && c.memory.gathering)) {
-								energy -= creep.carryCapacity + creep.carry.energy;
+								energy -= creep.carryCapacity - creep.carry.energy;
 							}
 							for (let s of source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType == STRUCTURE_CONTAINER})) {
 								energy += s.store[RESOURCE_ENERGY];
