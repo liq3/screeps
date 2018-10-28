@@ -154,7 +154,7 @@ module.exports = {
 
 		if (!creep.memory.job) {
 			let totalSpawn = 0;
-			for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn')) {
+			for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn' && c.memory.bossRoom == creep.room.name)) {
 				totalSpawn += c.carry.energy;
 			}
 			let desired = creep.room.energyCapacityAvailable - creep.room.energyAvailable
@@ -169,7 +169,7 @@ module.exports = {
 				{filter: s=>s.structureType == STRUCTURE_CONTAINER && s.pos.inRangeTo(s.room.controller, 3)});
 			if (upgradeContainer) {
 				let totalUpgrade = upgradeContainer.store[RESOURCE_ENERGY];
-				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'upgrade')) {
+				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'upgrade' && c.memory.bossRoom == creep.room.name)) {
 					totalUpgrade += c.carry.energy;
 				}
 				let upgradeParts = 0;
