@@ -30,9 +30,13 @@ let mainLoop = function() {
         Memory.dangerRooms = []
     }
 
-    Memory.ownedRooms = {};
+    if (!Memory.ownedRooms) {
+        Memory.ownedRooms = {};
+    }
     for (let i in Game.spawns) {
-        Memory.ownedRooms[Game.spawns[i].room.name] = [Game.spawns[i].room.name]
+        if (!Memory.ownedRooms[Game.spawns[i].room.name]) {
+            Memory.ownedRooms[Game.spawns[i].room.name] = [Game.spawns[i].room.name]
+        }
     }
 
     for (let i in Game.rooms) {
