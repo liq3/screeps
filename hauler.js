@@ -95,9 +95,10 @@ module.exports = {
 	                err = creep.transfer(target, RESOURCE_ENERGY);
 	                if (err == ERR_NOT_IN_RANGE) {
 	                    creep.moveTo(target);
-	                }
-					if (err == OK) {
+	                } else if (err == OK) {
 						this.doneDelivering(creep);
+					} else {
+						console.log(`weird error while delivering energy to the praise box ${err}`)
 					}
 	            }
 			} else if (creep.memory.job == 'deliverEnergyToTerminal') {
