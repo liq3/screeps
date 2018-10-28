@@ -97,6 +97,8 @@ module.exports = {
 	                    creep.moveTo(target);
 	                } else if (err == OK) {
 						this.doneDelivering(creep);
+					} else if (err == ERR_INVALID_TARGET) {
+						delete creep.memory.target;
 					} else {
 						console.log(`weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
 					}
@@ -134,10 +136,10 @@ module.exports = {
 		}
 	},
 	repairRoads: function(creep) {
-	   	if(creep.carry.energy > 0) {
+	   	if (creep.carry.energy > 0) {
         	let road = creep.pos.lookFor(LOOK_STRUCTURES);
-        	if(road.length>0) {
-        		if(road[0].hits<road[0].hitsMax) {
+        	if (road.length>0) {
+        		if (road[0].hits<road[0].hitsMax) {
         			creep.repair(road[0]);
         		}
         	}
