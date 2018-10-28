@@ -312,7 +312,7 @@ module.exports = {
         } else if (data.role == 'scout') {
             parts = [MOVE];
         } else if (data.role == 'claimer') {
-            parts = [CLAIM,MOVE];
+            parts = [CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
         } else {
             if (spawn.room.energyCapacityAvailable < 350) {
                 parts = [WORK, CARRY, CARRY, MOVE, MOVE];
