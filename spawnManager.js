@@ -100,20 +100,43 @@ module.exports = {
             }
         }
 
-        searchRooms = [];
-        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attack');
-        for (let i in searchRooms) {
-            searchRooms[i] = searchRooms[i].pos.roomName;
-        }
-        let spawnAttacker = false;
-        let attackerTargetRoom = null;
-        for (let r of searchRooms) {
-            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.job == 'attack' && c.memory.role == 'combat').length;
-            if (attackers == 0) {
-                spawnAttacker = true;
-                attackerTargetRoom = r;
-                break;
+        function processAttackFlag(name) {
+            let spawnAttacker = false;
+            let targetRoom;
+            searchRooms = [];
+            let attackFlags = _.filter(Game.flags, f => f.name.split(" ")[0] == name);
+            let desiredAttackers = [];
+            for (let i in attackFlags) {
+                let flagName = attackFlags[i].name.split(" ");
+                if (flagName.length > 1) {
+                    let num = parseInt(flagName[1]);
+                    if (num) {
+                        desiredAttackers[i] = num;
+                    }
+                } else {
+                    desiredAttackers[i] = 1;
+                }
+                searchRooms[i] = attackFlags[i].pos.roomName;
             }
+            for (let i in searchRooms) {
+                let r = searchRooms[i];
+                let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'combat' && c.memory.job == name).length;
+                if (attackers < desiredAttackers[i]) {
+                    spawnAttacker = true;
+                    targetRoom = r;
+                    break;
+                }
+            }
+            if (spawnAttacker) {
+                return targetRoom
+            } else {
+                return
+            }
+        }
+
+        let attackerTargetRoom = processAttackFlag("attack")
+        if (!attackerTargetRoom) {
+            var attackerRangedTargetRoom = processAttackFlag("attackRanged")
         }
 
         searchRooms = [];
@@ -132,32 +155,7 @@ module.exports = {
             }
         }
 
-        let spawnAttackerRanged = false;
-        let attackerRangedTargetRoom;
-        searchRooms = [];
-        let attackFlags = _.filter(Game.flags, f => f.name.split(" ")[0] == 'attackRanged');
-        let desiredAttackers = [];
-        for (let i in attackFlags) {
-            let flagName = attackFlags[i].name.split(" ");
-            if (flagName.length > 1) {
-                let num = parseInt(flagName[1]);
-                if (num) {
-                    desiredAttackers[i] = num;
-                }
-            } else {
-                desiredAttackers[i] = 1;
-            }
-            searchRooms[i] = attackFlags[i].pos.roomName;
-        }
-        for (let i in searchRooms) {
-            let r = searchRooms[i];
-            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'combat' && c.memory.job == 'attackRanged').length;
-            if (attackers < desiredAttackers[i]) {
-                spawnAttackerRanged = true;
-                attackerRangedTargetRoom = r;
-                break;
-            }
-        }
+
 
         searchRooms = [];
         searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'decoy');
