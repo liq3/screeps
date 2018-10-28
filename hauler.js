@@ -125,14 +125,22 @@ module.exports = {
 			if (err == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target, {range:1});
 			}
-			if (creep.carry.energy > 0 && creep.pos.lookFor(LOOK_STRUCTURES).length > 0) {
-			 	creep.repair(creep.pos.lookFor(LOOK_STRUCTURES)[0]);
-			}
+			this.repairRoads(creep)
 		}
 		if (Memory.visuals.displayJobs) {
 			let text = creep.memory.job || 'idle';
 			creep.room.visual.text(text, creep.pos);
 		}
+	},
+	repairRoads: function(creep) {
+	   	if(creep.carry.energy > 0) {
+        	let road = creep.pos.lookFor(LOOK_STRUCTURES);
+        	if(road.length>0) {
+        		if(road[0].hits<road[0].hitsMax) {
+        			creep.repair(road[0]);
+        		}
+        	}
+        }
 	},
 	doneDelivering: function(creep) {
 		creep.memory.gathering = true;

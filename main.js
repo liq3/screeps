@@ -297,14 +297,17 @@ global.myUtils.countParts = function(rooms) {
 global.myUtils.dumpMarket = function() {
     let orders = {}
     for (let order of Game.market.getAllOrders()) {
-        if (!orders[order.order.resourceType]) {
-            orders[order.order.resourceType] = {ORDER_BUY:[], ORDER_SELL:[]}
+        if (!orders[order.resourceType]) {
+            orders[order.resourceType] = {}
+            orders[order.resourceType][ORDER_BUY] = []
+            orders[order.resourceType][ORDER_SELL] = []
         }
+        //console.log(JSON.stringify(order, null, 4), JSON.stringify(orders))
         orders[order.resourceType][order.type].push({price:order.price, amount:order.amount})
     }
     for (let resourceType in orders) {
-        let stats = {ORDER_BUY:{min:Infinity, max:-Infinity, total:0, count:0},
-                    ORDER_SELL:{min:Infinity, max:-Infinity, total:0, count:0}};
+        let stats = {'buy':{min:Infinity, max:-Infinity, total:0, count:0},
+                    'sell':{min:Infinity, max:-Infinity, total:0, count:0}};
         for (let orderType in orders[resourceType]) {
             for (let order of orders[resourceType][orderType]) {
                 stats[orderType].count += 1
@@ -312,14 +315,12 @@ global.myUtils.dumpMarket = function() {
                 if (order.price < stats[orderType].min) {
                     stats[orderType].min = order.price
                 }
-                if (order.price > stats[orderType].min) {
+                if (order.price > stats[orderType].max) {
                     stats[orderType].max = order.price
                 }
             }
         }
-        console.log(`${resourceType}: Sell Min:${stats[ORDER_SELL].min} Max:${stats[ORDER_SELL].max} \
-            Average:${stats[ORDER_SELL].total / stats[ORDER_SELL].count} Count:${stats[ORDER_SELL].count}\
-            Buy Min:${stats[ORDER_BUY].min} Max:${stats[ORDER_BUY].max} Average:${stats[ORDER_BUY].total / stats[ORDER_BUY].count} Count:${stats[ORDER_BUY].count}`)
+        console.log(`${resourceType}: Sell Min:${stats[ORDER_SELL].min} Max:${stats[ORDER_SELL].max} Average:${stats[ORDER_SELL].total / stats[ORDER_SELL].count} Count:${stats[ORDER_SELL].count} Buy Min:${stats[ORDER_BUY].min} Max:${stats[ORDER_BUY].max} Average:${stats[ORDER_BUY].total / stats[ORDER_BUY].count} Count:${stats[ORDER_BUY].count}`)
     }
 }
 
