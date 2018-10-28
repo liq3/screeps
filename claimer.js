@@ -6,7 +6,7 @@ module.exports = {
 		} else if (creep.memory.targetRoom != undefined) {
 			var target = creep.memory.targetRoom;
 		}
-		if (creep.pos.roomName != target) {
+		if (creep.room.name != target) {
 			creep.moveTo(new RoomPosition(25,25,target), {range: 22});
 		} else {
     	    if (creep.memory.claimRoom != undefined) {
@@ -15,7 +15,7 @@ module.exports = {
         		var err = creep.reserveController(creep.room.controller);
     		}
 			if (err == ERR_NOT_IN_RANGE) {
-				creep.moveTo(creep.room.controller);
+				creep.moveTo(creep.room.controller, {range: 1});
 			}
 		}
 	}
