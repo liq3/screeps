@@ -43,20 +43,20 @@ module.exports = {
 					}
 				}
 
+				let priorityMods = {
+					STRUCTURE_WALL:200,
+					STRUCTURE_RAMPART:200,
+					STRUCTURE_ROAD:100,
+					STRUCTURE_CONTAINER:-100,
+					STRUCTURE_SPAWN:-200,
+					STRUCTURE_STORAGE:-300
+				}
 				for (let i in Game.constructionSites) {
 					let itr = Game.constructionSites[i];
 					let score = creep.pos.getRangeTo(itr);
-					if (itr.structureType == STRUCTURE_WALL || itr.structureType == STRUCTURE_RAMPART) {
-						score += 200;
-					}
-					if (itr.structureType == STRUCTURE_ROAD || itr.structureType == STRUCTURE_CONTAINER) {
-						score += 100;
-					}
-					if (itr.structureType == STRUCTURE_SPAWN) {
-					    score -= 200;
-					}
-					if (itr.structureType == STRUCTURE_STORAGE) {
-						score -= 10000
+
+					if (priorityMods[itr.structureType]) {
+						score += priorityMods[itr.structureType]
 					}
 					if (score < possible.best) {
 						possible.best = score;

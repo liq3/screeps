@@ -9,6 +9,11 @@ Creep.prototype.gatherEnergy = function () {
         }
     }
     if (!energy) {
+        if (this.room.container && this.room.container.store[RESOURCE_ENERGY] > this.carryCapacity) {
+            energy = this.room.container;
+        }
+    }
+    if (!energy) {
         energy = this.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
             r => r.resourceType == RESOURCE_ENERGY && r.amount > 0, range:1});
     }

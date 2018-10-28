@@ -106,8 +106,8 @@ module.exports = {
 				if (err == OK) {
 					this.doneDelivering(creep);
 				}
-			} else if (creep.memory.job == 'storage' && creep.room.storage && creep.room.storage.isActive()) {
-			    target = creep.room.storage;
+			} else if (creep.memory.job == 'storage' && (creep.room.storage || creep.room.container) && creep.room.storage.isActive()) {
+			    target = creep.room.storage ? creep.room.storage : creep.room.container;
 				err = creep.transfer(target, RESOURCE_ENERGY);
 				if (err == OK) {
 					this.doneDelivering(creep);
@@ -178,13 +178,13 @@ module.exports = {
 				}
 				let distance = creep.pos.findPathTo(upgradeContainer).length;
 				let metric = upgradeContainer.storeCapacity - (totalUpgrade - upgradeParts*distance);
-				if (metric > creep.carryCapacity && (!creep.room.storage || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
+				if (metric > creep.carryCapacity && (!(creep.room.storage || creep.room.container) || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
 					creep.memory.job = 'upgrade';
 				}
 			}
 		}
 
-		if (!creep.memory.job && creep.room.storage && creep.carry.energy == creep.carryCapacity) {
+		if (!creep.memory.job && (creep.room.storage || creep.room.container) && creep.carry.energy == creep.carryCapacity) {
 			creep.memory.job = 'storage'
 		}
 
