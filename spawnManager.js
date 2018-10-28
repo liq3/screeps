@@ -27,32 +27,30 @@ module.exports = {
         let minerTargetId = null;
         let spawnHauler = false;
         let desiredTransportCapacity = 0;
-        if (numberStationaryUpgraders > 1 || room.storage) {
-            let sourceList = [];
-            for (let r of Memory.ownedRooms[room.name]) {
-                if (Game.rooms[r] == null && scoutTarget == null
-                        && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName == r).length == 0) {
-                    scoutTarget = r;
-                } else if (Game.rooms[r]) {
-                    for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-                        let path = room.getSourcePath(firstSpawn, source)
-                        sourceList.push({source:source, path:path});
-                    }
+        let sourceList = [];
+        for (let r of Memory.ownedRooms[room.name]) {
+            if (Game.rooms[r] == null && scoutTarget == null
+                    && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName == r).length == 0) {
+                scoutTarget = r;
+            } else if (Game.rooms[r]) {
+                for (let source of Game.rooms[r].find(FIND_SOURCES)) {
+                    let path = room.getSourcePath(firstSpawn, source)
+                    sourceList.push({source:source, path:path});
                 }
             }
+        }
 
-            sourceList.sort((a,b) => a.path.cost - b.path.cost );
-            let numberContainers = 0;
-            for (let {source,path} of sourceList) {
-                let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-                if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
-                    minerTargetId = source.id;
-                } else if (miners.length > 0) {
-                    let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_CONTAINER});
-                    if (containers.length > 0) {
-                        desiredTransportCapacity += Math.ceil( 2 * (2 * path.cost) * source.energyCapacity / ENERGY_REGEN_TIME);
-                        numberContainers += 1;
-                    }
+        sourceList.sort((a,b) => a.path.cost - b.path.cost );
+        let numberContainers = 0;
+        for (let {source,path} of sourceList) {
+            let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
+            if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
+                minerTargetId = source.id;
+            } else if (miners.length > 0) {
+                let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_CONTAINER});
+                if (containers.length > 0) {
+                    desiredTransportCapacity += Math.ceil( 2 * (2 * path.cost) * source.energyCapacity / ENERGY_REGEN_TIME);
+                    numberContainers += 1;
                 }
             }
         }
