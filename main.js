@@ -294,6 +294,35 @@ global.myUtils.countParts = function(rooms) {
     console.log (ret + " parts.");
 }
 
+global.myUtils.dumpMarket = function() {
+    let orders = {}
+    for (let order of Game.market.getAllOrders()) {
+        if (!orders[order.order.resourceType]) {
+            orders[order.order.resourceType] = {ORDER_BUY:[], ORDER_SELL:[]}
+        }
+        orders[order.resourceType][order.type].push({price:order.price, amount:order.amount})
+    }
+    for (let resourceType in orders) {
+        let stats = {ORDER_BUY:{min:Infinity, max:-Infinity, total:0, count:0},
+                    ORDER_SELL:{min:Infinity, max:-Infinity, total:0, count:0}};
+        for (let orderType in orders[resourceType]) {
+            for (let order of orders[resourceType][orderType]) {
+                stats[orderType].count += 1
+                stats[orderType].total += order.price
+                if (order.price < stats[orderType].min) {
+                    stats[orderType].min = order.price
+                }
+                if (order.price > stats[orderType].min) {
+                    stats[orderType].max = order.price
+                }
+            }
+        }
+        console.log(`${resourceType}: Sell Min:${stats[ORDER_SELL].min} Max:${stats[ORDER_SELL].max} \
+            Average:${stats[ORDER_SELL].total / stats[ORDER_SELL].count} Count:${stats[ORDER_SELL].count}\
+            Buy Min:${stats[ORDER_BUY].min} Max:${stats[ORDER_BUY].max} Average:${stats[ORDER_BUY].total / stats[ORDER_BUY].count} Count:${stats[ORDER_BUY].count}`)
+    }
+}
+
 if (useProfiler) {
     const profiler = require('screeps-profiler');
     profiler.enable();
