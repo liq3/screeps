@@ -3,15 +3,7 @@ module.exports = {
  	run: function (creep) {
 		var source = Game.getObjectById(creep.memory.sourceId);
         if(source) {
-            let container = Game.getObjectById(creep.memory.containerId);
-            if (!container) {
-                let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_CONTAINER});
-                if (containers.length > 0) {
-                    container = containers[0];
-                    creep.memory.containerId = container.id;
-                }
-            }
-
+            let container = source.container
             if (container && creep.pos.getRangeTo(container) > 0) {
                 creep.moveTo(container, {range:0});
             } else if (!container) {
