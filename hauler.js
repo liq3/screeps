@@ -99,7 +99,7 @@ module.exports = {
 						this.doneDelivering(creep);
 					} else if (err == ERR_INVALID_TARGET) {
 						delete creep.memory.target;
-					} else {
+					} else if (err != ERR_FULL) {
 						console.log(`${creep.name}: weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
 					}
 	            }
