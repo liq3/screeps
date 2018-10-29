@@ -2,7 +2,7 @@ module.exports = {
 
 	run: function (creep) {
 
-		if(creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
+		if (creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
 			creep.gatherEnergy(creep);
 	    } else if (creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
 	        creep.memory.gathering = false;
