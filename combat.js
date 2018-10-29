@@ -24,8 +24,8 @@ module.exports = {
 				target = creep.pos.findClosestByPath(FIND_HOSTILE_SPAWNS);
 			}
 			if (!target) {
-				let flags = creep.room.find(FIND_FLAGS, {filter: f=>f.name.split(" ")[0] == 'target'})
-				if (flags) {
+				let flags = creep.room.find(FIND_FLAGS, {filter: f=> f.name.split(" ")[0] == 'target'})
+				if (flags.length) {
 					target = flags[0].pos.findClosestByRange(FIND_HOSTILE_STRUCTURES)
 				} else {
 					target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
