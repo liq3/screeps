@@ -349,7 +349,7 @@ module.exports = {
             parts = [CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
         } else if (data.role == 'miner') {
             let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 50) / 450);
-            parts = Array(numberParts).fill(WORK);
+            parts = Array(numberParts*4).fill(WORK);
             parts.push(CARRY)
             parts = parts.concat(Array(numberParts).fill(MOVE))
         } else {
