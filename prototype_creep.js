@@ -3,30 +3,43 @@ Creep.prototype.gatherEnergy = function () {
     if (id) {
         var energy = Game.getObjectById(id);
     }
-    if (!energy) {
-        if (this.room.storage && this.room.storage.store[RESOURCE_ENERGY] > this.carryCapacity) {
-            energy = this.room.storage;
+    function getNewEnergy(room) {
+        let energy = undefined;
+        if (!energy) {
+            if (room.storage && room.storage.store[RESOURCE_ENERGY] > this.carryCapacity) {
+                energy = room.storage;
+            }
         }
-    }
-    if (!energy) {
-        if (this.room.container && this.room.container.store[RESOURCE_ENERGY] > this.carryCapacity) {
-            energy = this.room.container;
+        if (!energy) {
+            if (room.container && room.container.store[RESOURCE_ENERGY] > this.carryCapacity) {
+                energy = room.container;
+            }
         }
+        if (!energy) {
+            energy = this.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
+                r => r.resourceType == RESOURCE_ENERGY && r.amount > 0, range:1});
+        }
+        if (!energy) {
+            energy = this.pos.findClosestByPath(FIND_STRUCTURES, {filter:
+                s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 50
+                    && s.pos.findInRange(FIND_SOURCES, 1).length >= 1})
+        }
+        if (!energy) {
+            if (this.memory.sourceId != undefined) {
+                energy = Game.getObjectById(this.memory.sourceId);
+            } else {
+                energy = this.pos.findClosestByPath(FIND_SOURCES);
+            }
+        }
+        return energy
     }
     if (!energy) {
-        energy = this.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
-            r => r.resourceType == RESOURCE_ENERGY && r.amount > 0, range:1});
-    }
-    if (!energy) {
-        energy = this.pos.findClosestByPath(FIND_STRUCTURES, {filter:
-            s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 50
-                && s.pos.findInRange(FIND_SOURCES, 1).length >= 1})
-    }
-    if (!energy) {
-        if (this.memory.sourceId != undefined) {
-            energy = Game.getObjectById(this.memory.sourceId);
-        } else {
-            energy = this.pos.findClosestByPath(FIND_SOURCES);
+        energy = getNewEnergy(this.room)
+        if (energy instanceof Source && this.memory.bossRoom) {
+            var energy2 = getNewEnergy(Game.rooms[this.memory.bossRoom])
+            if (energy2 && !(energy2 instanceof Source)) {
+                energy = energy2
+            }
         }
     }
 
