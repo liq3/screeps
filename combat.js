@@ -14,7 +14,9 @@ module.exports = {
 		}
 	},
 	jobAttack: function(creep) {
-		if (creep.pos.roomName == creep.memory.targetRoom) {
+		if (Game.flags.squad && creep.pos.roomName != Game.flags.squad.pos.roomName) {
+			creep.moveTo(Game.flags.squad.pos, {range:2});
+		} else if (creep.pos.roomName == creep.memory.targetRoom || (Game.flags.squad && creep.pos.roomName == Game.flags.squad.pos.roomName)) {
 			let hostileCreeps = creep.room.find(FIND_HOSTILE_CREEPS);
 			let hostileTowers = creep.room.find(FIND_HOSTILE_STRUCTURES, {filter: s=>s.structureType == STRUCTURE_TOWER});
 			let target = creep.pos.findClosestByPath(hostileCreeps.concat(hostileTowers));
@@ -73,7 +75,9 @@ module.exports = {
 		}
 	},
 	jobHealer: function(creep) {
-		if (creep.pos.roomName == creep.memory.targetRoom) {
+		if (Game.flags.squad && creep.pos.roomName != Game.flags.squad.pos.roomName) {
+			creep.moveTo(Game.flags.squad.pos, {range:2});
+		} else if (creep.pos.roomName == creep.memory.targetRoom || (Game.flags.squad && creep.pos.roomName == Game.flags.squad.pos.roomName)) {
 			let target = _.min(creep.pos.findInRange(FIND_MY_CREEPS, 3, {filter: c=>c.hits < c.hitsMax}), 'hits')
 			if (target) {
 				if (creep.hits == creep.hitsMax) {
