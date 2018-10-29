@@ -31,6 +31,9 @@ module.exports = {
 					target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
 				}
 			}
+			if (!target) {
+				target = creep.pos.findClosestByRange(FIND_STRUCTURES, {filter: {structureType:STRUCTURE_WALL}})
+			}
 			if (target) {
 				creep.attack(target);
 				creep.moveTo(target);
