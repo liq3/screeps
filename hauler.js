@@ -44,7 +44,7 @@ module.exports = {
 			if (!creep.memory.job || creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
 				creep.memory.gathering = false;
 			}
-		} else if (!creep.memory.gathering && creep.carry.energy == 0) {
+		} else if (!creep.memory.gathering && _.sum(creep.carry) == 0) {
 			this.doneDelivering(creep);
 			this.getNewJob(creep);
 		} else if (creep.makeSureInBossRoom()) {
