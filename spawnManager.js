@@ -81,7 +81,7 @@ module.exports = {
                         }
                     }
                 }
-                if (spots > miners.length) {
+                if (numberMiners < spots) {
                     var spawnMiner = true
                 }
             }
