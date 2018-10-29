@@ -333,7 +333,7 @@ module.exports = {
             console.log("Error! Trying to spawn creep that costs too much" + data.role + parts);
         }
         if (typeof(error) == 'string') {
-            logStr = spawn.name + " spawning creep " + error + " in room " + spawn.room.name + " in " + parts.length*3 + " ticks." + JSON.stringify(data);
+            logStr = `${spawn.room.name} spawning ${error} in ${parts.length*3} ticks with ${spawn.name}. ` + JSON.stringify(data);
             console.log(logStr);
             try {
                 Memory.spawnTimes[spawn.id].push({tick:Game.time, time:parts.length*3});
