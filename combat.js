@@ -76,14 +76,16 @@ module.exports = {
 		if (creep.pos.roomName == creep.memory.targetRoom) {
 			let target = _.min(creep.pos.findInRange(FIND_MY_CREEPS, 3, {filter: c=>c.hits < c.hitsMax}), 'hits')
 			if (target) {
-				if (creep.pos.inRangeTo(target, 1)) {
-					creep.heal(target)
-				} else {
-					creep.rangedHeal(target)
+				if (creep.hits == creep.hitsMax) {
+					if (creep.pos.inRangeTo(target, 1)) {
+						creep.heal(target)
+					} else {
+						creep.rangedHeal(target)
+					}
 				}
 				creep.moveTo(target)
 			}
-			if (creep.hits <= creep.hitsMax) {
+			if (creep.hits < creep.hitsMax) {
 				creep.heal(creep)
 			}
 		} else {
