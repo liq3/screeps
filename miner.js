@@ -11,7 +11,7 @@ module.exports = {
             } else if (Game.time % 5 == 1) {
                 let container = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
                 if (container) {
-                    creep.transfer(container, mineral.mineralType)
+                    let err = creep.transfer(container, mineral.mineralType)
                     if (err != OK) {
                         console.log(`${creep.name} Error transferring minerals to container ${err}`);
                     }
