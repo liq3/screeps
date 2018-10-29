@@ -190,7 +190,7 @@ module.exports = {
 			//console.log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
 		}
 
-		if (!creep.memory.job && creep.room.storage) {
+		if (!creep.memory.job && creep.room.storage && _.sum(creep.carry) == 0) {
 			let container = creep.room.find(FIND_MINERALS)[0].pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType: STRUCTURE_CONTAINER}})[0]
 			if (container) {
 				let minerals = _.sum(container.store)
