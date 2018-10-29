@@ -5,7 +5,7 @@ module.exports = {
         if (creep.pos.inRangeTo(mineral, 1)) {
             if (Game.time % 5 == 0) {
                 let container = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
-                if (container && _.sum(creep.carry) + work <= creep.carryCapacity) {
+                if (container && _.sum(creep.carry) + creep.getActiveBodyparts(WORK) <= creep.carryCapacity) {
                     let err = creep.harvest(mineral)
                     if (err != OK) {
                         console.log(`${creep.name} Error harvesting mineral ${err}`);
