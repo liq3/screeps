@@ -31,9 +31,11 @@ module.exports = {
 					target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
 				}
 			}
-			if(target) {
+			if (target) {
 				creep.attack(target);
 				creep.moveTo(target);
+			} else if (Game.flags.squad) {
+				creep.moveTo(Game.flags.squad.pos, {range:2});
 			} else {
 				creep.moveTo(new RoomPosition(25,25,creep.memory.targetRoom), {range: 22});
 			}
@@ -88,6 +90,8 @@ module.exports = {
 					}
 				}
 				creep.moveTo(target)
+			} else if (Game.flags.squad) {
+				creep.moveTo(Game.flags.squad, {range:2})
 			}
 			if (creep.hits < creep.hitsMax) {
 				creep.heal(creep)
