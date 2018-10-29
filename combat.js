@@ -7,6 +7,8 @@ module.exports = {
 			this.jobGuard(creep);
 		} else if (creep.memory.job == 'attackRanged') {
 			this.jobAttackRanged(creep);
+		} else if (creep.memory.job == 'healer') {
+			this.jobHealer(creep);
 		} else {
 			console.log(`${creep.name} Error with job memory`);
 		}
@@ -70,8 +72,20 @@ module.exports = {
 			creep.heal(creep);
 		}
 	},
-	healNearby: function(creep) {
-
+	jobHealer: function(creep) {
+		if (creep.pos.roomName == creep.memory.targetRoom) {
+			let target = _.min(creep.pos.findInRange(FIND_MY_CREEPS, 3, {filter: c=>c.hits < c.hitsMax}), 'hits')
+			if (target) {
+				if (creep.pos.inRangeTo(target, 1)) {
+					creep.heal(target)
+				} else {
+					creep.rangedHeal(target)
+				}
+				creep.moveTo(target)
+			}
+		} else {
+			creep.moveTo(new RoomPosition(25,25,creep.memory.targetRoom), {range: 22});
+		}
 	},
 	jobGuard: function (creep) {
 		var target = Game.getObjectById(creep.memory.targetId);

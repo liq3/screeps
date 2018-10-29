@@ -163,6 +163,9 @@ module.exports = {
         let attackerTargetRoom = processAttackFlag("attack")
         if (!attackerTargetRoom) {
             var attackerRangedTargetRoom = processAttackFlag("attackRanged")
+            if (!attackerRangedTargetRoom) {
+                var healerTargetRoom = processAttackFlag("healer")
+            }
         }
 
         searchRooms = [];
@@ -238,6 +241,8 @@ module.exports = {
             this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
         } else if (attackerRangedTargetRoom) {
             this.createCreep(spawn, 'AR', {role:'combat',targetRoom:attackerRangedTargetRoom, job:'attackRanged'});
+        } else if (healerTargetRoom) {
+            this.createCreep(spawn, 'CH', {role:'combat',targetRoom:healerTargetRoom, job:'healer'});
         } else if (scoutTarget) {
             this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
         } else if (claimTargetRoom) {
@@ -333,6 +338,10 @@ module.exports = {
                 parts = Array(numberParts+1).fill(MOVE);
                 parts = parts.concat(Array(numberParts).fill(ATTACK));
                 parts.push(HEAL,RANGED_ATTACK);
+            } else if (data.job == 'healer') {
+                let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 300)
+                parts = Array(numberParts).fill(MOVE)
+                parts = parts.concat(Array(numberParts).fill(HEAL))
             }
         } else if (data.role == 'scout') {
             parts = [MOVE];
