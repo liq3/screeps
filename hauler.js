@@ -195,7 +195,7 @@ module.exports = {
 			if (container) {
 				let minerals = _.sum(container.store)
 				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'collectMinerals' && c.memory.bossRoom == creep.room.name)) {
-					minerals += _.sum(c.carry);
+					minerals += _.sum(c.carry) - creep.carryCapacity;
 				}
 				let upgradeParts = 0;
 				for (let c of creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'miner'})) {
