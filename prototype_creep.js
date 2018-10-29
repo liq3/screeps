@@ -34,9 +34,9 @@ Creep.prototype.gatherEnergy = function () {
         return energy
     }
     if (!energy) {
-        energy = getNewEnergy(this.room)
+        energy = getNewEnergy(this.room, this)
         if (energy instanceof Source && this.memory.bossRoom) {
-            var energy2 = getNewEnergy(Game.rooms[this.memory.bossRoom])
+            var energy2 = getNewEnergy(Game.rooms[this.memory.bossRoom], this)
             if (energy2 && !(energy2 instanceof Source)) {
                 energy = energy2
             }
