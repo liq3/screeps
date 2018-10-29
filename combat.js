@@ -81,7 +81,7 @@ module.exports = {
 			creep.moveTo(Game.flags.squad.pos, {range:2});
 		} else if (creep.pos.roomName == creep.memory.targetRoom || (Game.flags.squad && creep.pos.roomName == Game.flags.squad.pos.roomName)) {
 			let target = _.min(creep.pos.findInRange(FIND_MY_CREEPS, 3, {filter: c=>c.hits < c.hitsMax}), 'hits')
-			if (target) {
+			if (target != Infinity) {
 				if (creep.hits == creep.hitsMax) {
 					if (creep.pos.inRangeTo(target, 1)) {
 						creep.heal(target)
