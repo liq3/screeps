@@ -132,7 +132,7 @@ module.exports = {
 				}
 			} else if (creep.memory.job == 'collectMinerals') {
 				target = creep.room.storage;
-				err = creep.transfer(target, creep.room.find(FIND_MINERALS)[0].mineralType)
+				err = creep.transfer(target, Object.keys(creep.carry)[0])
 				if (err == OK) {
 					this.doneDelivering(creep);
 				}
