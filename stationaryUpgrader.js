@@ -7,6 +7,9 @@ module.exports = {
 		var target;
 		if (!creep.memory.finalPos) {
 			target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType:STRUCTURE_CONTAINER}});
+			if (target.length) {
+				target = target[0]
+			}
 			let terrain = creep.room.getTerrain()
 			let possiblePositions = {}
 			for (let x = target.pos.x-1; x < target.pos.x+2; x++) {
@@ -16,10 +19,8 @@ module.exports = {
 					}
 				}
 			}
-			for (let thing of pos.lookFor(FIND_STRUCTURES)) {
-				if (thing.structureType == STRUCTURE_ROAD) {
-					possiblePositions[`${x}_${y}`] = false
-				}
+			for (let thing of target.pos.findInRange(FIND_STRUCTURES, 1, {filter:{structureType:STRUCTURE_ROAD}})) {
+				possiblePositions[`${thing.pos.x}_${thing.pos.y}`] = false
 			}
 			for (let otherCreep of creep.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role=='stationaryUpgrader'})) {
 				possiblePositions[`${otherCreep.memory.finalPos.x}_${otherCreep.memory.finalPos.y}`] = false
