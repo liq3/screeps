@@ -175,8 +175,10 @@ global.myUtils.avgCpu = function() {
 }
 
 global.myUtils.changeRole = function(role1, role2) {
-    for (let creep of _.filter(Game.creeps, {filter: c=>c.memory.role==role1})) {
-        creep.memory.role = role2
+    for (let c in Game.creeps) {
+        if (Game.creeps[c].memory.role == role1) {
+            Game.creeps[c].memory.role = role2
+        }
     }
 }
 
