@@ -3,33 +3,32 @@ Creep.prototype.gatherEnergy = function () {
     if (id) {
         var energy = Game.getObjectById(id);
     }
-    function getNewEnergy(room) {
-        that = this.this
+    function getNewEnergy(room, creep) {
         let energy = undefined;
         if (!energy) {
-            if (room.storage && room.storage.store[RESOURCE_ENERGY] > that.carryCapacity) {
+            if (room.storage && room.storage.store[RESOURCE_ENERGY] > creep.carryCapacity) {
                 energy = room.storage;
             }
         }
         if (!energy) {
-            if (room.container && room.container.store[RESOURCE_ENERGY] > that.carryCapacity) {
+            if (room.container && room.container.store[RESOURCE_ENERGY] > creep.carryCapacity) {
                 energy = room.container;
             }
         }
         if (!energy) {
-            energy = that.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
+            energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
                 r => r.resourceType == RESOURCE_ENERGY && r.amount > 0, range:1});
         }
         if (!energy) {
-            energy = that.pos.findClosestByPath(FIND_STRUCTURES, {filter:
+            energy = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter:
                 s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 50
                     && s.pos.findInRange(FIND_SOURCES, 1).length >= 1})
         }
         if (!energy) {
-            if (that.memory.sourceId != undefined) {
-                energy = Game.getObjectById(that.memory.sourceId);
+            if (creep.memory.sourceId != undefined) {
+                energy = Game.getObjectById(creep.memory.sourceId);
             } else {
-                energy = that.pos.findClosestByPath(FIND_SOURCES);
+                energy = creep.pos.findClosestByPath(FIND_SOURCES);
             }
         }
         return energy
