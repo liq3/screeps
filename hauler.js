@@ -193,7 +193,7 @@ module.exports = {
 					upgradeParts += c.getActiveBodyparts(WORK);
 				}
 				let distance = creep.pos.findPathTo(container).length;
-				let metric = container.storeCapacity - (totalUpgrade - upgradeParts*distance/5);
+				let metric = container.storeCapacity - (minerals - upgradeParts*distance/5);
 				if (metric > creep.carryCapacity || metric > 1900) {
 					creep.memory.job = 'collectMinerals';
 				}
