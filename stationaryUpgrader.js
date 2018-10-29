@@ -23,7 +23,11 @@ module.exports = {
 				possiblePositions[`${thing.pos.x}_${thing.pos.y}`] = false
 			}
 			for (let otherCreep of creep.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role=='stationaryUpgrader'})) {
-				possiblePositions[`${otherCreep.memory.finalPos.x}_${otherCreep.memory.finalPos.y}`] = false
+				if (creep.memory.finalPos) {
+					possiblePositions[`${otherCreep.memory.finalPos.x}_${otherCreep.memory.finalPos.y}`] = false
+				} else {
+					possiblePositions[`${otherCreep.pos.x}_${otherCreep.pos.y}`] = false
+				}
 			}
 			for (let pos in possiblePositions) {
 				if (possiblePositions[pos]) {
