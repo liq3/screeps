@@ -4,13 +4,16 @@ module.exports = {
 		var mineral = creep.room.find(FIND_MINERALS)[0];
         if (creep.pos.inRangeTo(mineral, 1)) {
             if (Game.time % 5 == 0) {
-                let err = creep.harvest(mineral)
-                if (err != OK) {
-                    console.log(`${creep.name} Error harvesting mineral ${err}`);
+                let container = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
+                if (container && _.sum(container.store) < 1900) {
+                    let err = creep.harvest(mineral)
+                    if (err != OK) {
+                        console.log(`${creep.name} Error harvesting mineral ${err}`);
+                    }                    
                 }
             } else if (Game.time % 5 == 1) {
                 let container = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
-                if (container) {
+                if (container && _.sum(container.store) < 1900) {
                     let err = creep.transfer(container, mineral.mineralType)
                     if (err != OK) {
                         console.log(`${creep.name} Error transferring minerals to container ${err}`);
