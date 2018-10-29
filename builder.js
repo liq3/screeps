@@ -54,6 +54,9 @@ module.exports = {
 				for (let i in Game.constructionSites) {
 					let itr = Game.constructionSites[i];
 					let score = creep.pos.getRangeTo(itr);
+					if (score == Infinity) {
+						score = 50
+					}
 
 					if (priorityMods[itr.structureType]) {
 						score += priorityMods[itr.structureType]
