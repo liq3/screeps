@@ -182,7 +182,7 @@ module.exports = {
 		}
 
 		if (!creep.memory.job && creep.room.storage) {
-			let container = creep.room.find(FIND_MINERALS)[0].pos.findInRange(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_CONTAINER}})[0]
+			let container = creep.room.find(FIND_MINERALS)[0].pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType: STRUCTURE_CONTAINER}})[0]
 			if (container) {
 				let minerals = _.sum(container.store)
 				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'collectMinerals' && c.memory.bossRoom == creep.room.name)) {
