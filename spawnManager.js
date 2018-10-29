@@ -24,7 +24,7 @@ module.exports = {
 
         let firstSpawn = room.find(FIND_MY_STRUCTURES, {structureType: STRUCTURE_SPAWN})[0]
         let scoutTarget = null;
-        let minerTargetId = null;
+        let harvesterTargetId = null;
         let spawnHauler = false;
         let desiredTransportCapacity = 0;
         let sourceList = [];
@@ -44,8 +44,8 @@ module.exports = {
         let numberContainers = 0;
         for (let {source,path} of sourceList) {
             let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
-            if (minerTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
-                minerTargetId = source.id;
+            if (harvesterTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
+                harvesterTargetId = source.id;
             } else if (miners.length > 0) {
                 let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_CONTAINER});
                 if (containers.length > 0) {
@@ -54,10 +54,36 @@ module.exports = {
                 }
             }
         }
+
         if (numberStationaryUpgraders > 0) {
             let path = PathFinder.search(firstSpawn.pos, {pos:room.controller.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
             for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role == 'stationaryUpgrader'})) {
                 desiredTransportCapacity += 2 * path.cost * praiser.getActiveBodyparts(WORK)
+            }
+        }
+
+        if (room.find(FIND_MY_STRUCTURES, {filter:{structureType:STRUCTURE_EXTRACTOR}}).length) {
+            let mineral = room.find(FIND_MINERALS)[0];
+            let mineralContainer = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
+            if (mineralContainer && mineral.mineralAmount > 0) {
+                let mineralPath = PathFinder.search(firstSpawn.pos, {pos:mineral.pos, range: 1}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+                let miners = _.filter(Game.creeps, {filter: c => c.memory.role == 'miner'})
+                for (let miner of miners) {
+                    desiredTransportCapacity += 2 * path.cost * miner.getActiveBodyparts(WORK) / 5
+                }
+
+                let spots = 0
+                let terrain = room.getTerrain()
+                for (let x = mineral.pos.x-1; x < mineral.pos.x+2; x++) {
+                    for (let y = mineral.pos.y-1; y < mineral.pos.y+2; y++) {
+                        if (terrain.get(x,y) != TERRAIN_MASK_WALL) {
+                            spots += 1
+                        }
+                    }
+                }
+                if (spots > miners.length) {
+                    var spawnMiner = true
+                }
             }
         }
 
@@ -218,8 +244,8 @@ module.exports = {
             this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
         } else if (spawnHauler || (room.energyCapacityAvailable < 550 && numberHaulers < 5)) {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
-        } else if (minerTargetId && RCL >= 2 && room.energyCapacityAvailable >= 550) {
-            this.createCreep(spawn, 'M', {role:'miner',sourceId:minerTargetId});
+        } else if (harvesterTargetId && RCL >= 2 && room.energyCapacityAvailable >= 550) {
+            this.createCreep(spawn, 'HV', {role:'harvester',sourceId:harvesterTargetId});
         } else if (numberBuilders < desiredBuilders) {
             this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
         } else if (numberGuards < 3) {
@@ -232,6 +258,8 @@ module.exports = {
             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
         } else if (decoyTargetRoom) {
             this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
+        } else if (spawnMiner) {
+            this.createCreep(spawn, 'M', {role:'miner'});
         } else if ((room.storage && numberStationaryUpgraders < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)) || (room.storage == undefined && numberStationaryUpgraders < 3))) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', bossRoom:room.name});
         }
@@ -239,7 +267,7 @@ module.exports = {
 
     createCreep: function(spawn, name, data, partNumber) {
         let parts = [];
-        if (data.role == 'miner') {
+        if (data.role == 'harvester') {
             let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 150) / 100);
             parts = Array(Math.min(6,numberParts)).fill(WORK);
             parts = parts.concat([CARRY,MOVE,MOVE]);
@@ -282,9 +310,6 @@ module.exports = {
             parts = parts.concat(Array(numberParts).fill(CARRY));
             parts = parts.concat(Array(numberParts).fill(MOVE));
             data.gathering = true;
-        } else if (data.role == 'harvester') {
-            parts = [WORK,CARRY,MOVE,MOVE];
-            data.gathering = true;
         } else if (data.role == 'decoy') {
             parts = [TOUGH,MOVE];
             // let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
@@ -313,6 +338,11 @@ module.exports = {
             parts = [MOVE];
         } else if (data.role == 'claimer') {
             parts = [CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
+        } else if (data.role == 'miner') {
+            let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 50) / 450);
+            parts = Array(numberParts).fill(WORK);
+            parts.push(CARRY)
+            parts = parts.concat(Array(numberParts).fill(MOVE))
         } else {
             if (spawn.room.energyCapacityAvailable < 350) {
                 parts = [WORK, CARRY, CARRY, MOVE, MOVE];
