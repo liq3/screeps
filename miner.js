@@ -2,7 +2,7 @@ module.exports = {
 
  	run: function (creep) {
 		var mineral = creep.room.find(FIND_MINERALS)[0];
-        if (creep.inRangeTo(mineral, 1)) {
+        if (creep.pos.inRangeTo(mineral, 1)) {
             if (Game.time % 5 == 0) {
                 let err = creep.harvest(mineral)
                 if (err != OK) {
