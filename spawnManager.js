@@ -43,7 +43,7 @@ module.exports = {
         sourceList.sort((a,b) => a.path.cost - b.path.cost );
         let numberContainers = 0;
         for (let {source,path} of sourceList) {
-            let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'miner');
+            let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'harvester');
             if (harvesterTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
                 harvesterTargetId = source.id;
             } else if (miners.length > 0) {

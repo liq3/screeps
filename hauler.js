@@ -121,6 +121,12 @@ module.exports = {
 				if (err == OK && creep.carry.energy == 0) {
 					this.doneDelivering(creep);
 				}
+			} else if (creep.memory.job == 'collectMinerals') {
+				target = creep.room.storage;
+				err = creep.transfer(target, creep.room.find(FIND_MINERALS)[0].mineralType)
+				if (err == OK) {
+					this.doneDelivering(creep);
+				}
 			} else {
 				this.doneDelivering(creep);
 				this.getNewJob(creep);
@@ -173,6 +179,25 @@ module.exports = {
 				creep.memory.job = 'spawn';
 			}
 			//console.log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
+		}
+
+		if (!creep.memory.job && creep.room.storage) {
+			let container = creep.room.find(FIND_MINERALS)[0].pos.findInRange(FIND_STRUCTURES, {filter: {structureType: STRUCTURE_CONTAINER}})[0]
+			if (container) {
+				let minerals = _.sum(container.store)
+				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'collectMinerals' && c.memory.bossRoom == creep.room.name)) {
+					minerals += _.sum(c.carry);
+				}
+				let upgradeParts = 0;
+				for (let c of creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'miner'})) {
+					upgradeParts += c.getActiveBodyparts(WORK);
+				}
+				let distance = creep.pos.findPathTo(container).length;
+				let metric = container.storeCapacity - (totalUpgrade - upgradeParts*distance/5);
+				if (metric > creep.carryCapacity) {
+					creep.memory.job = 'collectMinerals';
+				}
+			}
 		}
 
 		if (!creep.memory.job) {
