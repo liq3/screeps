@@ -174,6 +174,12 @@ global.myUtils.avgCpu = function() {
     console.log(_.sum(Memory.cpuTimes) / Memory.cpuTimes.length);
 }
 
+global.myUtils.changeRole = function(role1, role2) {
+    for (let creep of _.filter(Game.creeps, {filter: c=>c.memory.role==role1})) {
+        creep.memory.role = role2
+    }
+}
+
 global.myUtils.getSpawnTimes = function() {
     for (let i in Game.spawns) {
         let spawn = Game.spawns[i];
