@@ -20,6 +20,15 @@ module.exports = {
 				if (err == ERR_NOT_IN_RANGE) {
 					creep.moveTo(target)
 				}
+			} else if (creep.memory.job == 'collectMinerals') {
+				let target = creep.room.find(FIND_MINERALS)[0].pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType: STRUCTURE_CONTAINER}})[0]
+				let err = creep.withdraw(target, creep.room.find(FIND_MINERALS)[0].mineralType)
+				if (err == OK) {
+					creep.memory.gathering = false;
+				}
+				if (err == ERR_NOT_IN_RANGE) {
+					creep.moveTo(target)
+				}
 			} else if (creep.memory.job != 'storage') {
 			    if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
     				let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
