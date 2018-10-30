@@ -21,8 +21,8 @@ module.exports = {
 					creep.moveTo(target)
 				}
 			} else if (creep.memory.job == 'collectMinerals') {
-				let target = creep.room.find(FIND_MINERALS)[0].pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType: STRUCTURE_CONTAINER}})[0]
-				let err = creep.withdraw(target, creep.room.find(FIND_MINERALS)[0].mineralType)
+				let target = creep.room.mineral.container
+				let err = creep.withdraw(target, creep.room.mineral.mineralType
 				if (err == OK) {
 					creep.memory.gathering = false;
 				}
@@ -191,7 +191,7 @@ module.exports = {
 		}
 
 		if (!creep.memory.job && creep.room.storage && _.sum(creep.carry) == 0) {
-			let container = creep.room.find(FIND_MINERALS)[0].pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType: STRUCTURE_CONTAINER}})[0]
+			let container = creep.room.mineral.container
 			if (container) {
 				let minerals = _.sum(container.store)
 				for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'collectMinerals' && c.memory.bossRoom == creep.room.name)) {
