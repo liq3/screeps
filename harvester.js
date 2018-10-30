@@ -3,7 +3,7 @@ module.exports = {
  	run: function (creep) {
 		var source = Game.getObjectById(creep.memory.sourceId);
         if (source) {
-            if (creep.room.energyCapacityAvailable >= 550) {                
+            if (creep.room.energyCapacityAvailable >= 550) {
                 let container = source.container
                 if (container && creep.pos.getRangeTo(container) > 0) {
                     creep.moveTo(container, {range:0});
@@ -21,11 +21,16 @@ module.exports = {
                         }
                     }
                 }
-            }
-            if (container && container.hits < container.hitsMax && creep.carry.energy > 30) {
-                creep.repair(container);
+                if (container && container.hits < container.hitsMax && creep.carry.energy > 30) {
+                    creep.repair(container);
+                } else {
+                    let error = creep.harvest(source);
+                }
             } else {
-                let error = creep.harvest(source);
+                let error = creep.harvest(source)
+                if (error === ERR_NOT_IN_RANGE) {
+                    creep.moveTo(source, {range:1})
+                }
             }
         }
 	}
