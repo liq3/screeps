@@ -114,6 +114,7 @@ module.exports = {
             if (itr && itr.controller.my && itr.controller.level >= 1) {
                 itr.createConstructionSite(Game.flags.claim.pos, STRUCTURE_SPAWN)
                 itr.memory.supportNewRoom = Game.flags.claim.room.name
+                Memory.ownedRooms[itr] = [itr]
                 Game.flags.claim.remove()
             }
         }
