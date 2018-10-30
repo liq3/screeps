@@ -223,7 +223,7 @@ module.exports = {
 				}
 				let distance = creep.pos.findPathTo(upgradeContainer).length;
 				let metric = upgradeContainer.storeCapacity - (totalUpgrade - upgradeParts*distance);
-				if (distance*2 > creep.ticksToLive && metric > creep.carryCapacity && (!(creep.room.storage || creep.room.container) || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
+				if (distance*2 > creep.ticksToLive && metric > creep.carryCapacity && ((!creep.room.storage && creep.room.container) || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
 					creep.memory.job = 'upgrade';
 				}
 			}
