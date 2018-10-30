@@ -121,7 +121,7 @@ module.exports = {
 			} else if (creep.memory.job == 'storage' && ((creep.room.storage && creep.room.storage.isActive()) || creep.room.container)) {
 			    target = creep.room.storage ? creep.room.storage : creep.room.container;
 				err = creep.transfer(target, RESOURCE_ENERGY);
-				if (err == OK) {
+				if (err == OK || err == ERR_FULL) {
 					this.doneDelivering(creep);
 				}
 			} else if (creep.memory.job == 'praise') {
