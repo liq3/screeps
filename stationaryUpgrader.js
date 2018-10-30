@@ -43,7 +43,7 @@ module.exports = {
 			}
 		}
 		var error = creep.transfer(creep.room.controller,RESOURCE_ENERGY);
-		if (error===ERR_NOT_IN_RANGE || error===ERR_NOT_ENOUGH_ENERGY) {
+		if (error === ERR_NOT_IN_RANGE || error === ERR_NOT_ENOUGH_ENERGY) {
 			if (target) {
 				creep.moveTo(target, {range: 1});
 				creep.withdraw(target, RESOURCE_ENERGY);

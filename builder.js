@@ -4,14 +4,14 @@ module.exports = {
 
 		if (creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
 			creep.gatherEnergy(creep);
-	    } else if (creep.memory.gathering && creep.carry.energy===creep.carryCapacity) {
+	    } else if (creep.memory.gathering && creep.carry.energy === creep.carryCapacity) {
 	        creep.memory.gathering = false;
 			delete creep.memory.energyId;
-	    } else if (!creep.memory.gathering && creep.carry.energy===0) {
+	    } else if (!creep.memory.gathering && creep.carry.energy === 0) {
 	        creep.memory.gathering = true;
 	    } else {
 	        var target = Game.getObjectById(creep.memory.targetId);
-			if (target instanceof Structure && target.hits===target.hitsMax) {
+			if (target instanceof Structure && target.hits === target.hitsMax) {
 				creep.memory.targetId = null;
 			}
 	        if(!target || Game.time - creep.memory.jobStartTime > 100) {
@@ -19,14 +19,14 @@ module.exports = {
 				for (let r of Memory.ownedRooms[creep.memory.bossRoom]) {
 					for (let itr of Game.rooms[r].find(FIND_STRUCTURES, {filter: s => s.hits < s.hitsMax && s.hits < 500000})) {
 						let score = creep.pos.getRangeTo(itr);
-						if (itr.structureType===STRUCTURE_WALL || itr.structureType===STRUCTURE_RAMPART) {
+						if (itr.structureType === STRUCTURE_WALL || itr.structureType === STRUCTURE_RAMPART) {
 							if (itr.hits > 10000) {
 								score += 1000 + itr.hits / 1000;
 							} else {
 								score -= 100;
 							}
 						}
-						if ((itr.structureType===STRUCTURE_ROAD || itr.structureType===STRUCTURE_CONTAINER)) {
+						if ((itr.structureType === STRUCTURE_ROAD || itr.structureType === STRUCTURE_CONTAINER)) {
 						    if (itr.hits > (itr.hits/2)) {
 							    score += 300;
 						    } else {
@@ -51,7 +51,7 @@ module.exports = {
 				for (let i in Game.constructionSites) {
 					let itr = Game.constructionSites[i];
 					let score = creep.pos.getRangeTo(itr);
-					if (score===Infinity) {
+					if (score === Infinity) {
 						score = 50
 					}
 
@@ -78,7 +78,7 @@ module.exports = {
 			} else if (target instanceof Structure){
 				err = creep.repair(target);
 			}
-			if (err===ERR_NOT_IN_RANGE) {
+			if (err === ERR_NOT_IN_RANGE) {
 				creep.moveTo(target);
 			} else if (err != 0) {
 			    //console.log(err + " " + target);

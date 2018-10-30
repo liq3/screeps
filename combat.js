@@ -1,13 +1,13 @@
 module.exports = {
 
 	run: function (creep) {
-		if (creep.memory.job==='attack') {
+		if (creep.memory.job === 'attack') {
 			this.jobAttack(creep);
-		} else if (creep.memory.job==='guard') {
+		} else if (creep.memory.job === 'guard') {
 			this.jobGuard(creep);
-		} else if (creep.memory.job==='attackRanged') {
+		} else if (creep.memory.job === 'attackRanged') {
 			this.jobAttackRanged(creep);
-		} else if (creep.memory.job==='healer') {
+		} else if (creep.memory.job === 'healer') {
 			this.jobHealer(creep);
 		} else {
 			console.log(`${creep.name} Error with job memory`);
@@ -16,15 +16,15 @@ module.exports = {
 	jobAttack: function(creep) {
 		if (Game.flags.squad && creep.pos.roomName != Game.flags.squad.pos.roomName) {
 			creep.moveTo(Game.flags.squad.pos, {range:2});
-		} else if (creep.pos.roomName===creep.memory.targetRoom || (Game.flags.squad && creep.pos.roomName===Game.flags.squad.pos.roomName)) {
+		} else if (creep.pos.roomName === creep.memory.targetRoom || (Game.flags.squad && creep.pos.roomName === Game.flags.squad.pos.roomName)) {
 			let hostileCreeps = creep.room.find(FIND_HOSTILE_CREEPS);
-			let hostileTowers = creep.room.find(FIND_HOSTILE_STRUCTURES, {filter: s=>s.structureType===STRUCTURE_TOWER});
+			let hostileTowers = creep.room.find(FIND_HOSTILE_STRUCTURES, {filter: s=>s.structureType === STRUCTURE_TOWER});
 			let target = creep.pos.findClosestByPath(hostileCreeps.concat(hostileTowers));
 			if (!target) {
 				target = creep.pos.findClosestByPath(FIND_HOSTILE_SPAWNS);
 			}
 			if (!target) {
-				let flags = creep.room.find(FIND_FLAGS, {filter: f=> f.name.split(" ")[0]==='target'})
+				let flags = creep.room.find(FIND_FLAGS, {filter: f=> f.name.split(" ")[0] === 'target'})
 				if (flags.length) {
 					target = flags[0].pos.findClosestByRange(FIND_HOSTILE_STRUCTURES)
 				} else {
@@ -49,9 +49,9 @@ module.exports = {
 	jobAttackRanged: function (creep) {
 		if (Game.flags.squad && creep.pos.roomName != Game.flags.squad.pos.roomName) {
 			creep.moveTo(Game.flags.squad.pos, {range:2});
-		} else if (creep.pos.roomName===creep.memory.targetRoom || (Game.flags.squad && creep.pos.roomName===Game.flags.squad.pos.roomName)) {
+		} else if (creep.pos.roomName === creep.memory.targetRoom || (Game.flags.squad && creep.pos.roomName === Game.flags.squad.pos.roomName)) {
 			let hostileCreeps = creep.room.find(FIND_HOSTILE_CREEPS);
-			let hostileTowers = creep.room.find(FIND_HOSTILE_STRUCTURES, {filter: s=>s.structureType===STRUCTURE_TOWER});
+			let hostileTowers = creep.room.find(FIND_HOSTILE_STRUCTURES, {filter: s=>s.structureType === STRUCTURE_TOWER});
 			let target = creep.pos.findClosestByPath(hostileCreeps.concat(hostileTowers));
 			if (!target) {
 				target = creep.pos.findClosestByPath(FIND_HOSTILE_SPAWNS);
@@ -61,7 +61,7 @@ module.exports = {
 			}
 			if(target) {
 				let err = creep.rangedAttack(target);
-				if (creep.pos.getRangeTo(target) > 3 || (target instanceof Creep && (target.getActiveBodyparts(ATTACK)===0))) {
+				if (creep.pos.getRangeTo(target) > 3 || (target instanceof Creep && (target.getActiveBodyparts(ATTACK) === 0))) {
 					creep.moveTo(target);
 				} else if (creep.pos.getRangeTo(target) < 3) {
 					let path = PathFinder.search(creep.pos, {pos:target.pos, range:3}, {flee:true});
@@ -82,10 +82,10 @@ module.exports = {
 	jobHealer: function(creep) {
 		if (Game.flags.squad && creep.pos.roomName != Game.flags.squad.pos.roomName) {
 			creep.moveTo(Game.flags.squad.pos, {range:2});
-		} else if (creep.pos.roomName===creep.memory.targetRoom || (Game.flags.squad && creep.pos.roomName===Game.flags.squad.pos.roomName)) {
+		} else if (creep.pos.roomName === creep.memory.targetRoom || (Game.flags.squad && creep.pos.roomName === Game.flags.squad.pos.roomName)) {
 			let target = _.min(creep.pos.findInRange(FIND_MY_CREEPS, 3, {filter: c=>c.hits < c.hitsMax}), 'hits')
 			if (target != Infinity) {
-				if (creep.hits===creep.hitsMax) {
+				if (creep.hits === creep.hitsMax) {
 					if (creep.pos.inRangeTo(target, 1)) {
 						creep.heal(target)
 					} else {

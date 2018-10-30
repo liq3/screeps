@@ -27,7 +27,7 @@ let mainLoop = function() {
         }
     }
 
-    if (Memory.dangerRooms===undefined) {
+    if (Memory.dangerRooms === undefined) {
         Memory.dangerRooms = []
     }
 
@@ -43,7 +43,7 @@ let mainLoop = function() {
     for (let i in Game.rooms) {
         try {
             if (Game.rooms[i].controller && Game.rooms[i].controller.my && Game.cpu.bucket > 1000
-            && Game.rooms[i].find(FIND_MY_STRUCTURES, {filter: s => s.structureType===STRUCTURE_SPAWN && !s.spawning})[0] != undefined) {
+            && Game.rooms[i].find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning})[0] != undefined) {
                 spawnManager.spawnCreeps(Game.rooms[i]);
             }
         } catch (err) {
@@ -69,7 +69,7 @@ let mainLoop = function() {
         }
     }
 
-    let dangerFlags = _.filter(Game.flags, f => f.name.split(" ")[0]==='danger');
+    let dangerFlags = _.filter(Game.flags, f => f.name.split(" ")[0] === 'danger');
     for (let i in dangerFlags) {
         let room = dangerFlags[i].pos.roomName;
         if (!Memory.dangerRooms.includes(room)) {
@@ -84,7 +84,7 @@ let mainLoop = function() {
             if (Game.cpu.bucket > 500) {
                 if (creepFunctions[creep.memory.role] != undefined) {
                     creepFunctions[creep.memory.role].run(creep);
-                } else if (creep.memory.role==='recycle') {
+                } else if (creep.memory.role === 'recycle') {
                     creep.moveTo(creep.pos.findClosestByPath(FIND_MY_SPAWNS));
                 } else {
                     console.log("Undefined function for role: " + creep.memory.role);
@@ -95,7 +95,7 @@ let mainLoop = function() {
         }
 	}
 
-    let towers = _.filter(Game.structures, s => s.structureType===STRUCTURE_TOWER);
+    let towers = _.filter(Game.structures, s => s.structureType === STRUCTURE_TOWER);
     for (let tower of towers) {
         let target = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS, {filter: c => c.pos.x != 0 && c.pos.y != 0 && c.pos.y != 49 && c.pos.x != 49});
         if (target != null) {
@@ -110,8 +110,8 @@ let mainLoop = function() {
 
     for (let i in Game.spawns) {
         let spawn = Game.spawns[i];
-        spawn.recycleCreep(spawn.pos.findClosestByRange( FIND_MY_CREEPS, {filter: c => c.memory.role==='recycle'}));
-        if (Memory.spawnTimes===undefined) {
+        spawn.recycleCreep(spawn.pos.findClosestByRange( FIND_MY_CREEPS, {filter: c => c.memory.role === 'recycle'}));
+        if (Memory.spawnTimes === undefined) {
             Memory.spawnTimes = {};
             if (!Memory.spawnTimes[spawn.id]) {
                 Memory.spawnTimes[spawn.id] = [];
@@ -140,7 +140,7 @@ let mainLoop = function() {
     }
 
     if (Game.cpu.bucket > 5000 && Game.market.credits < 1000) {
-        let orders = Game.market.getAllOrders(order => order.resourceType===RESOURCE_ENERGY && order.type===ORDER_BUY && order.price >= 0.018);
+        let orders = Game.market.getAllOrders(order => order.resourceType === RESOURCE_ENERGY && order.type === ORDER_BUY && order.price >= 0.018);
         if (orders.length > 0) {
             console.log(JSON.stringify(orders));
             orders.sort((a,b) => b.price - a.price);
@@ -158,7 +158,7 @@ let mainLoop = function() {
         }
     }
 
-    if (Memory.cpuTimes===undefined) {
+    if (Memory.cpuTimes === undefined) {
         Memory.cpuTimes = [];
     }
     Memory.cpuTimes.push(Game.cpu.getUsed());
@@ -177,7 +177,7 @@ global.myUtils.avgCpu = function() {
 
 global.myUtils.changeRole = function(role1, role2) {
     for (let c in Game.creeps) {
-        if (Game.creeps[c].memory.role===role1) {
+        if (Game.creeps[c].memory.role === role1) {
             Game.creeps[c].memory.role = role2
         }
     }
@@ -195,7 +195,7 @@ global.myUtils.getSpawnTimes = function() {
 }
 
 global.myUtils.toggleJobDisplay = function() {
-    if (Memory.visuals===undefined) {
+    if (Memory.visuals === undefined) {
         Memory.visuals = {};
     }
     if (Memory.visuals.displayJobs != undefined) {
@@ -269,11 +269,11 @@ global.costMatrixCallback = function(roomName) {
     var costMatrix = new PathFinder.CostMatrix;
     if (Game.rooms[roomName]) {
         for (let structure of Game.rooms[roomName].find(FIND_STRUCTURES)) {
-            if (structure.structureType===STRUCTURE_ROAD) {
-                if (costMatrix.get(structure.pos.x, structure.pos.y)===0) {
+            if (structure.structureType === STRUCTURE_ROAD) {
+                if (costMatrix.get(structure.pos.x, structure.pos.y) === 0) {
                     costMatrix.set(structure.pos.x, structure.pos.y, 1);
                 }
-            } else if (!(structure.structureType===STRUCTURE_RAMPART || structure.structureType===STRUCTURE_CONTAINER)) {
+            } else if (!(structure.structureType === STRUCTURE_RAMPART || structure.structureType === STRUCTURE_CONTAINER)) {
                 costMatrix.set(structure.pos.x, structure.pos.y, 255);
             }
         }
@@ -284,7 +284,7 @@ global.costMatrixCallback = function(roomName) {
 global.myUtils.clearTransportMemory = function() {
     for (let i in Game.creeps) {
         let creep = Game.creeps[i];
-        if (creep.memory.role==='hauler') {
+        if (creep.memory.role === 'hauler') {
             delete creep.memory.reserved;
             delete creep.memory.targetId;
         }

@@ -1,7 +1,7 @@
 module.exports = {
 
 	run: function (creep) {
-		if (creep._first === undefined) {
+		if (creep._first  ===  undefined) {
 			creep._first = true
 		} else if (creep._first) {
 			creep._first = false

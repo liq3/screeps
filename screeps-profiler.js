@@ -86,7 +86,7 @@ function wrapFunction(name, originalFunction) {
   if (originalFunction.profilerWrapped) { throw new AlreadyWrappedError(); }
   function wrappedFunction() {
     if (Profiler.isProfiling()) {
-      const nameMatchesFilter = name === getFilter();
+      const nameMatchesFilter = name  ===  getFilter();
       const start = Game.cpu.getUsed();
       if (nameMatchesFilter) {
         depth++;
@@ -157,7 +157,7 @@ function profileObjectFunctions(object, label) {
       return;
     }
 
-    const isFunction = typeof descriptor.value === 'function';
+    const isFunction = typeof descriptor.value  ===  'function';
     if (!isFunction) {
       return;
     }
@@ -297,14 +297,14 @@ const Profiler = {
   },
 
   shouldPrint() {
-    const streaming = Profiler.type() === 'stream';
-    const profiling = Profiler.type() === 'profile';
-    const onEndingTick = Memory.profiler.disableTick === Game.time;
+    const streaming = Profiler.type()  ===  'stream';
+    const profiling = Profiler.type()  ===  'profile';
+    const onEndingTick = Memory.profiler.disableTick  ===  Game.time;
     return streaming || (profiling && onEndingTick);
   },
 
   shouldEmail() {
-    return Profiler.type() === 'email' && Memory.profiler.disableTick === Game.time;
+    return Profiler.type()  ===  'email' && Memory.profiler.disableTick  ===  Game.time;
   },
 };
 
