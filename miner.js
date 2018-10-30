@@ -9,6 +9,8 @@ module.exports = {
                     let err = creep.harvest(mineral)
                     if (err != OK) {
                         console.log(`${creep.name} Error harvesting mineral ${err}`);
+                    } else if (err == ERR_NOT_ENOUGH_RESOURCES) {
+                        creep.memory.role = 'recycle'
                     }
                 }
             } else if (Game.time % 6 === 1) {
