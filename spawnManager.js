@@ -216,7 +216,7 @@ module.exports = {
                 break
             }
         }
-        if (numberBuilders > desiredBuilders) {
+        if (room.find(FIND_CONSTRUCTION_SITES).length === 0) {
             best = null
             for (let creep of room.find(FIND_MY_CREEPS, {filter: c => c.memory.role === 'builder'})) {
                 if (best === null || best.ticksToLive < creep.ticksToLive) {
