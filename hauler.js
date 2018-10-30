@@ -334,17 +334,19 @@ module.exports = {
 					}
 				}
 			}
-			let best = possibleSources[0];
-			for (let i in possibleSources) {
-				let {id, distance, energy} = possibleSources[i];
-				if ((energy >= creep.carryCapacity && best.distance > distance) || best.energy < creep.carryCapacity) {
-					best = possibleSources[i];
+			if (possibleSources.length) {
+				let best = possibleSources[0];
+				for (let i in possibleSources) {
+					let {id, distance, energy} = possibleSources[i];
+					if ((energy >= creep.carryCapacity && best.distance > distance) || best.energy < creep.carryCapacity) {
+						best = possibleSources[i];
+					}
 				}
-			}
-			if (best.energy >= creep.carryCapacity) {
-				//console.log(JSON.stringify(best), Game.time);
-				creep.memory.sourceId = best.id;
-			}
+				if (best.energy >= creep.carryCapacity) {
+					//console.log(JSON.stringify(best), Game.time);
+					creep.memory.sourceId = best.id;
+				}
+			}		
 		}
 		if (!creep.memory.sourceId && (Game.time - creep.memory.jobAssignedTime) >= 10) {
 			this.doneDelivering(creep)
