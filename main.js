@@ -333,6 +333,10 @@ global.myUtils.dumpMarket = function() {
     }
 }
 
+global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
+    
+}
+
 if (useProfiler) {
     const profiler = require('screeps-profiler');
     profiler.enable();

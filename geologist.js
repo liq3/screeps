@@ -10,7 +10,7 @@ module.exports = {
                     room.memory.sources[source.id] = {capacity:source.energyCapacity, pos:source.pos}
                 }
             }
-            if (!room.memory.controller) {
+            if (!room.memory.controller && room.controller) {
                 room.memory.controller = {pos:room.controller.pos}
             }
             delete creep.memory.target
@@ -30,7 +30,8 @@ module.exports = {
             let room = _.findKey(open)
             delete open[room]
             closed[room] = true
-            if (!Memory.rooms[room] || !Memory.rooms[room].sources) {
+            let otherCreeps = _.filter(Game.creeps, {filter: c=>c.memory.role === 'geologist' && c.memory.target && c.memory.target === room}).length === 0
+            if (!Memory.rooms[room] && otherCreeps) {
                 creep.memory.target = room
                 break;
             } else {
