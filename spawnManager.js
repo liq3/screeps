@@ -268,7 +268,9 @@ module.exports = {
             this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
         } else if (spawnMiner) {
             this.createCreep(spawn, 'M', {role:'miner'});
-        } else if ((room.storage && numberStationaryUpgraders < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)) || (room.storage === undefined && numberStationaryUpgraders < 3))) {
+        } else if ((room.storage && numberStationaryUpgraders < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable))
+                || (room.storage === undefined && numberStationaryUpgraders < 3))
+                && room.controller.findInRange(FIND_STRUCTURES, 2, {filter: {structureType:STRUCTURE_CONTAINER}})) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', bossRoom:room.name});
         } else if (Memory.spawnGeologist === room.name) {
             this.createCreep(spawn, 'GEO', {role:'geologist'});
