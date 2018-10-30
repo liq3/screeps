@@ -252,7 +252,7 @@ module.exports = {
             this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
         } else if (spawnHauler || (room.energyCapacityAvailable < 550 && numberHaulers < 5)) {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
-        } else if (harvesterTargetId && RCL >= 2 && room.energyCapacityAvailable >= 550) {
+        } else if (harvesterTargetId && RCL >= 2) {
             this.createCreep(spawn, 'HV', {role:'harvester',sourceId:harvesterTargetId});
         } else if (numberNewRoomBuilders !== undefined && numberNewRoomBuilders < 5) {
             this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.memory.supportNewRoom});
@@ -279,9 +279,15 @@ module.exports = {
     createCreep: function(spawn, name, data, partNumber) {
         let parts = [];
         if (data.role === 'harvester') {
-            let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 150) / 100);
-            parts = Array(Math.min(6,numberParts)).fill(WORK);
-            parts = parts.concat([CARRY,MOVE,MOVE]);
+            if (spawn.room.energyCapacityAvailable < 550) {
+                let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 50) / 100);
+                parts = Array(Math.min(6,numberParts)).fill(WORK);
+                parts = parts.concat([MOVE]);
+            } else {
+                let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 150) / 100);
+                parts = Array(Math.min(6,numberParts)).fill(WORK);
+                parts = parts.concat([CARRY,MOVE,MOVE]);
+            }
         } else if (data.role === 'stationaryUpgrader') {
             let cost = 100;
             let maxCost = spawn.room.energyCapacityAvailable;
