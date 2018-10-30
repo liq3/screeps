@@ -7,7 +7,7 @@ module.exports = {
 
         function sumCreeps(role, room) {
             if (room === undefined) {
-                return _.sum(Game.creeps, c => c.memory.role === role);
+                return _.size(Game.creeps, c => c.memory.role === role);
             } else {
                 return room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role === role}).length;
             }

@@ -366,7 +366,31 @@ global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
 }
 
 global.myUtils.baseTest = function() {
-
+    let flag = Game.flags.baseTest
+    if (!flag.memory.done) {
+        let buildings = []
+        for (let i = 0; i<50; i++) {
+            buildings[i] = []
+        }
+        for (let x = flag.pos.x-1; x < flag.pos.x+2; x++) {
+            for (let y = flag.pos.y-1; y < flag.pos.y+2; y++) {
+                if (y != x) {
+                    buildings[x][y] = STRUCTURE_ROAD
+                }
+            }
+        }
+        flag.memory.buildings = []
+        for (let x in buildings) {
+            for (let y in buildings[x]) {
+                flag.memory.buildings.push({type:buildings[x][y], x:x, y:y})
+            }
+        }
+    }
+    let visual = new RoomVisual(flag.pos.roomName)
+    for (let building of flag.memory.buildings) {
+        let {type, x, y} = building
+        visual.circle(x,y)
+    }
 }
 
 if (useProfiler) {
