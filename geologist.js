@@ -38,7 +38,10 @@ module.exports = {
             } else {
                 let exits = Game.map.describeExits(room)
                 for (let i in exits) {
-                    open[exits[i]] = true
+                    let [x,y] = /[WE](\d{1,2})[NS](\d{1,2})/.exec(exits[i])
+                    if (x >= 20 && x <= 30 && y <= 40 && y >= 30) {
+                        open[exits[i]] = true
+                    }
                 }
             }
             loops++;
