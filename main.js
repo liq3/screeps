@@ -91,7 +91,7 @@ let mainLoop = function() {
                 }
             }
         } catch (err) {
-            console.log(err.stack || err);
+            console.log(`${name} ${creep.pos} \n ${err.stack || err}`);
         }
 	}
 
