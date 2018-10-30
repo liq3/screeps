@@ -99,7 +99,9 @@ module.exports = {
         for (let r of Memory.ownedRooms[room.name]) {
             if (Game.rooms[r] && !Game.rooms[r].controller.my) {
                 let a = _.filter(Game.creeps, c => c.memory.role === 'claimer' && c.memory.targetRoom === r).length;
-                if ((a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) && !(Memory.dangerRooms.includes(r))) {
+                if (Game.rooms[r].controller.reservation &&
+                    ((a < 1 && Game.rooms[r].controller.reservation.ticksToEnd < 4000)
+                    || (a < 2 && Game.rooms[r].controller.reservation.ticksToEnd < 4500) && RCL < 5) && !(Memory.dangerRooms.includes(r))) {
                     reserveTargetRoom = r;
                     break;
                 }
@@ -350,7 +352,7 @@ module.exports = {
         } else if (data.role === 'scout' || data.role === 'geologist') {
             parts = [MOVE];
         } else if (data.role === 'claimer') {
-            parts = [CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
+            parts = spawn.room.energyCapacityAvailable < 1450 ? [CLAIM,MOVE,MOVE,MOVE] : [CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
         } else if (data.role === 'miner') {
             let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 50) / 450);
             parts = Array(numberParts*4).fill(WORK);
