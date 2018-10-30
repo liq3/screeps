@@ -40,7 +40,7 @@ let mainLoop = function() {
         }
     }
 
-    if (Memory.flags.baseTest) {
+    if (Memory.flags && Memory.flags.baseTest) {
         if (Game.flags.baseTest) {
             myUtils.baseTest();
         } else {
@@ -366,7 +366,7 @@ global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
 }
 
 global.myUtils.baseTest = function() {
-    
+
 }
 
 if (useProfiler) {
