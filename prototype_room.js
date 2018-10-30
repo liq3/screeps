@@ -27,17 +27,3 @@ Object.defineProperty(Room.prototype, 'container', {
         return this._container
     }
 });
-
-Object.defineProperty(Room.prototype, 'mineral', {
-    get: function() {
-        if (!this._mineral) {
-            if (!this.memory.mineralId) {
-                this._mineral = this.find(FIND_MINERALS)[0]
-                this.memory.mineralId = this._mineral.id
-            } else {
-                this._mineral = Game.getObjectById(this.memory.mineralId)
-            }
-        }
-        return this._mineral
-    }
-});

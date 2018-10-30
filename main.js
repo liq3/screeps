@@ -5,7 +5,6 @@ const useProfiler = true
 require('prototype_creep')
 require('prototype_source')
 require('prototype_room')
-require('prototype_mineral')
 const spawnManager = require('spawnManager');
 
 let creepRoles = ['builder','combat','miner','harvester',
