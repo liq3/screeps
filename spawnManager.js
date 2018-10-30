@@ -228,8 +228,8 @@ module.exports = {
             }
         }
 
-        if (room.memory.supportNewRoom != undefined) {
-            if (Game.rooms[room.memory.supportNewRoom].find(FIND_MY_STRUCTURES, {filter: s=> s.structureType === 'STRUCTURE_SPAWN'}).length > 0) {
+        if (room.memory.supportNewRoom !== undefined) {
+            if (Game.rooms[room.memory.supportNewroom] && Game.rooms[room.memory.supportNewRoom].find(FIND_MY_STRUCTURES, {filter: s=> s.structureType === 'STRUCTURE_SPAWN'}).length > 0) {
                 delete room.memory.supportNewRoom
             } else {
                 var numberNewRoomBuilders = _.filter(Game.creeps, c => c.memory.role === 'builder' && c.memory.bossRoom === room.memory.supportNewRoom).length
@@ -252,7 +252,7 @@ module.exports = {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
         } else if (harvesterTargetId && RCL >= 2 && room.energyCapacityAvailable >= 550) {
             this.createCreep(spawn, 'HV', {role:'harvester',sourceId:harvesterTargetId});
-        } else if (numberNewRoomBuilders && numberNewRoomBuilders < 5) {
+        } else if (numberNewRoomBuilders !== undefined && numberNewRoomBuilders < 5) {
             this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.memory.supportNewRoom});
         } else if (numberBuilders < desiredBuilders) {
             this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
