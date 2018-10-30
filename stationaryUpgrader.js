@@ -35,17 +35,17 @@ module.exports = {
 					creep.memory.finalPos = {x:parseInt(xy[0]), y:parseInt(xy[1])}
 				}
 			}
-			if (creep.memory.finalPos) {
-				pos = creep.memory.finalPos
-				target = new RoomPosition(pos.x, pos.y, creep.room.name)
-			} else {
-				console.log(`Creep ${creep.name}: Error getting final position near controller`)
-			}
+		}
+		if (creep.memory.finalPos) {
+			pos = creep.memory.finalPos
+			target = new RoomPosition(pos.x, pos.y, creep.room.name)
+		} else {
+			console.log(`Creep ${creep.name}: Error getting final position near controller`)
 		}
 		var error = creep.transfer(creep.room.controller,RESOURCE_ENERGY);
 		if (error === ERR_NOT_IN_RANGE || error === ERR_NOT_ENOUGH_ENERGY) {
 			if (target) {
-				creep.moveTo(target, {range: 1});
+				creep.moveTo(target);
 				creep.withdraw(target, RESOURCE_ENERGY);
 			} else {
 				creep.moveTo(creep.room.controller, {range: 2});
