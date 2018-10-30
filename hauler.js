@@ -22,7 +22,7 @@ module.exports = {
 				}
 			} else if (creep.memory.job == 'collectMinerals') {
 				let target = creep.room.mineral.container
-				let err = creep.withdraw(target, creep.room.mineral.mineralType
+				let err = creep.withdraw(target, creep.room.mineral.mineralType);
 				if (err == OK) {
 					creep.memory.gathering = false;
 				}

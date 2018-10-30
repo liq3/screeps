@@ -10,7 +10,6 @@ Object.defineProperty(Mineral.prototype, 'memory', {
     }
 });
 
-
 Object.defineProperty(Mineral.prototype, 'container', {
     get: function() {
         if (!this._container) {
