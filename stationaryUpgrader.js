@@ -38,26 +38,17 @@ module.exports = {
 		}
 		if (creep.memory.finalPos) {
 			pos = creep.memory.finalPos
-			target = new RoomPosition(pos.x, pos.y, creep.room.name)
+			if (creep.pos.isEqualto(pos.x,pos.y)) {
+				var error = creep.transfer(creep.room.controller,RESOURCE_ENERGY);
+				if (error === ERR_NOT_ENOUGH_ENERGY || creep.carry.energy < 20) {
+					target = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType==STRUCTURE_CONTAINER});
+					let err = creep.withdraw(target, RESOURCE_ENERGY);
+				}
+			} else {
+				target = new RoomPosition(pos.x, pos.y, creep.room.name)
+			}
 		} else {
 			console.log(`Creep ${creep.name}: Error getting final position near controller`)
-		}
-		var error = creep.transfer(creep.room.controller,RESOURCE_ENERGY);
-		if (error === ERR_NOT_IN_RANGE || error === ERR_NOT_ENOUGH_ENERGY) {
-			if (target) {
-				creep.moveTo(target);
-				creep.withdraw(target, RESOURCE_ENERGY);
-			} else {
-				creep.moveTo(creep.room.controller, {range: 2});
-			}
-		}
-		if (creep.carry.energy < 20) {
-			if (!target) {
-				target = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType==STRUCTURE_CONTAINER});
-			}
-			if (target.length > 0) {
-				creep.withdraw(target[0], RESOURCE_ENERGY);
-			}
 		}
 	}
 };
