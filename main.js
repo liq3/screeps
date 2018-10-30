@@ -8,7 +8,7 @@ require('prototype_room')
 require('prototype_mineral')
 const spawnManager = require('spawnManager');
 
-let creepRoles = ['builder','combat','miner','harvester',
+let creepRoles = ['builder','combat','miner','geologist','harvester',
     'hauler','stationaryUpgrader','scout','decoy','claimer','spawnHelper'];
 
 let creepFunctions = {};

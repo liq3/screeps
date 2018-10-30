@@ -267,6 +267,8 @@ module.exports = {
             this.createCreep(spawn, 'M', {role:'miner'});
         } else if ((room.storage && numberStationaryUpgraders < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)) || (room.storage === undefined && numberStationaryUpgraders < 3))) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', bossRoom:room.name});
+        } else if (Memory.spawnGeologist) {
+            this.createCreep(spawn, 'GEO', {role:'geologist'});
         }
     },
 
@@ -343,7 +345,7 @@ module.exports = {
                 parts = Array(numberParts).fill(MOVE)
                 parts = parts.concat(Array(numberParts).fill(HEAL))
             }
-        } else if (data.role === 'scout') {
+        } else if (data.role === 'scout' || data.role === 'geologist') {
             parts = [MOVE];
         } else if (data.role === 'claimer') {
             parts = [CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
