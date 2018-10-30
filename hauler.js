@@ -203,7 +203,7 @@ module.exports = {
 				}
 				let distance = creep.pos.findPathTo(container).length;
 				let metric = minerals + upgradeParts*distance/5;
-				if (distance*2 > creep.ticksToLive && metric > creep.carryCapacity || metric > 1900) {
+				if (distance*2 > creep.ticksToLive && (metric > creep.carryCapacity || metric > 1900)) {
 					creep.memory.job = 'collectMinerals';
 				}
 			}
@@ -223,7 +223,7 @@ module.exports = {
 				}
 				let distance = creep.pos.findPathTo(upgradeContainer).length;
 				let metric = upgradeContainer.storeCapacity - (totalUpgrade - upgradeParts*distance);
-				if (metric > creep.carryCapacity && (!(creep.room.storage || creep.room.container) || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
+				if (distance*2 > creep.ticksToLive && metric > creep.carryCapacity && (!(creep.room.storage || creep.room.container) || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
 					creep.memory.job = 'upgrade';
 				}
 			}
@@ -327,7 +327,9 @@ module.exports = {
 							if (source.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c=>c.memory.role == 'miner'}).length > 0) {
 								energy += distance*6;
 							}
-							possibleSources.push({id:source.id, distance:distance, energy:energy, r:reserved});
+							if (distance*2 > creep.ticksToLive) {
+								possibleSources.push({id:source.id, distance:distance, energy:energy, r:reserved});
+							}
 						}
 					}
 				}
