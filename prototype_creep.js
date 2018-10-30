@@ -56,6 +56,10 @@ Creep.prototype.gatherEnergy = function () {
             error = this.withdraw(energy, RESOURCE_ENERGY);
         } else if (energy instanceof Source) {
             error = this.harvest(energy)
+            if (error === ERR_NO_BODYPART) {
+                delete this.memory.energyId
+                energy = undefined
+            }
         }
 
         if (error === ERR_NOT_IN_RANGE) {
