@@ -38,7 +38,7 @@ module.exports = {
 		}
 		if (creep.memory.finalPos) {
 			pos = creep.memory.finalPos
-			if (creep.pos.isEqualto(pos.x,pos.y)) {
+			if (creep.pos.isEqualTo(pos.x,pos.y)) {
 				var error = creep.transfer(creep.room.controller,RESOURCE_ENERGY);
 				if (error === ERR_NOT_ENOUGH_ENERGY || creep.carry.energy < 20) {
 					target = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType==STRUCTURE_CONTAINER});
