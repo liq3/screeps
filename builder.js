@@ -41,31 +41,31 @@ module.exports = {
 							possible.id = itr.id;
 						}
 					}
+					let priorityMods = {
+						STRUCTURE_WALL:200,
+						STRUCTURE_RAMPART:200,
+						STRUCTURE_ROAD:100,
+						STRUCTURE_CONTAINER:-100,
+						STRUCTURE_SPAWN:-200,
+						STRUCTURE_STORAGE:-300
+					}
+					for (let itr of Game.rooms[r].find(FIND_CONSTRUCTION_SITES)) {
+						let score = creep.pos.getRangeTo(itr);
+						if (score === Infinity) {
+							score = 50
+						}
+
+						if (priorityMods[itr.structureType]) {
+							score += priorityMods[itr.structureType]
+						}
+						if (score < possible.best) {
+							possible.best = score;
+							possible.id = itr.id;
+						}
+					}
 				}
 
-				let priorityMods = {
-					STRUCTURE_WALL:200,
-					STRUCTURE_RAMPART:200,
-					STRUCTURE_ROAD:100,
-					STRUCTURE_CONTAINER:-100,
-					STRUCTURE_SPAWN:-200,
-					STRUCTURE_STORAGE:-300
-				}
-				for (let i in Game.constructionSites) {
-					let itr = Game.constructionSites[i];
-					let score = creep.pos.getRangeTo(itr);
-					if (score === Infinity) {
-						score = 50
-					}
 
-					if (priorityMods[itr.structureType]) {
-						score += priorityMods[itr.structureType]
-					}
-					if (score < possible.best) {
-						possible.best = score;
-						possible.id = itr.id;
-					}
-				}
 
 				creep.memory.targetId = possible.id;
 				target = Game.getObjectById(possible.id);
