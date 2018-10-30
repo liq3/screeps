@@ -132,7 +132,7 @@ module.exports = {
 				}
 			} else if (creep.memory.job == 'collectMinerals') {
 				target = creep.room.storage;
-				err = creep.transfer(target, Object.keys(creep.carry)[0])
+				err = creep.transfer(target, _.findKey(creep.carry))
 				if (err == OK) {
 					this.doneDelivering(creep);
 				}
@@ -203,7 +203,7 @@ module.exports = {
 				}
 				let distance = creep.pos.findPathTo(container).length;
 				let metric = minerals + upgradeParts*distance/5;
-				if (metric > creep.carryCapacity || metric > 1900) {
+				if (distance*2 > creep.ticksToLive && metric > creep.carryCapacity || metric > 1900) {
 					creep.memory.job = 'collectMinerals';
 				}
 			}
@@ -234,7 +234,7 @@ module.exports = {
 		}
 
 		if (!creep.memory.job && creep.carry.energy < creep.carryCapacity) {
-			let pickups = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5, {filter: r => r.resourceType == RESOURCE_ENERGY});
+			let pickups = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5);
 			if (pickups.length > 0) {
 				for (let pickup of pickups) {
 					if (pickup.amount > 100) {

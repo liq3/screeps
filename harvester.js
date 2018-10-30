@@ -11,8 +11,8 @@ module.exports = {
                     creep.moveTo(source, {range:1});
                 } else {
                     let sites = source.pos.findInRange(FIND_CONSTRUCTION_SITES, 1);
-                    if (sites.length == 0) {
-                        if (creep.pos.getRangeTo(source.pos) == 1) {
+                    if (sites.length===0) {
+                        if (creep.pos.getRangeTo(source.pos)===1) {
                             source.room.createConstructionSite(creep.pos, STRUCTURE_CONTAINER);
                         }
                     } else if (sites.length > 0 && creep.carry.energy > 30) {

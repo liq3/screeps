@@ -17,11 +17,11 @@ Creep.prototype.gatherEnergy = function () {
         }
         if (!energy) {
             energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
-                r => r.resourceType == RESOURCE_ENERGY && r.amount > 0, range:1});
+                r => r.resourceType===RESOURCE_ENERGY && r.amount > 0, range:1});
         }
         if (!energy) {
             energy = creep.pos.findClosestByPath(FIND_STRUCTURES, {filter:
-                s => s.structureType == STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 50
+                s => s.structureType===STRUCTURE_CONTAINER && s.store[RESOURCE_ENERGY] > 50
                     && s.pos.findInRange(FIND_SOURCES, 1).length >= 1})
         }
         if (!energy) {
@@ -47,9 +47,9 @@ Creep.prototype.gatherEnergy = function () {
         let error;
         if (energy instanceof Resource) {
             error = this.pickup(energy);
-            if (error == OK) {
+            if (error===OK) {
                 let container = this.pos.findClosestByRange(FIND_STRUCTURES, {filter:
-                            s => s.structureType == STRUCTURE_CONTAINER && s.pos.findInRange(FIND_SOURCES, 1).length >= 1})
+                            s => s.structureType===STRUCTURE_CONTAINER && s.pos.findInRange(FIND_SOURCES, 1).length >= 1})
                 this.withdraw(container, RESOURCE_ENERGY);
             }
         } else if (energy instanceof Structure) {
@@ -58,9 +58,9 @@ Creep.prototype.gatherEnergy = function () {
             error = this.harvest(energy)
         }
 
-        if (error == ERR_NOT_IN_RANGE) {
+        if (error===ERR_NOT_IN_RANGE) {
             this.moveTo(energy);
-        } else if (error == ERR_NOT_ENOUGH_RESOURCES) {
+        } else if (error===ERR_NOT_ENOUGH_RESOURCES) {
             energy = null;
             delete this.memory.energyId;
         }
@@ -70,7 +70,7 @@ Creep.prototype.gatherEnergy = function () {
         this.memory.energyId = energy.id;
     }
 
-    if (this.carry.energy == this.carryCapacity) {
+    if (this.carry.energy===this.carryCapacity) {
         this.memory.gathering = false;
         delete this.memory.energyId;
     }
@@ -78,7 +78,7 @@ Creep.prototype.gatherEnergy = function () {
 
 
 Creep.prototype.makeSureInBossRoom = function () {
-   if (this.memory.bossRoom == undefined) {
+   if (this.memory.bossRoom===undefined) {
        return true
    } else if (this.memory.bossRoom != this.room.name) {
        let err = this.moveTo(new RoomPosition(25,25,this.memory.bossRoom), {range:22});

@@ -1,22 +1,22 @@
 module.exports = {
     spawnCreeps: function(room) {
-        let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType == STRUCTURE_SPAWN && !s.spawning})[0]
+        let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType===STRUCTURE_SPAWN && !s.spawning})[0]
         if (!spawn) {
             return
         }
 
         function sumCreeps(role, room) {
-            if (room == undefined) {
-                return _.sum(Game.creeps, c => c.memory.role == role);
+            if (room===undefined) {
+                return _.sum(Game.creeps, c => c.memory.role===role);
             } else {
-                return room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == role}).length;
+                return room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role===role}).length;
             }
         }
 
         var RCL = room.controller.level;
         let numberHarvesters = sumCreeps('harvester', room);
         let numberSpawnHelpers = sumCreeps('spawnHelper', room);
-        let numberGuards = _(Game.creeps).filter( c => c.memory.job == 'guard').length;
+        let numberGuards = _(Game.creeps).filter( c => c.memory.job==='guard').length;
         let numberMiners = sumCreeps('miner', room)
         let numberHaulers = sumCreeps('hauler', room)
         let numberBuilders = sumCreeps ('builder', room);
@@ -29,8 +29,8 @@ module.exports = {
         let desiredTransportCapacity = 0;
         let sourceList = [];
         for (let r of Memory.ownedRooms[room.name]) {
-            if (Game.rooms[r] == null && scoutTarget == null
-                    && _.filter(Game.creeps, c => c.memory.role == 'scout' && c.memory.targetPos.roomName == r).length == 0) {
+            if (Game.rooms[r]===null && scoutTarget===null
+                    && _.filter(Game.creeps, c => c.memory.role==='scout' && c.memory.targetPos.roomName===r).length===0) {
                 scoutTarget = r;
             } else if (Game.rooms[r]) {
                 for (let source of Game.rooms[r].find(FIND_SOURCES)) {
@@ -43,11 +43,11 @@ module.exports = {
         sourceList.sort((a,b) => a.path.cost - b.path.cost );
         let numberContainers = 0;
         for (let {source,path} of sourceList) {
-            let miners = _.filter(Game.creeps, c => c.memory.sourceId == source.id && c.memory.role == 'harvester');
-            if (harvesterTargetId == null && (miners.length == 0 || (miners.length == 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
+            let miners = _.filter(Game.creeps, c => c.memory.sourceId===source.id && c.memory.role==='harvester');
+            if (harvesterTargetId===null && (miners.length===0 || (miners.length===1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
                 harvesterTargetId = source.id;
             } else if (miners.length > 0) {
-                let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType == STRUCTURE_CONTAINER});
+                let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType===STRUCTURE_CONTAINER});
                 if (containers.length > 0) {
                     desiredTransportCapacity += Math.ceil( 2 * (2 * path.cost) * source.energyCapacity / ENERGY_REGEN_TIME);
                     numberContainers += 1;
@@ -57,7 +57,7 @@ module.exports = {
 
         if (numberStationaryUpgraders > 0) {
             let path = PathFinder.search(firstSpawn.pos, {pos:room.controller.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
-            for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role == 'stationaryUpgrader'})) {
+            for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role==='stationaryUpgrader'})) {
                 desiredTransportCapacity += 2 * path.cost * praiser.getActiveBodyparts(WORK)
             }
         }
@@ -67,7 +67,7 @@ module.exports = {
             let mineralContainer = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
             if (mineralContainer && mineral.mineralAmount > 0) {
                 let mineralPath = PathFinder.search(firstSpawn.pos, {pos:mineral.pos, range: 1}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
-                let miners = _.filter(Game.creeps, {filter: c => c.memory.role == 'miner'})
+                let miners = _.filter(Game.creeps, {filter: c => c.memory.role==='miner'})
                 for (let miner of miners) {
                     desiredTransportCapacity += 2 * path.cost * miner.getActiveBodyparts(WORK) / 5
                 }
@@ -88,7 +88,7 @@ module.exports = {
         }
 
         let transportCapacity = 0;
-        for (let creep of _.filter(Game.creeps, c => c.memory.role == 'hauler' && c.memory.bossRoom == room.name)) {
+        for (let creep of _.filter(Game.creeps, c => c.memory.role==='hauler' && c.memory.bossRoom===room.name)) {
             transportCapacity += creep.carryCapacity;
         }
         if (transportCapacity < desiredTransportCapacity) {
@@ -98,7 +98,7 @@ module.exports = {
         let reserveTargetRoom = null;
         for (let r of Memory.ownedRooms[room.name]) {
             if (Game.rooms[r] && !Game.rooms[r].controller.my) {
-                let a = _.filter(Game.creeps, c => c.memory.role == 'claimer' && c.memory.targetRoom == r).length;
+                let a = _.filter(Game.creeps, c => c.memory.role==='claimer' && c.memory.targetRoom===r).length;
                 if ((a < 1 || (a < 2 && Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500)) && !(Memory.dangerRooms.includes(r))) {
                     reserveTargetRoom = r;
                     break;
@@ -107,7 +107,7 @@ module.exports = {
         }
 
         let searchRooms = [];
-        searchRooms = _.filter(Game.flags, f => f.name == 'claim');
+        searchRooms = _.filter(Game.flags, f => f.name==='claim');
         for (let i in searchRooms) {
             searchRooms[i] = searchRooms[i].pos.roomName;
             room = Game.rooms[searchRooms[i]]
@@ -119,8 +119,8 @@ module.exports = {
         }
         let claimTargetRoom = null;
         for (let r of searchRooms) {
-            let trans = _.filter(Game.creeps, c => c.memory.claimRoom == r && c.memory.role == 'claimer').length;
-            if (trans == 0) {
+            let trans = _.filter(Game.creeps, c => c.memory.claimRoom===r && c.memory.role==='claimer').length;
+            if (trans===0) {
                 claimTargetRoom = r;
                 break;
             }
@@ -130,7 +130,7 @@ module.exports = {
             let spawnAttacker = false;
             let targetRoom;
             searchRooms = [];
-            let attackFlags = _.filter(Game.flags, f => f.name.split(" ")[0] == name);
+            let attackFlags = _.filter(Game.flags, f => f.name.split(" ")[0]===name);
             let desiredAttackers = [];
             for (let i in attackFlags) {
                 let flagName = attackFlags[i].name.split(" ");
@@ -146,7 +146,7 @@ module.exports = {
             }
             for (let i in searchRooms) {
                 let r = searchRooms[i];
-                let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.role == 'combat' && c.memory.job == name).length;
+                let attackers = _.filter(Game.creeps, c => c.memory.targetRoom===r && c.memory.role==='combat' && c.memory.job===name).length;
                 if (attackers < desiredAttackers[i]) {
                     spawnAttacker = true;
                     targetRoom = r;
@@ -169,14 +169,14 @@ module.exports = {
         }
 
         searchRooms = [];
-        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'harass');
+        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0]==='harass');
         for (let i in searchRooms) {
             searchRooms[i] = searchRooms[i].pos.roomName;
         }
         let attackerParts;
         for (let r of searchRooms) {
-            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom == r && c.memory.job == 'attack' && c.memory.role == `combat`).length;
-            if (attackers == 0) {
+            let attackers = _.filter(Game.creeps, c => c.memory.targetRoom===r && c.memory.job==='attack' && c.memory.role===`combat`).length;
+            if (attackers===0) {
                 spawnAttacker = true;
                 attackerTargetRoom = r;
                 attackerParts = 1;
@@ -187,7 +187,7 @@ module.exports = {
 
 
         searchRooms = [];
-        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] == 'decoy');
+        searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0]==='decoy');
         for (let i in searchRooms) {
             searchRooms[i] = searchRooms[i].pos.roomName;
         }
@@ -198,9 +198,9 @@ module.exports = {
         }
 
         let upgradeWorkParts = 0;
-        for (let creep of room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role == 'stationaryUpgrader'})) {
+        for (let creep of room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role==='stationaryUpgrader'})) {
             for (let part in creep.body) {
-                if (creep.body[part].type == WORK) {
+                if (creep.body[part].type===WORK) {
                     upgradeWorkParts += 1;
                 }
             }
@@ -215,8 +215,8 @@ module.exports = {
         }
         if (numberBuilders > desiredBuilders) {
             best = null
-            for (let creep of room.find(FIND_MY_CREEPS, {filter: c => c.memory.role == 'builder'})) {
-                if (best == null || best.ticksToLive < creep.ticksToLive) {
+            for (let creep of room.find(FIND_MY_CREEPS, {filter: c => c.memory.role==='builder'})) {
+                if (best===null || best.ticksToLive < creep.ticksToLive) {
                     if (best != null) {
                         best.memory.role = 'recycle'
                     }
@@ -228,10 +228,10 @@ module.exports = {
         }
 
         if (room.memory.supportNewRoom != undefined) {
-            if (Game.rooms[room.memory.supportNewRoom].find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == 'STRUCTURE_SPAWN'}).length > 0) {
+            if (Game.rooms[room.memory.supportNewRoom].find(FIND_MY_STRUCTURES, {filter: s=> s.structureType==='STRUCTURE_SPAWN'}).length > 0) {
                 delete room.memory.supportNewRoom
             } else {
-                var numberNewRoomBuilders = _.filter(Game.creeps, c => c.memory.role == 'builder' && c.memory.bossRoom == room.memory.supportNewRoom).length
+                var numberNewRoomBuilders = _.filter(Game.creeps, c => c.memory.role==='builder' && c.memory.bossRoom===room.memory.supportNewRoom).length
             }
         }
 
@@ -265,18 +265,18 @@ module.exports = {
             this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
         } else if (spawnMiner) {
             this.createCreep(spawn, 'M', {role:'miner'});
-        } else if ((room.storage && numberStationaryUpgraders < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)) || (room.storage == undefined && numberStationaryUpgraders < 3))) {
+        } else if ((room.storage && numberStationaryUpgraders < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)) || (room.storage===undefined && numberStationaryUpgraders < 3))) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', bossRoom:room.name});
         }
     },
 
     createCreep: function(spawn, name, data, partNumber) {
         let parts = [];
-        if (data.role == 'harvester') {
+        if (data.role==='harvester') {
             let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 150) / 100);
             parts = Array(Math.min(6,numberParts)).fill(WORK);
             parts = parts.concat([CARRY,MOVE,MOVE]);
-        } else if (data.role == 'stationaryUpgrader') {
+        } else if (data.role==='stationaryUpgrader') {
             let cost = 100;
             let maxCost = spawn.room.energyCapacityAvailable;
             parts = [];
@@ -294,7 +294,7 @@ module.exports = {
                 }
             }
             parts.push(CARRY,MOVE);
-        } else if (data.role == 'hauler') {
+        } else if (data.role==='hauler') {
             if (spawn.room.energyCapacityAvailable >= 550) {
                 let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 200) / 150);
                 parts = [WORK]
@@ -306,48 +306,48 @@ module.exports = {
                 parts = parts.concat(Array(numberParts).fill(CARRY));
                 parts = parts.concat(Array(numberParts).fill(MOVE));
             }
-        } else if (data.role == 'smallHauler') {
+        } else if (data.role==='smallHauler') {
             parts = [WORK, MOVE, MOVE, CARRY]
             data.role = 'hauler'
-        } else if (data.role == 'spawnHelper') {
+        } else if (data.role==='spawnHelper') {
             let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 150);
             parts = Array(numberParts).fill(CARRY);
             parts = parts.concat(Array(numberParts).fill(CARRY));
             parts = parts.concat(Array(numberParts).fill(MOVE));
             data.gathering = true;
-        } else if (data.role == 'decoy') {
+        } else if (data.role==='decoy') {
             parts = [TOUGH,MOVE];
             // let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
             // for (let i = 0; i < Math.min(8,numberParts); i++) {
             //     parts = parts.concat([TOUGH,TOUGH,TOUGH,TOUGH,TOUGH,MOVE]);
             // }
-        } else if (data.role == 'combat') {
-            if (data.job == 'attack') {
+        } else if (data.role==='combat') {
+            if (data.job==='attack') {
                 let numberParts = partNumber ? partNumber : Math.floor(spawn.room.energyCapacityAvailable / 130);
                 for (let i = 0; i < Math.min(numberParts, 5); i++) {
                     parts = parts.concat([ATTACK,MOVE]);
                 }
-            } else if (data.job == 'attackRanged' || data.job == 'guard') {
+            } else if (data.job==='attackRanged' || data.job==='guard') {
                 let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 300) / 260);
                 parts = Array(numberParts).fill(TOUGH);
                 parts = parts.concat(Array(numberParts*2+1).fill(MOVE));
                 parts = parts.concat(Array(numberParts-1).fill(RANGED_ATTACK));
                 parts.push(HEAL,RANGED_ATTACK);
-            }  else if (data.job == 'guard') {
+            }  else if (data.job==='guard') {
                 let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 450) / 130);
                 parts = Array(numberParts+1).fill(MOVE);
                 parts = parts.concat(Array(numberParts).fill(ATTACK));
                 parts.push(HEAL,RANGED_ATTACK);
-            } else if (data.job == 'healer') {
+            } else if (data.job==='healer') {
                 let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 300)
                 parts = Array(numberParts).fill(MOVE)
                 parts = parts.concat(Array(numberParts).fill(HEAL))
             }
-        } else if (data.role == 'scout') {
+        } else if (data.role==='scout') {
             parts = [MOVE];
-        } else if (data.role == 'claimer') {
+        } else if (data.role==='claimer') {
             parts = [CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
-        } else if (data.role == 'miner') {
+        } else if (data.role==='miner') {
             let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 50) / 450);
             parts = Array(numberParts*4).fill(WORK);
             parts.push(CARRY)
@@ -364,14 +364,14 @@ module.exports = {
             }
         }
         error = spawn.createCreep(parts, this.getName(name), data);
-        if (error == -10) {
+        if (error===-10) {
             console.log("Error spawning creep: " + error + JSON.stringify(data) + parts);
-        } else if (error == -3) {
+        } else if (error===-3) {
             console.log("Error! Trying to spawn creep with same name");
-        } else if (error == -6 && spawn.room.energyAvailable == spawn.room.energyCapacityAvailable) {
+        } else if (error===-6 && spawn.room.energyAvailable===spawn.room.energyCapacityAvailable) {
             console.log("Error! Trying to spawn creep that costs too much" + data.role + parts);
         }
-        if (typeof(error) == 'string') {
+        if (typeof(error)==='string') {
             logStr = `${spawn.room.name} spawning ${error} in ${parts.length*3} ticks with ${spawn.name}. ` + JSON.stringify(data);
             console.log(logStr);
             try {
@@ -384,7 +384,7 @@ module.exports = {
     },
 
     getName: function(name, num) {
-        if (num == undefined) {
+        if (num===undefined) {
             num = 0;
         }
         if (!((name + num) in Game.creeps)) {
