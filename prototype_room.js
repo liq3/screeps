@@ -16,7 +16,7 @@ Object.defineProperty(Room.prototype, 'container', {
         if (!this._container) {
             if (!this.memory.containerId) {
                 this._container = this.find(FIND_STRUCTURES, {filter: s => s.structureType === STRUCTURE_CONTAINER
-                    && !s.pos.findInRange(FIND_MY_STRUCTURES, 1, {structureType:STRUCTURE_SPAWN}) })[0]
+                    && s.pos.findInRange(FIND_MY_STRUCTURES, 1, {structureType:STRUCTURE_SPAWN}).length })[0]
                 if (this._container) {
                     this.memory.containerId = container.id
                 }
