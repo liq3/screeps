@@ -40,6 +40,14 @@ let mainLoop = function() {
         }
     }
 
+    if (Memory.flags.baseTest) {
+        if (Game.flags.baseTest) {
+            myUtils.baseTest();
+        } else {
+            delete Memory.flags.baseTest
+        }
+    }
+
     for (let i in Game.rooms) {
         try {
             if (Game.rooms[i].controller && Game.rooms[i].controller.my && Game.cpu.bucket > 1000
@@ -355,6 +363,10 @@ global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
         }
         console.log(`Room:${r} EnergyRate:${energyRate} Upkeep:${upkeep} Net:${energyRate+upkeep}`)
     }
+}
+
+global.myUtils.baseTest = function() {
+    
 }
 
 if (useProfiler) {

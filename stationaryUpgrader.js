@@ -43,7 +43,7 @@ module.exports = {
 				if (error === ERR_NOT_ENOUGH_ENERGY || creep.carry.energy < 20) {
 					target = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType==STRUCTURE_CONTAINER});
 					let err = creep.withdraw(target[0], RESOURCE_ENERGY);
-					if (err != OK) {
+					if (err != OK && err != ERR_NOT_ENOUGH_ENERGY) {
 						console.log(`Creep ${creep.name}: ${err} withdrawing from container`)
 					}
 				}
