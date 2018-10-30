@@ -314,6 +314,10 @@ module.exports = {
                 parts = [WORK]
                 parts = parts.concat(Array(numberParts*2+1).fill(CARRY));
                 parts = parts.concat(Array(numberParts+1).fill(MOVE));
+            } else if (spawn.room.controller.level >= 2) {
+                let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 100);
+                parts = parts.concat(Array(numberParts).fill(CARRY));
+                parts = parts.concat(Array(numberParts).fill(MOVE));
             } else {
                 let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 150) / 100);
                 parts = [WORK, MOVE]
