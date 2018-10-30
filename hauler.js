@@ -269,7 +269,7 @@ module.exports = {
 				if (source.container) {
 					droppedEnergy = source.container.pos.lookFor(LOOK_RESOURCES);
 				} else {
-					droppedEnergy = source.pos.findInRange(LOOK_RESOURCES, 1);
+					droppedEnergy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
 				}
 				if (droppedEnergy.length) {
 					droppedEnergy = droppedEnergy[0]
