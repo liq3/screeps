@@ -40,12 +40,10 @@ let mainLoop = function() {
         }
     }
 
-    if (Memory.flags && Memory.flags.baseTest) {
-        if (Game.flags.baseTest) {
-            myUtils.baseTest();
-        } else {
-            delete Memory.flags.baseTest
-        }
+    if (Game.flags.baseTest) {
+        myUtils.baseTest();
+    } else if (Memory.flags && Memory.flags.baseTest){
+        delete Memory.flags.baseTest
     }
 
     for (let i in Game.rooms) {
