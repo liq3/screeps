@@ -334,7 +334,16 @@ global.myUtils.dumpMarket = function() {
 }
 
 global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
-    
+    for (let room of Memory.rooms) {
+        let energyRate = 0
+        let upkeep = 0
+        let completePath = true
+        for (let s of room.sources) {
+            energyRate += s.capacity / 300
+            let path = PathFinder.search(spawn.pos, {pos:s.pos, range:1}, {maxOps:10000})
+            upkeep -= (path.cost * 2 * (s.capacity / 300) * 2/3 + 100 + path.cost * 0.001) / 1500
+        }
+    }
 }
 
 if (useProfiler) {

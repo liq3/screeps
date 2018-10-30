@@ -1,5 +1,6 @@
 module.exports = {
     run: function(creep) {
+         if (Game.cpu.bucket < 9000) { return; } // emergency CPU measures
         if (!creep.memory.target) {
             this.getNewTargetRoom(creep)
         } else if (creep.room.name === creep.memory.target) {

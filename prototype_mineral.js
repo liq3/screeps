@@ -17,8 +17,6 @@ Object.defineProperty(Mineral.prototype, 'container', {
                 let container = this.pos.findInRange(FIND_STRUCTURES, 1, {structureType: STRUCTURE_CONTAINER})[0]
                 if (container) {
                     this.memory.containerId = container.id
-                } else {
-                    return
                 }
             }
             this._container = Game.getObjectById(this.memory.containerId)
