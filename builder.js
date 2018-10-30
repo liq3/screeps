@@ -14,7 +14,7 @@ module.exports = {
 			if (target instanceof Structure && target.hits === target.hitsMax) {
 				creep.memory.targetId = null;
 			}
-	        if(!target || Game.time - creep.memory.jobStartTime > 100) {
+	        if(Memory.ownedRooms[creep.memory.bossRoom] && (!target || Game.time - creep.memory.jobStartTime > 100)) {
 				let possible = {best:1000000, id:null};
 				for (let r of Memory.ownedRooms[creep.memory.bossRoom]) {
 					if (!Game.rooms[r]) {
