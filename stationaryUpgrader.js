@@ -42,7 +42,10 @@ module.exports = {
 				var error = creep.transfer(creep.room.controller,RESOURCE_ENERGY);
 				if (error === ERR_NOT_ENOUGH_ENERGY || creep.carry.energy < 20) {
 					target = creep.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType==STRUCTURE_CONTAINER});
-					let err = creep.withdraw(target, RESOURCE_ENERGY);
+					let err = creep.withdraw(target[0], RESOURCE_ENERGY);
+					if (err != OK) {
+						console.log(`Creep ${creep.name}: ${err} withdrawing from container`)
+					}
 				}
 			} else {
 				target = new RoomPosition(pos.x, pos.y, creep.room.name)
