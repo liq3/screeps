@@ -334,12 +334,17 @@ global.myUtils.dumpMarket = function() {
 }
 
 global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
-    for (let room of Memory.rooms) {
+    for (let r in Memory.rooms) {
+        let room = Memory.rooms[r]
         let energyRate = 0
         let upkeep = 0
         let completePath = true
-        for (let s of room.sources) {
-            energyRate += s.capacity / 300
+        if (_.size(room.sources) === 0) {
+            continue;
+        }
+        for (let si in room.sources) {
+            let s = room.sources[si]
+            energyRate += (s.capacity === 1500 ? 3000 : s.capacity) / 300
             let path = PathFinder.search(spawn.pos, {pos:s.pos, range:1}, {maxOps:10000})
             upkeep -= (path.cost * 2 * (s.capacity / 300) * 2/3 + 100) / 1500
         }
@@ -347,7 +352,7 @@ global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
             let path = PathFinder.search(spawn.pos, {pos:room.controller.pos, range:1}, {maxOps:10000})
             upkeep -= 650 / (600 - path.cost)
         }
-        console.log(`Room:${room} EnergyRate:${energyRate} Upkeep:${upkeep} Net:${energyRate-upkeep}`)
+        console.log(`Room:${r} EnergyRate:${energyRate} Upkeep:${upkeep} Net:${energyRate+upkeep}`)
     }
 }
 
