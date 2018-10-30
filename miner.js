@@ -7,10 +7,10 @@ module.exports = {
                 let container = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
                 if (container && _.sum(creep.carry) + creep.getActiveBodyparts(WORK) <= creep.carryCapacity) {
                     let err = creep.harvest(mineral)
-                    if (err != OK) {
-                        console.log(`${creep.name} Error harvesting mineral ${err}`);
-                    } else if (err == ERR_NOT_ENOUGH_RESOURCES) {
+                    if (err == ERR_NOT_ENOUGH_RESOURCES) {
                         creep.memory.role = 'recycle'
+                    } else if (err != OK) {
+                        console.log(`${creep.name} Error harvesting mineral ${err}`);
                     }
                 }
             } else if (Game.time % 6 === 1) {
