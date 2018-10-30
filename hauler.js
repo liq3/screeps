@@ -265,9 +265,17 @@ module.exports = {
 				let target;
 				var err;
 				let withdrawAmount = 0;
-				let droppedEnergy = source.container.pos.lookFor(LOOK_RESOURCES);
+				let droppedEnergy;
+				if (source.container) {
+					droppedEnergy = source.container.pos.lookFor(LOOK_RESOURCES);
+				} else {
+					droppedEnergy = source.pos.findInRange(LOOK_RESOURCES, 1);
+				}
 				if (droppedEnergy.length) {
-					target = droppedEnergy[0];
+					droppedEnergy = droppedEnergy[0]
+				}
+				if (droppedEnergy instanceof Resource) {
+					target = droppedEnergy;
 					err = creep.pickup(target);
 					if (err == OK && creep.carryCapacity - creep.carry.energy < target.amount) {
 						creep.memory.gathering = false;
