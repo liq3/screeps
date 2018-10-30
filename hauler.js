@@ -327,7 +327,7 @@ module.exports = {
 							if (source.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c=>c.memory.role == 'miner'}).length > 0) {
 								energy += distance*6;
 							}
-							if (distance*2 > creep.ticksToLive) {
+							if (distance*2 < creep.ticksToLive) {
 								possibleSources.push({id:source.id, distance:distance, energy:energy, r:reserved});
 							}
 						}
@@ -346,7 +346,7 @@ module.exports = {
 					//console.log(JSON.stringify(best), Game.time);
 					creep.memory.sourceId = best.id;
 				}
-			}		
+			}
 		}
 		if (!creep.memory.sourceId && (Game.time - creep.memory.jobAssignedTime) >= 10) {
 			this.doneDelivering(creep)
