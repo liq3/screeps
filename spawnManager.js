@@ -252,12 +252,12 @@ module.exports = {
             this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
         } else if (harvesterTargetId && RCL >= 2 && room.energyCapacityAvailable >= 550) {
             this.createCreep(spawn, 'HV', {role:'harvester',sourceId:harvesterTargetId});
+        } else if (numberNewRoomBuilders && numberNewRoomBuilders < 5) {
+            this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.memory.supportNewRoom});
         } else if (numberBuilders < desiredBuilders) {
             this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
         } else if (numberGuards < 3) {
             this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
-        } else if (numberNewRoomBuilders && numberNewRoomBuilders < 5) {
-            this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.memory.supportNewRoom});
         } else if (false && numberSpawnHelpers < 1 && room.storage && room.storage.store[RESOURCE_ENERGY] > 5000) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (reserveTargetRoom && RCL > 2) {
