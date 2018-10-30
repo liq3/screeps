@@ -341,8 +341,13 @@ global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
         for (let s of room.sources) {
             energyRate += s.capacity / 300
             let path = PathFinder.search(spawn.pos, {pos:s.pos, range:1}, {maxOps:10000})
-            upkeep -= (path.cost * 2 * (s.capacity / 300) * 2/3 + 100 + path.cost * 0.001) / 1500
+            upkeep -= (path.cost * 2 * (s.capacity / 300) * 2/3 + 100) / 1500
         }
+        if (room.controller) {
+            let path = PathFinder.search(spawn.pos, {pos:room.controller.pos, range:1}, {maxOps:10000})
+            upkeep -= 650 / (600 - path.cost)
+        }
+        console.log(`Room:${room} EnergyRate:${energyRate} Upkeep:${upkeep} Net:${energyRate-upkeep}`)
     }
 }
 
