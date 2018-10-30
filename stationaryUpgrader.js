@@ -46,6 +46,7 @@ module.exports = {
 				}
 			} else {
 				target = new RoomPosition(pos.x, pos.y, creep.room.name)
+				creep.moveTo(target)
 			}
 		} else {
 			console.log(`Creep ${creep.name}: Error getting final position near controller`)
