@@ -1,3 +1,5 @@
+const spawnManager = require('spawnManager');
+
 module.exports = {
     run: function(room) {
         if (Game.rooms[room] && Game.rooms.controller && !Game.rooms[room].controller.my) {
@@ -16,7 +18,7 @@ module.exports = {
             }
         }
 
-        
+
 
         if (room.controller && room.controller.my && Game.cpu.bucket > 1000
         && room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning})[0] != undefined) {
