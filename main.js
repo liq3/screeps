@@ -454,8 +454,8 @@ global.myUtils.baseTest = function() {
         function reverseKey(k) {
             return [k % 50, Math.floor(k/50)]
         }
+        flag.room.memory.plannedBuildings = {}
         let mem = flag.room.memory.plannedBuildings
-        mem = {}
         mem.extensions = []
         mem.roads = []
         mem.storage = []
