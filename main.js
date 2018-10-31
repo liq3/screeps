@@ -383,6 +383,7 @@ global.myUtils.baseTest = function() {
         let open = {}
         open[key(flag.pos.x, flag.pos.y)] = true
         let closed = {}
+        let terrain = Game.map.getRoomTerrain(flag.pos.roomName)
         while(_.size(open)) {
             let index = _.findKey(open)
             closed[index] = true
@@ -390,21 +391,23 @@ global.myUtils.baseTest = function() {
             let _x = index % 50;
             let _y = Math.floor(index/50)
             let roads = 0
-            for (let x = _x-1; x < _x+2; x++) {
-                for (let y = _y-1; y < _y+2; y++) {
-                    if (!key(x,y) in open && !key(x,y) in closed && x >= 4 && x < 46 && y >= 4 && y < 46) {
-                        open[key(x,y)] = true
-                    }
-                    if (get(x,y) === STRUCTURE_ROAD) {
-                        roads++;
-                    }
-                    if (x === flag.pos.x && y === flag.pos.y) {
-                        set(_x,_y,STRUCTURE_ROAD)
+            if (terrain.get(_x,_y) !== TERRAIN_MASK_WALL) {
+                for (let x = _x-1; x < _x+2; x++) {
+                    for (let y = _y-1; y < _y+2; y++) {
+                        if (!(key(x,y) in open) && !(key(x,y) in closed) && x >= 4 && x < 46 && y >= 4 && y < 46) {
+                            open[key(x,y)] = true
+                        }
+                        if (get(x,y) === STRUCTURE_ROAD) {
+                            roads++;
+                        }
+                        if (x === flag.pos.x && y === flag.pos.y) {
+                            set(_x,_y,STRUCTURE_ROAD)
+                        }
                     }
                 }
-            }
-            if (roads <= 1) {
-                set(_x,_y,STRUCTURE_ROAD)
+                if (roads <= 1) {
+                    set(_x,_y,STRUCTURE_ROAD)
+                }
             }
         }
         flag.memory.done = true
