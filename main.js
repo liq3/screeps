@@ -373,15 +373,38 @@ global.myUtils.baseTest = function() {
     function get(x,y) {
         return Game.flags.baseTest.memory.buildings[y*50+x]
     }
+    function key(x,y) {
+        return y*50+x
+    }
     let startTime = Game.cpu.getUsed()
     let flag = Game.flags.baseTest
     if (!flag.memory.done) {
         flag.memory.buildings = {}
-        for (let x = flag.pos.x-1; x < flag.pos.x+2; x++) {
-            for (let y = flag.pos.y-1; y < flag.pos.y+2; y++) {
-                if (y != x) {
-                    set(x,y,STRUCTURE_ROAD)
+        let open = {}
+        open[key(flag.pos.x, flag.pos.y)] = true
+        let closed = {}
+        while(_.size(open)) {
+            let index = _.findKey(open)
+            closed[index] = true
+            delete open[index]
+            let _x = index % 50;
+            let _y = Math.floor(index/50)
+            let roads = 0
+            for (let x = _x-1; x < _x+2; x++) {
+                for (let y = _y-1; y < _y+2; y++) {
+                    if (!key(x,y) in open && !key(x,y) in closed && x >= 4 && x < 46 && y >= 4 && y < 46) {
+                        open[key(x,y)] = true
+                    }
+                    if (get(x,y) === STRUCTURE_ROAD) {
+                        roads++;
+                    }
+                    if (x === flag.pos.x && y === flag.pos.y) {
+                        set(_x,_y,STRUCTURE_ROAD)
+                    }
                 }
+            }
+            if (roads <= 1) {
+                set(_x,_y,STRUCTURE_ROAD)
             }
         }
         flag.memory.done = true
