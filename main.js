@@ -367,39 +367,35 @@ global.myUtils.baseTest = function() {
     if (Game.cpu.bucket < 5000) {
         return;
     }
+    function set(x,y,v) {
+        Game.flags.baseTest.buildings[y*50+x] = v
+    }
+    function get(x,y) {
+        return Game.flags.baseTest.buildings[y*50+x]
+    }
     let startTime = Game.cpu.getUsed()
     let flag = Game.flags.baseTest
-    let buildings = []
-    for (let i = 0; i<50; i++) {
-        buildings[i] = []
-    }
     if (!flag.memory.done) {
+        flag.memory.buildings = {}
         for (let x = flag.pos.x-1; x < flag.pos.x+2; x++) {
             for (let y = flag.pos.y-1; y < flag.pos.y+2; y++) {
                 if (y != x) {
-                    buildings[x][y] = STRUCTURE_ROAD
+                    set(x,y,STRUCTURE_ROAD)
                 }
             }
         }
-        flag.memory.buildings = []
-        for (let x in buildings) {
-            for (let y in buildings[x]) {
-                flag.memory.buildings.push({type:buildings[x][y], x:parseInt(x), y:parseInt(y)})
-            }
-        }
+        flag.memory.done = true
     }
     let visual = new RoomVisual(flag.pos.roomName)
-    for (let building of flag.memory.buildings) {
-        let {type, x, y} = building
-        buildings[x][y] = type
-    }
-    for (let building of flag.memory.buildings) {
-        let {type, x, y} = building
+    for (let i in flag.memory.buildings) {
+        let type = flag.memory.buildings[i]
+        let x = i % 50
+        let y = Math.floor(i/50)
         if (type === STRUCTURE_ROAD) {
-            for (let dx = -1; dx < 2; dx++) {
-                for (let dy = -1; dy < 2; y++) {
-                    if (y != x && buildings[x+dx][y+dy] === STRUCTURE_ROAD) {
-                        visual.line(x,y,dx+x,dy+y)
+            for (let dx = x-1; dx < x+2; dx++) {
+                for (let dy = y-1; dy < y+2; y++) {
+                    if (dx != dy && get(dx,dy) === STRUCTURE_ROAD) {
+                        visual.line(x,y,dx,dy)
                     }
                 }
             }
