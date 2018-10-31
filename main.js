@@ -423,7 +423,7 @@ global.myUtils.baseTest = function() {
                     }
                 }
                 if (roads < 5 && walls == 0 ) {
-                    if (!flag.pos.isEqualTo(_x,_y) && !storage.pos.isEqualTo(_x,_y)) {
+                    if (!flag.pos.isEqualTo(_x,_y) && !storage.isEqualTo(_x,_y)) {
                         if (get(_x,_y) === STRUCTURE_EXTENSION) {
                             totalExt--;
                         }
