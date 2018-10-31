@@ -470,7 +470,7 @@ global.myUtils.baseTest = function() {
                 mem.storage.push({x:x, y:y})
             }
         }
-        _.forEach([roads, extensions], m => m.sort((a,b) => flag.pos.getRangeTo(a.x,a.b) - flag.pos.getRangeTo(b.x,b.y)))
+        _.forEach([mem.roads, mem.extensions], m => m.sort((a,b) => flag.pos.getRangeTo(a.x,a.b) - flag.pos.getRangeTo(b.x,b.y)))
         flag.memory.done = true;
     }
     let visual = new RoomVisual(flag.pos.roomName)
