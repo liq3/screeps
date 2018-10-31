@@ -380,37 +380,48 @@ global.myUtils.baseTest = function() {
     let flag = Game.flags.baseTest
     if (!flag.memory.done) {
         flag.memory.buildings = {}
-        let open = {}
-        open[key(flag.pos.x, flag.pos.y)] = true
+        let open = []
+        open.push(key(flag.pos.x, flag.pos.y))
         let closed = {}
         let terrain = Game.map.getRoomTerrain(flag.pos.roomName)
-        while(_.size(open)) {
-            let index = _.findKey(open)
+        let totalExt = 0
+        while(open.length) {
+            let index = open.shift()
             closed[index] = true
-            delete open[index]
             let _x = index % 50;
             let _y = Math.floor(index/50)
             let roads = 0
+            let walls = 0
             if (terrain.get(_x,_y) !== TERRAIN_MASK_WALL) {
                 for (let x = _x-1; x < _x+2; x++) {
                     for (let y = _y-1; y < _y+2; y++) {
-                        if (!(key(x,y) in open) && !(key(x,y) in closed) && x >= 4 && x < 46 && y >= 4 && y < 46) {
-                            open[key(x,y)] = true
+                        if (open.indexOf(key(x,y)) < 0 && !(key(x,y) in closed) && x >= 4 && x < 46 && y >= 4 && y < 46) {
+                            open.push(key(x,y))
                         }
                         if (get(x,y) === STRUCTURE_ROAD) {
                             roads++;
                         }
-                        if (x === flag.pos.x && y === flag.pos.y) {
+                        if (terrain.get(x,y) === TERRAIN_MASK_WALL) {
+                            walls++;
+                        }
+                        if (x === flag.pos.x && y === flag.pos.y && _x !== x && _y !== y) {
                             set(_x,_y,STRUCTURE_ROAD)
                         }
                     }
                 }
-                if (roads <= 1) {
-                    set(_x,_y,STRUCTURE_ROAD)
+                if (get(_x,_y) === undefined) {
+                    if (roads+walls >= 2) {
+                        set(_x,_y,STRUCTURE_EXTENSION)
+                        totalExt++;
+                    } else if (roads > 0 && roads < 4) {
+                        set(_x,_y,STRUCTURE_ROAD)
+                    }
                 }
             }
+            if (totalExt >= 60) {
+                break;
+            }
         }
-        flag.memory.done = true
     }
     let visual = new RoomVisual(flag.pos.roomName)
     for (let i in flag.memory.buildings) {
