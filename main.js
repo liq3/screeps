@@ -392,14 +392,14 @@ global.myUtils.baseTest = function() {
         let x = i % 50
         let y = Math.floor(i/50)
         if (type === STRUCTURE_ROAD) {
-            visual.rect(x-0.4, y-0.4, 0.8,0.8)
-            // for (let dx = x-1; dx < x+2; dx++) {
-            //     for (let dy = y-1; dy < y+2; y++) {
-            //         if (dx != dy && get(dx,dy) === STRUCTURE_ROAD) {
-            //             visual.line(x,y,dx,dy)
-            //         }
-            //     }
-            // }
+            //visual.rect(x-0.4, y-0.4, 0.8,0.8)
+            for (let dx = x-1; dx < x+2; dx++) {
+                for (let dy = y-1; dy < y+2; dy++) {
+                    if (dx != dy && get(dx,dy) === STRUCTURE_ROAD) {
+                        visual.line(x,y,dx,dy)
+                    }
+                }
+            }
         } else if (type === STRUCTURE_EXTENSION) {
             visual.circle(x,y)
         }
