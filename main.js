@@ -365,11 +365,11 @@ global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
 
 global.myUtils.baseTest = function() {
     let flag = Game.flags.baseTest
+    let buildings = []
+    for (let i = 0; i<50; i++) {
+        buildings[i] = []
+    }
     if (!flag.memory.done) {
-        let buildings = []
-        for (let i = 0; i<50; i++) {
-            buildings[i] = []
-        }
         for (let x = flag.pos.x-1; x < flag.pos.x+2; x++) {
             for (let y = flag.pos.y-1; y < flag.pos.y+2; y++) {
                 if (y != x) {
@@ -380,14 +380,28 @@ global.myUtils.baseTest = function() {
         flag.memory.buildings = []
         for (let x in buildings) {
             for (let y in buildings[x]) {
-                flag.memory.buildings.push({type:buildings[x][y], x:x, y:y})
+                flag.memory.buildings.push({type:buildings[x][y], x:parseInt(x), y:parseInt(y)})
             }
         }
     }
     let visual = new RoomVisual(flag.pos.roomName)
     for (let building of flag.memory.buildings) {
         let {type, x, y} = building
-        visual.circle(x,y)
+        buildings[x][y] = type
+    }
+    for (let building of flag.memory.buildings) {
+        let {type, x, y} = building
+        if (type === STRUCTURE_ROAD) {
+            for (let dx = -1; dx < 2; dx++) {
+                for (let dy = -1; dy < 2; y++) {
+                    if (y != x && buildigs[x+dx][y+dy] === STRUCTURE_ROAD) {
+                        visual.line(x,y,dx+x,dy+y)
+                    }
+                }
+            }
+        } else if (type === STRUCTURE_EXTENSION) {
+            visual.circle(x,y)
+        }
     }
 }
 
