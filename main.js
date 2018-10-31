@@ -364,9 +364,10 @@ global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
 }
 
 global.myUtils.baseTest = function() {
-    if (Game.cpu.bucket < 2000) {
+    if (Game.cpu.bucket < 5000) {
         return;
     }
+    let startTime = Game.cpu.getUsed()
     let flag = Game.flags.baseTest
     let buildings = []
     for (let i = 0; i<50; i++) {
@@ -406,6 +407,7 @@ global.myUtils.baseTest = function() {
             visual.circle(x,y)
         }
     }
+    console.log(`baseTest() took ${Game.cpu.getUsed() - startTime}`)
 }
 
 if (useProfiler) {
