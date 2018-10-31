@@ -463,13 +463,14 @@ global.myUtils.baseTest = function() {
             let [x,y] = reverseKey(i)
             let type = get(x,y)
             if (type === STRUCTURE_ROAD) {
-                mem.roads[10000*flag.pos.getRangeTo(x,y)+i] = type
+                mem.roads.push({x:x, y:y})
             } else if (type === STRUCTURE_EXTENSION) {
-                mem.extensions[10000*flag.pos.getRangeTo(x,y)+i] = type
+                mem.extensions.push({x:x, y:y})
             } else if (type === STRUCTURE_STORAGE) {
-                mem.storage[10000*flag.pos.getRangeTo(x,y)+i] = type
+                mem.storage.push({x:x, y:y})
             }
         }
+        _.forEach([roads, extensions], m => m.sort((a,b) => flag.pos.getRangeTo(a.x,a.b) - flag.pos.getRangeTo(b.x,b.y)))
         flag.memory.done = true;
     }
     let visual = new RoomVisual(flag.pos.roomName)
