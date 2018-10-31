@@ -368,10 +368,10 @@ global.myUtils.baseTest = function() {
         return;
     }
     function set(x,y,v) {
-        Game.flags.baseTest.buildings[y*50+x] = v
+        Game.flags.baseTest.memory.buildings[y*50+x] = v
     }
     function get(x,y) {
-        return Game.flags.baseTest.buildings[y*50+x]
+        return Game.flags.baseTest.memory.buildings[y*50+x]
     }
     let startTime = Game.cpu.getUsed()
     let flag = Game.flags.baseTest
