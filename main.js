@@ -451,8 +451,25 @@ global.myUtils.baseTest = function() {
                 break;
             }
         }
-
-
+        function reverseKey(k) {
+            return [k % 50, Math.floor(k/50)]
+        }
+        let mem = flag.room.memory.plannedBuildings
+        mem = {}
+        mem.extensions = []
+        mem.roads = []
+        mem.storage = []
+        for (let i in flag.memory.buildings) {
+            let [x,y] = reverseKey(i)
+            let type = get(x,y)
+            if (type === STRUCTURE_ROAD) {
+                mem.roads[10000*flag.pos.getRangeTo(x,y)+i] = type
+            } else if (type === STRUCTURE_EXTENSION) {
+                mem.extensions[10000*flag.pos.getRangeTo(x,y)+i] = type
+            } else if (type === STRUCTURE_STORAGE) {
+                mem.storage[10000*flag.pos.getRangeTo(x,y)+i] = type
+            }
+        }
         flag.memory.done = true;
     }
     let visual = new RoomVisual(flag.pos.roomName)
