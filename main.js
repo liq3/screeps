@@ -406,7 +406,7 @@ global.myUtils.baseTest = function() {
             let roads = 0
             let walls = 0
             if (terrain.get(_x,_y) !== TERRAIN_MASK_WALL) {
-                if (flag.pos.inRangeTo(_x,_y, 1)) {
+                if (flag.pos.inRangeTo(_x,_y, 1) || storage.inRangeTo(_x,_y,1)) {
                     roads -= 50
                 } else {
                     for (let x = _x-2; x < _x+3; x++) {
@@ -451,6 +451,8 @@ global.myUtils.baseTest = function() {
                 break;
             }
         }
+
+
         flag.memory.done = true;
     }
     let visual = new RoomVisual(flag.pos.roomName)
