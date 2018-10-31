@@ -423,7 +423,7 @@ global.myUtils.baseTest = function() {
                     }
                 }
                 if (roads < 5 && walls == 0 ) {
-                    if (!flag.pos.isEqualTo(_x,_y)) {
+                    if (!flag.pos.isEqualTo(_x,_y) && !storage.pos.isEqualTo(_x,_y)) {
                         if (get(_x,_y) === STRUCTURE_EXTENSION) {
                             totalExt--;
                         }
@@ -431,7 +431,7 @@ global.myUtils.baseTest = function() {
                     }
                     for (let x = _x-1; x < _x+2; x++) {
                         for (let y = _y-1; y < _y+2; y++) {
-                            if (open.indexOf(key(x,y)) < 0 && !(key(x,y) in closed) && x >= 4 && x < 46 && y >= 4 && y < 46) {
+                            if (open.indexOf(key(x,y)) < 0 && !(key(x,y) in closed) && x >= 6 && x < 44 && y >= 6 && y < 44) {
                                 if (get(x,y) === STRUCTURE_EXTENSION || get(x,y) === STRUCTURE_ROAD || get(x,y) === undefined) {
                                     open.push(key(x,y))
                                 }
