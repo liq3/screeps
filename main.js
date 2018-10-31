@@ -364,6 +364,9 @@ global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
 }
 
 global.myUtils.baseTest = function() {
+    if (Game.cpu.bucket < 2000) {
+        return;
+    }
     let flag = Game.flags.baseTest
     let buildings = []
     for (let i = 0; i<50; i++) {
@@ -394,7 +397,7 @@ global.myUtils.baseTest = function() {
         if (type === STRUCTURE_ROAD) {
             for (let dx = -1; dx < 2; dx++) {
                 for (let dy = -1; dy < 2; y++) {
-                    if (y != x && buildigs[x+dx][y+dy] === STRUCTURE_ROAD) {
+                    if (y != x && buildings[x+dx][y+dy] === STRUCTURE_ROAD) {
                         visual.line(x,y,dx+x,dy+y)
                     }
                 }
