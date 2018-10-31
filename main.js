@@ -376,11 +376,22 @@ global.myUtils.baseTest = function() {
     function key(x,y) {
         return y*50+x
     }
+    function addPath(path) {
+        for (let pos of path.path) {
+            set(pos.x, pos.y, STURCTURE_ROAD)
+        }
+    }
     let startTime = Game.cpu.getUsed()
     let flag = Game.flags.baseTest
     let storage = new RoomPosition(flag.pos.x+2, flag.pos.y, flag.pos.roomName)
     if (!flag.memory.done) {
         flag.memory.buildings = {}
+        for (let source of flag.room.find(FIND_SOURCES)) {
+            let path = PathFinder.search(flag.pos, {pos:source.pos, range:1}, {plains:1, swamp:1})
+            addPath(path.path)
+        }
+        addPath(PathFinder.search(flag.pos, {pos:flag.room.controller.pos, range:1}, {plains:1, swamp:1}).path)
+
         set(flag.pos.x+2, flag.pos.y, STRUCTURE_STORAGE)
         let open = []
         open.push(key(storage.x, storage.y))
@@ -411,7 +422,7 @@ global.myUtils.baseTest = function() {
                         }
                     }
                 }
-                if (roads < 4 && walls == 0 ) {
+                if (roads < 5 && walls == 0 ) {
                     if (!flag.pos.isEqualTo(_x,_y)) {
                         if (get(_x,_y) === STRUCTURE_EXTENSION) {
                             totalExt--;
