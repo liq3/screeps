@@ -378,10 +378,12 @@ global.myUtils.baseTest = function() {
     }
     let startTime = Game.cpu.getUsed()
     let flag = Game.flags.baseTest
+    let storage = new RoomPosition(flag.pos.x+2, flag.pos.y, flag.pos.roomName)
     if (!flag.memory.done) {
         flag.memory.buildings = {}
+        set(flag.pos.x+2, flag.pos.y, STRUCTURE_STORAGE)
         let open = []
-        open.push(key(flag.pos.x, flag.pos.y))
+        open.push(key(storage.x, storage.y))
         let closed = {}
         let terrain = Game.map.getRoomTerrain(flag.pos.roomName)
         let totalExt = 0
@@ -393,32 +395,46 @@ global.myUtils.baseTest = function() {
             let roads = 0
             let walls = 0
             if (terrain.get(_x,_y) !== TERRAIN_MASK_WALL) {
-                for (let x = _x-1; x < _x+2; x++) {
-                    for (let y = _y-1; y < _y+2; y++) {
-                        if (open.indexOf(key(x,y)) < 0 && !(key(x,y) in closed) && x >= 4 && x < 46 && y >= 4 && y < 46) {
-                            open.push(key(x,y))
-                        }
-                        if (get(x,y) === STRUCTURE_ROAD) {
-                            roads++;
-                        }
-                        if (terrain.get(x,y) === TERRAIN_MASK_WALL) {
-                            walls++;
-                        }
-                        if (x === flag.pos.x && y === flag.pos.y && _x !== x && _y !== y) {
-                            set(_x,_y,STRUCTURE_ROAD)
+                if (flag.pos.inRangeTo(_x,_y, 1)) {
+                    roads -= 50
+                } else {
+                    for (let x = _x-2; x < _x+3; x++) {
+                        for (let y = _y-2; y < _y+3; y++) {
+                            if (get(x,y) === STRUCTURE_ROAD) {
+                                roads++;
+                            }
+                            if (Math.abs(_x-x) < 2 && Math.abs(_y-y) < 2) {
+                                if (terrain.get(x,y) === TERRAIN_MASK_WALL) {
+                                    walls++;
+                                }
+                            }
                         }
                     }
                 }
-                if (get(_x,_y) === undefined) {
-                    if (roads+walls >= 2) {
-                        set(_x,_y,STRUCTURE_EXTENSION)
-                        totalExt++;
-                    } else if (roads > 0 && roads < 4) {
+                if (roads < 4 && walls == 0 ) {
+                    if (!flag.pos.isEqualTo(_x,_y)) {
+                        if (get(_x,_y) === STRUCTURE_EXTENSION) {
+                            totalExt--;
+                        }
                         set(_x,_y,STRUCTURE_ROAD)
+                    }
+                    for (let x = _x-1; x < _x+2; x++) {
+                        for (let y = _y-1; y < _y+2; y++) {
+                            if (open.indexOf(key(x,y)) < 0 && !(key(x,y) in closed) && x >= 4 && x < 46 && y >= 4 && y < 46
+                            && (get(x,y) === STRUCTURE_EXTENSION || get(x,y) === undefined)) {
+                                open.push(key(x,y))
+                                if (!flag.pos.inRangeTo(x,y,1) && !storage.inRangeTo(x,y,1)) {
+                                    if (totalExt < 70) {
+                                        set(x,y,STRUCTURE_EXTENSION);
+                                    }
+                                    totalExt++;
+                                }
+                            }
+                        }
                     }
                 }
             }
-            if (totalExt >= 60) {
+            if (totalExt >= 70) {
                 break;
             }
         }
