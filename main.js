@@ -7,9 +7,10 @@ require('prototype_source')
 require('prototype_room')
 require('prototype_mineral')
 const spawnManager = require('spawnManager');
+const roomManager = require('roomManager');
 
-let creepRoles = ['builder','combat','miner','geologist','harvester',
-    'hauler','stationaryUpgrader','scout','decoy','claimer','spawnHelper'];
+let creepRoles = ['builder','claimer','combat','hauler','decoy','geologist','harvester',
+    'miner','stationaryUpgrader','scout','spawnHelper'];
 
 let creepFunctions = {};
 for (let i of creepRoles) {
@@ -48,30 +49,9 @@ let mainLoop = function() {
 
     for (let i in Game.rooms) {
         try {
-            if (Game.rooms[i].controller && Game.rooms[i].controller.my && Game.cpu.bucket > 1000
-            && Game.rooms[i].find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning})[0] != undefined) {
-                spawnManager.spawnCreeps(Game.rooms[i]);
-            }
+            roomManager.run(Game.rooms[i])
         } catch (err) {
             console.log(err.stack || err);
-        }
-    }
-
-    for (let room in Game.rooms) {
-        if (Game.rooms[room] && Game.rooms.controller && !Game.rooms[room].controller.my) {
-            let danger = false;
-            let hostileCreeps = Game.rooms[room].find(FIND_HOSTILE_CREEPS);
-            for (let creep of hostileCreeps) {
-                if (creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0) {
-                    danger = true;
-                    break;
-                }
-            }
-            if (danger && !Memory.dangerRooms.includes(room)) {
-                Memory.dangerRooms.push(room);
-            } else if (!danger && Memory.dangerRooms.includes(room)){
-                Memory.dangerRooms.splice(Memory.dangerRooms.indexOf(room), 1);
-            }
         }
     }
 

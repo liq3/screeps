@@ -23,13 +23,13 @@ module.exports = {
         let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', room);
 
         let firstSpawn = room.find(FIND_MY_STRUCTURES, {structureType: STRUCTURE_SPAWN})[0]
-        let scoutTarget = null;
+        let scoutTarget;
         let harvesterTargetId = null;
         let spawnHauler = false;
         let desiredTransportCapacity = 0;
         let sourceList = [];
         for (let r of Memory.ownedRooms[room.name]) {
-            if (Game.rooms[r] === null && scoutTarget === null
+            if (Game.rooms[r] === undefined && scoutTarget === undefined
                     && _.filter(Game.creeps, c => c.memory.role === 'scout' && c.memory.targetPos.roomName === r).length === 0) {
                 scoutTarget = r;
             } else if (Game.rooms[r]) {
