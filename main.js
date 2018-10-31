@@ -435,7 +435,7 @@ global.myUtils.baseTest = function() {
                                 if (get(x,y) === STRUCTURE_EXTENSION || get(x,y) === STRUCTURE_ROAD || get(x,y) === undefined) {
                                     open.push(key(x,y))
                                 }
-                                if ((get(x,y) === STRUCTURE_EXTENSION || get(x,y) === STRUCTURE_ROAD)
+                                if ((get(x,y) === STRUCTURE_EXTENSION || get(x,y) === undefined)
                                     && !flag.pos.inRangeTo(x,y,1) && !storage.inRangeTo(x,y,1)) {
                                     if (totalExt < 70) {
                                         set(x,y,STRUCTURE_EXTENSION);
