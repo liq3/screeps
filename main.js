@@ -377,8 +377,8 @@ global.myUtils.baseTest = function() {
         return y*50+x
     }
     function addPath(path) {
-        for (let pos of path.path) {
-            set(pos.x, pos.y, STURCTURE_ROAD)
+        for (let pos of path) {
+            set(pos.x, pos.y, STRUCTURE_ROAD)
         }
     }
     let startTime = Game.cpu.getUsed()
@@ -431,10 +431,12 @@ global.myUtils.baseTest = function() {
                     }
                     for (let x = _x-1; x < _x+2; x++) {
                         for (let y = _y-1; y < _y+2; y++) {
-                            if (open.indexOf(key(x,y)) < 0 && !(key(x,y) in closed) && x >= 4 && x < 46 && y >= 4 && y < 46
-                            && (get(x,y) === STRUCTURE_EXTENSION || get(x,y) === undefined)) {
-                                open.push(key(x,y))
-                                if (!flag.pos.inRangeTo(x,y,1) && !storage.inRangeTo(x,y,1)) {
+                            if (open.indexOf(key(x,y)) < 0 && !(key(x,y) in closed) && x >= 4 && x < 46 && y >= 4 && y < 46) {
+                                if (get(x,y) === STRUCTURE_EXTENSION || get(x,y) === STRUCTURE_ROAD || get(x,y) === undefined) {
+                                    open.push(key(x,y))
+                                }
+                                if ((get(x,y) === STRUCTURE_EXTENSION || get(x,y) === STRUCTURE_ROAD)
+                                    && !flag.pos.inRangeTo(x,y,1) && !storage.inRangeTo(x,y,1)) {
                                     if (totalExt < 70) {
                                         set(x,y,STRUCTURE_EXTENSION);
                                     }
@@ -449,6 +451,7 @@ global.myUtils.baseTest = function() {
                 break;
             }
         }
+        flag.memory.done = true;
     }
     let visual = new RoomVisual(flag.pos.roomName)
     for (let i in flag.memory.buildings) {
