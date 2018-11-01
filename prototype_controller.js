@@ -1,3 +1,15 @@
+Object.defineProperty(StructureController.prototype, 'memory', {
+    get: function() {
+        if (!this._memory) {
+            if (!Memory.rooms[this.room].controller) {
+                Memory.rooms[this.room].controller = {}
+            }
+            this._memory = Memory.rooms[this.room].controller
+        }
+        return this._memory
+    }
+});
+
 Object.defineProperty(StructureController.prototype, 'container', {
     get: function() {
         if (!this._container) {
