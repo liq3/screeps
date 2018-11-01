@@ -147,7 +147,7 @@ let mainLoop = function() {
         }
         let room = Game.rooms['W22N32']
         if (room && room.terminal && !room.terminal.cooldown && room.terminal.store[RESOURCE_HYDROGEN] > 1000) {
-            let orders = Game.market.getAllOrders({type:ORDER_BUY, resourceType:RESOURCE_HYRDOGEN, price:1})
+            let orders = Game.market.getAllOrders({type:ORDER_BUY, resourceType:RESOURCE_HYDROOGEN, price:1})
             orders.sort(o => Game.market.calcTransactionCost(1000, room.name, o.roomName));
             let maxResources = room.terminal.store[RESOURCE_HYDROGEN]
             for (let order of orders) {
