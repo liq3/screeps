@@ -1,10 +1,10 @@
 Object.defineProperty(StructureController.prototype, 'memory', {
     get: function() {
         if (!this._memory) {
-            if (!Memory.rooms[this.room].controller) {
-                Memory.rooms[this.room].controller = {}
+            if (!Memory.rooms[this.room.name].controller) {
+                Memory.rooms[this.room.name].controller = {}
             }
-            this._memory = Memory.rooms[this.room].controller
+            this._memory = Memory.rooms[this.room.name].controller
         }
         return this._memory
     }
