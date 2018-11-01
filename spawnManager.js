@@ -99,9 +99,9 @@ module.exports = {
         for (let r of Memory.ownedRooms[room.name]) {
             if (Game.rooms[r] && !Game.rooms[r].controller.my) {
                 let a = _.filter(Game.creeps, c => c.memory.role === 'claimer' && c.memory.targetRoom === r).length;
-                if (Game.rooms[r].controller.reservation &&
-                    (((a < 1 && Game.rooms[r].controller.reservation.ticksToEnd < 4000) || !Game.rooms[r].controller.reservation)
-                    || (a < 2 && Game.rooms[r].controller.reservation.ticksToEnd < 4500 && RCL < 5)) && !(Memory.dangerRooms.includes(r))) {
+                if (((a < 1 && !Game.rooms[r].controller.reservation) || (Game.rooms[r].controller.reservation &&
+                    ((a < 1 && Game.rooms[r].controller.reservation.ticksToEnd < 4000)
+                    || (a < 2 && Game.rooms[r].controller.reservation.ticksToEnd < 4500 && RCL < 5)))) && !(Memory.dangerRooms.includes(r))) {
                     reserveTargetRoom = r;
                     break;
                 }
