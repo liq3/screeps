@@ -149,12 +149,14 @@ let mainLoop = function() {
         if (room && room.terminal && !room.terminal.cooldown && room.terminal.store[RESOURCE_HYDROGEN] > 1000) {
             let orders = Game.market.getAllOrders({type:ORDER_BUY, resourceType:RESOURCE_HYRDOGEN, price:1})
             orders.sort(o => Game.market.calcTransactionCost(1000, room.name, o.roomName));
+            let maxResources = room.terminal.store[RESOURCE_HYDROGEN]
             for (let order of orders) {
-                let amount = _.min([room.terminal.store[RESOURCE_HYDROGEN], order.amount])
+                let amount = _.min([maxResources, order.amount])
                 let cost = Game.market.calcTransactionCost(amount, room.name, order.roomName)
-                if (cost < room.terminal.store.energy) {
+                if (cost < room.terminal.store.energy && maxResources > 0) {
                     let err = Game.market.deal(order.id, amount, room.name)
                     console.log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${order.amount*order.price}`);
+                    maxResources -= amount
                 }
             }
         }
