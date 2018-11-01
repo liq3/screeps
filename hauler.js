@@ -43,10 +43,16 @@ module.exports = {
 				} else {
 					resource = creep.memory.targetResource
 				}
+				if (!resource) {
+					this.doneDelivering(creep)
+					return;
+				}
 
 				let err = creep.withdraw(creep.room.storage, resource);
 				if (err === ERR_NOT_IN_RANGE) {
 					creep.moveTo(creep.room.storage);
+				} else if (err === ERR_NOT_ENOUGH_RESOURCES) {
+					delete creep.memory.targetResource;
 				} else if (err != OK) {
 					console.log(`${creep.name} ${creep.room.name}: err withdrawing ${resource} from storage ${err}`)
 				} else {
