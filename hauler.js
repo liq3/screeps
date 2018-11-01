@@ -140,6 +140,7 @@ module.exports = {
 				err = creep.transfer(target, _.findKey(creep.carry));
 				if (err == OK) {
 					this.doneDelivering(creep);
+					delete creep.memory.targetResource;
 				}
 			} else if (creep.memory.job == 'storage' && ((creep.room.storage && creep.room.storage.isActive()) || creep.room.container)) {
 			    target = creep.room.storage ? creep.room.storage : creep.room.container;
