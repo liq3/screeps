@@ -126,20 +126,35 @@ let mainLoop = function() {
         }
     }
 
-    if (Game.cpu.bucket > 5000 && Game.market.credits < 1000) {
-        let orders = Game.market.getAllOrders(order => order.resourceType === RESOURCE_ENERGY && order.type === ORDER_BUY && order.price >= 0.018);
-        if (orders.length > 0) {
-            console.log(JSON.stringify(orders));
-            orders.sort((a,b) => b.price - a.price);
-            for (let order of orders) {
-                if (order.amount > 100) {
-                    let sendAmount = order.amount;
-                    if (Game.market.calcTransactionCost(order.amount, 'E61N94',order.roomName) + order.amount > Game.rooms['E61N94'].terminal.store[RESOURCE_ENERGY]) {
-                        let sendCost = Game.market.calcTransactionCost(1000000,'E61N94',order.roomName) / 1000000;
-                        sendAmount = order.amount * order.amount / (order.amount * (1+sendCost));
+    if (Game.cpu.bucket > 5000) {
+        if (false && Game.market.credits < 1000) {
+            let orders = Game.market.getAllOrders(order => order.resourceType === RESOURCE_ENERGY && order.type === ORDER_BUY && order.price >= 0.018);
+            if (orders.length > 0) {
+                console.log(JSON.stringify(orders));
+                orders.sort((a,b) => b.price - a.price);
+                for (let order of orders) {
+                    if (order.amount > 100) {
+                        let sendAmount = order.amount;
+                        if (Game.market.calcTransactionCost(order.amount, 'E61N94',order.roomName) + order.amount > Game.rooms['E61N94'].terminal.store[RESOURCE_ENERGY]) {
+                            let sendCost = Game.market.calcTransactionCost(1000000,'E61N94',order.roomName) / 1000000;
+                            sendAmount = order.amount * order.amount / (order.amount * (1+sendCost));
+                        }
+                        let err = Game.market.deal(order.id, sendAmount, 'E61N94');
+                        console.log(`Deal: ${err}. ${sendAmount} for ${order.price} total ${order.amount*order.price}`);
                     }
-                    let err = Game.market.deal(order.id, sendAmount, 'E61N94');
-                    console.log(`Deal: ${err}. ${sendAmount} for ${order.price} total ${order.amount*order.price}`);
+                }
+            }
+        }
+        let room = Game.rooms['W22N32']
+        if (room && room.terminal && !room.terminal.cooldown && room.terminal.store[RESOURCE_HYDROGEN] > 1000) {
+            let orders = Game.market.getAllOrders({type:ORDER_BUY, resourceType:RESOURCE_HYRDOGEN, price:1})
+            orders.sort(o => Game.market.calcTransactionCost(1000, room.name, o.roomName));
+            for (let order of orders) {
+                let amount = _.min([room.terminal.store[RESOURCE_HYDROGEN], order.amount])
+                let cost = Game.market.calcTransactionCost(amount, room.name, order.roomName)
+                if (cost < room.terminal.store.energy) {
+                    let err = Game.market.deal(order.id, amount, room.name)
+                    console.log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${order.amount*order.price}`);
                 }
             }
         }
@@ -321,7 +336,7 @@ global.myUtils.dumpMarket = function() {
 }
 
 global.myUtils.resourceTradeCost = function(room, resource, type) {
-    for (let order of Game.market.getAllOrderS({type:type, resourceType:resource, price:1})) {
+    for (let order of Game.market.getAllOrders({type:type, resourceType:resource, price:1})) {
         console.log(`${order.roomName}: ${Game.market.calcTransactionCost(1000, room, order.roomName)}`)
     }
 }
