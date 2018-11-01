@@ -29,6 +29,29 @@ module.exports = {
 				if (err == ERR_NOT_IN_RANGE) {
 					creep.moveTo(target)
 				}
+			} else if (creep.memory.job == 'deliverToTerminal') {
+				let resesource;
+				if (!creep.memory.targetResource) {
+					for (let res of creep.room.memory.desiredTerminalResources) {
+						if (creep.room.storage.store[res] > 0 && ((res === RESOURCE_ENERGY && creep.room.storage.store.energy > 40000) || res !== RESOURCE_ENERGY)
+							&& creep.room.memory.desiterdTerminalResoures[res] > creep.room.terminal.store[res]) {
+							resource = res;
+							creep.memory.targetResource = res
+							break;
+						}
+					}
+				} else {
+					resource = creep.memory.targetResource
+				}
+
+				let err = creep.withdraw(creep.room.storage, resource);
+				if (err === ERR_NOT_IN_RANGE) {
+					creep.moveTo(creep.room.storage);
+				} else if (err != OK) {
+					console.log(`${creep.name} ${creep.room.name}: err withdrawing ${resource} from storage ${err}`)
+				} else {
+					creep.memory.gathering = false
+				}
 			} else if (creep.memory.job != 'storage') {
 			    if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
     				let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
@@ -112,9 +135,9 @@ module.exports = {
 						console.log(`${creep.name}: weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
 					}
 	            }
-			} else if (creep.memory.job == 'deliverEnergyToTerminal') {
+			} else if (creep.memory.job == 'deliverToTerminal') {
 				target = creep.room.terminal;
-				err = creep.transfer(target, RESOURCE_ENERGY);
+				err = creep.transfer(target, _.findKey(creep.carry));
 				if (err == OK) {
 					this.doneDelivering(creep);
 				}
@@ -174,10 +197,6 @@ module.exports = {
 			creep.memory.job = 'praise'
 		}
 
-		if (!creep.memory.job && creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 10000 && creep.room.terminal && creep.room.terminal.store[RESOURCE_ENERGY] < 10000) {
-			creep.memory.job = 'deliverEnergyToTerminal';
-		}
-
 		if (!creep.memory.job) {
 			let totalSpawn = 0;
 			for (let c of _.filter(Game.creeps, c=>c.memory.job && c.memory.job == 'spawn' && c.memory.bossRoom == creep.room.name)) {
@@ -233,6 +252,16 @@ module.exports = {
 			creep.memory.job = 'storage'
 		}
 
+		if (!creep.memory.job && creep.room.storage && creep.room.terminal && creep.room.memory.desiredTerminalResources) {
+			for (let res in creep.room.memory.desiredTerminalResources) {
+				if (creep.room.storage.store[res] > 0 && ((res === RESOURCE_ENERGY && creep.room.storage.store.energy > 40000) || res !== RESOURCE_ENERGY)
+					&& creep.room.memory.desiterdTerminalResoures[res] > creep.room.terminal.store[res]) {
+					creep.memory.job = 'deliverToTerminal';
+					break;
+				}
+			}
+		}
+
 		if (!creep.memory.job && creep.carry.energy < creep.carryCapacity) {
 			let pickups = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5);
 			if (pickups.length > 0) {
@@ -240,6 +269,7 @@ module.exports = {
 					if (pickup.amount > 100) {
 						creep.memory.targetId = pickup.id;
 						creep.memory.job = 'pickup';
+						break;
 					}
 				}
 			}

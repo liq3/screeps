@@ -17,7 +17,7 @@ module.exports = {
                     }
                 } else {
                     let container = source.container
-                    if (container && creep.pos.getRangeTo(container) > 0) {
+                    if (container && !creep.pos.isEqualTo(container)) {
                         creep.moveTo(container, {range:0});
                     } else if (!container) {
                         if (creep.pos.getRangeTo(source) > 1) {
