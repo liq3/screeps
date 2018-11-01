@@ -320,6 +320,16 @@ global.myUtils.dumpMarket = function() {
     }
 }
 
+global.myUtils.resourceTradeCost = function(room, resource, type) {
+    for (let order of Game.market.getAllOrderS({type:type, resourceType:resource, price:1})) {
+        console.log(`${order.roomName}: ${Game.market.calcTransactionCost(1000, room, order.roomName)}`)
+    }
+}
+
+global.myUtils.help = function() {
+    console.log(JSON.stringify(myUtils))
+}
+
 global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
     for (let r in Memory.rooms) {
         let room = Memory.rooms[r]
@@ -476,7 +486,7 @@ global.myUtils.baseTest = function() {
 }
 
 global.myUtils.clearCache = function() {
-    
+
 }
 
 if (useProfiler) {
