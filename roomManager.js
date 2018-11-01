@@ -18,7 +18,12 @@ module.exports = {
             }
         }
 
-
+        for (let source of room.find(FIND_SOURCES)) {
+            if (source.link && source.link.cooldown === 0 && source.link.energy > 400
+                    && source.link.energy <= room.controller.link.energyCapacity - room.controller.link.energy) {
+                source.link.transferEnergy(room.controller.link)
+            }
+        }
 
         if (room.controller && room.controller.my && Game.cpu.bucket > 1000
         && room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning})[0] != undefined) {

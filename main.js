@@ -6,6 +6,7 @@ require('prototype_creep')
 require('prototype_source')
 require('prototype_room')
 require('prototype_mineral')
+require('prototype_controller')
 const spawnManager = require('spawnManager');
 const roomManager = require('roomManager');
 
