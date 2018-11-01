@@ -32,7 +32,7 @@ module.exports = {
 			} else if (creep.memory.job == 'deliverToTerminal') {
 				let resesource;
 				if (!creep.memory.targetResource) {
-					for (let res of creep.room.memory.desiredTerminalResources) {
+					for (let res in creep.room.memory.desiredTerminalResources) {
 						if (creep.room.storage.store[res] > 0 && ((res === RESOURCE_ENERGY && creep.room.storage.store.energy > 40000) || res !== RESOURCE_ENERGY)
 							&& creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res]) {
 							resource = res;
