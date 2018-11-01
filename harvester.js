@@ -7,7 +7,7 @@ module.exports = {
                 if (source.link) {
                     if (creep.getActiveBodyparts(WORK)*2 + creep.carry.energy > creep.carryCapacity) {
                         let err = creep.transfer(source.link, RESOURCE_ENERGY)
-                        if (err != OK) {
+                        if (err != OK || err != ERR_FULL) {
                             console.log(`${creep.name} issue transfering energy to link ${err}`)
                         }
                     }
