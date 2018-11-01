@@ -475,6 +475,10 @@ global.myUtils.baseTest = function() {
     console.log(`baseTest() took ${Game.cpu.getUsed() - startTime}`)
 }
 
+global.myUtils.clearCache = function() {
+    
+}
+
 if (useProfiler) {
     const profiler = require('screeps-profiler');
     profiler.enable();
