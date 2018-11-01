@@ -14,7 +14,7 @@ Object.defineProperty(Source.prototype, 'container', {
     get: function() {
         if (!this._container) {
             if (!this.memory.containerId) {
-                let container = this.pos.findInRange(FIND_STRUCTURES, 1, {structureType: STRUCTURE_CONTAINER})[0]
+                let container = this.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType: STRUCTURE_CONTAINER}})[0]
                 if (container) {
                     this.memory.containerId = container.id
                 } else {
@@ -34,7 +34,7 @@ Object.defineProperty(Source.prototype, 'link', {
     get: function() {
         if (!this._link) {
             if (!this.memory.linkId) {
-                let link = this.pos.findInRange(FIND_MY_STRUCTURES, 2, {structureType: STRUCTURE_LINK})[0]
+                let link = this.pos.findInRange(FIND_MY_STRUCTURES, 2, {filter: {structureType: STRUCTURE_LINK}})[0]
                 if (link) {
                     this.memory.linkId = link.id
                 } else {

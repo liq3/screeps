@@ -22,7 +22,7 @@ module.exports = {
         let numberBuilders = sumCreeps ('builder', room);
         let numberStationaryUpgraders = sumCreeps('stationaryUpgrader', room);
 
-        let firstSpawn = room.find(FIND_MY_STRUCTURES, {structureType: STRUCTURE_SPAWN})[0]
+        let firstSpawn = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_SPAWN}})[0]
         let scoutTarget;
         let harvesterTargetId = null;
         let spawnHauler = false;
