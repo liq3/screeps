@@ -34,7 +34,7 @@ module.exports = {
 				if (!creep.memory.targetResource) {
 					for (let res of creep.room.memory.desiredTerminalResources) {
 						if (creep.room.storage.store[res] > 0 && ((res === RESOURCE_ENERGY && creep.room.storage.store.energy > 40000) || res !== RESOURCE_ENERGY)
-							&& creep.room.memory.desiterdTerminalResoures[res] > creep.room.terminal.store[res]) {
+							&& creep.room.memory.desiredTerminalResoures[res] > creep.room.terminal.store[res]) {
 							resource = res;
 							creep.memory.targetResource = res
 							break;
@@ -255,7 +255,7 @@ module.exports = {
 		if (!creep.memory.job && creep.room.storage && creep.room.terminal && creep.room.memory.desiredTerminalResources) {
 			for (let res in creep.room.memory.desiredTerminalResources) {
 				if (creep.room.storage.store[res] > 0 && ((res === RESOURCE_ENERGY && creep.room.storage.store.energy > 40000) || res !== RESOURCE_ENERGY)
-					&& creep.room.memory.desiterdTerminalResoures[res] > creep.room.terminal.store[res]) {
+					&& creep.room.memory.desiredTerminalResoures[res] > creep.room.terminal.store[res]) {
 					creep.memory.job = 'deliverToTerminal';
 					break;
 				}
