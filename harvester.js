@@ -10,10 +10,10 @@ module.exports = {
                         if (err != OK) {
                             console.log(`${creep.name} issue transfering energy to link ${err}`)
                         }
-                        let error = creep.harvest(source)
-                        if (error === ERR_NOT_IN_RANGE) {
-                            creep.moveTo(source, {range:1})
-                        }
+                    }
+                    let error = creep.harvest(source)
+                    if (error === ERR_NOT_IN_RANGE) {
+                        creep.moveTo(source, {range:1})
                     }
                 } else {
                     let container = source.container
