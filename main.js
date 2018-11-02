@@ -153,7 +153,7 @@ let mainLoop = function() {
             for (let order of orders) {
                 let amount = _.min([maxResources, order.amount])
                 let cost = Game.market.calcTransactionCost(amount, room.name, order.roomName)
-                if (cost < room.terminal.store.energy && maxResources > 0) {
+                if (cost < room.terminal.store.energy && amount > 0) {
                     let err = Game.market.deal(order.id, amount, room.name)
                     console.log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${order.amount*order.price}`);
                     maxResources -= amount

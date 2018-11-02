@@ -47,8 +47,7 @@ module.exports = {
             if (harvesterTargetId === null && (miners.length === 0 || (miners.length === 1 && miners[0].ticksToLive < ((path.cost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
                 harvesterTargetId = source.id;
             } else if (miners.length > 0) {
-                let containers = source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s => s.structureType === STRUCTURE_CONTAINER});
-                if (containers.length > 0) {
+                if (source.container) {
                     desiredTransportCapacity += Math.ceil( 2 * (2 * path.cost) * source.energyCapacity / ENERGY_REGEN_TIME);
                     numberContainers += 1;
                 }

@@ -122,7 +122,7 @@ module.exports = {
 				}
 			} else if (creep.memory.job == 'upgrade') {
 				if (!target || (target.energy && target.energy == target.energyCapacity))  {
-					target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType: STRUCTURE_CONTAINER}})[0];
+					target = creep.room.controller.container;
 					if (!target) {
 						this.doneDelivering(creep);
 					} else {
@@ -363,7 +363,7 @@ module.exports = {
 							for (let creep of _.filter(Game.creeps, c=>c.memory.sourceId == source.id && c.memory.gathering)) {
 								energy -= creep.carryCapacity - creep.carry.energy;
 							}
-							for (let s of source.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType == STRUCTURE_CONTAINER})) {
+							for (let s of source.container) {
 								energy += s.store[RESOURCE_ENERGY];
 							}
 							for (let r of source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY})) {
