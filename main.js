@@ -506,6 +506,11 @@ global.myUtils.clearCache = function() {
 
 }
 
+globa.myUtils.pathfind = function(start, goal, opts) {
+    let [path, cost, ops, incomplete] = PathFinder.search(start, goal, opts); 
+    console.log(cost, ops, incomplete);
+}
+
 if (useProfiler) {
     const profiler = require('screeps-profiler');
     profiler.enable();
