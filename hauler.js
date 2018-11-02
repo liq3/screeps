@@ -282,9 +282,11 @@ module.exports = {
 				}
 			}
 		}
+		
 		if (!creep.memory.job) {
 			creep.memory.job = 'source';
 		}
+
 		if (creep.memory.job) {
 			creep.memory.gathering = creep.carry.energy < creep.carryCapacity;
 			creep.memory.jobAssignedTime = Game.time

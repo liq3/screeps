@@ -169,17 +169,21 @@ let mainLoop = function() {
 
         }
         for (let x = 0; x < height+1; x++) {
-            room.visual.line(x-0.5, top-0.5, x-0.5, top+height-0.5, x == 0 || x == width-1 ? {width=0.2, color='red'} : {})
+            room.visual.line(left+x-0.5, top-0.5, left+x-0.5, top+height-0.5)
         }
         for (let y = 0; y < height+1; y++) {
-            room.visual.line(left-0.5, y-0.5, left+width+0.5, y-0.5, y == 0 || y == height-1 ? {width=0.2, color='red'} : {})
+            room.visual.line(left-0.5, top+y-0.5, left+width-0.5, top+y-0.5)
         }
         let [roomLeft, roomTop] = [30,40]
         for (let x = 0; x < width; x++) {
             for (let y = 0; y < height; y++) {
                 let name = `W${roomLeft-x}N${roomTop-y}`
+                let color = 'white';
                 if (Memory.rooms[name]) {
-                    room.visual.circle(left+x, top+y)
+                    if (Memory.rooms[name].hostile) {
+                        color = 'red';
+                    }
+                    room.visual.circle(left+x, top+y, {color:color});
                 }
             }
         }
@@ -293,6 +297,10 @@ global.myUtils.createRoadBetweenFlags = function() {
 }
 
 global.costMatrixCallback = function(roomName) {
+    if (Memory.rooms[roomName] && Memory.rooms[roomName].hostile) {
+        return false;
+    }
+
     var costMatrix = new PathFinder.CostMatrix;
     if (Game.rooms[roomName]) {
         for (let structure of Game.rooms[roomName].find(FIND_STRUCTURES)) {
@@ -302,6 +310,15 @@ global.costMatrixCallback = function(roomName) {
                 }
             } else if (!(structure.structureType === STRUCTURE_RAMPART || structure.structureType === STRUCTURE_CONTAINER)) {
                 costMatrix.set(structure.pos.x, structure.pos.y, 255);
+            }
+        }
+
+        let keepers = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS, {filter: {owner:'Source Keeper'}})
+        for (let keeper of keepers) {
+            for (let x = keeper.pos.x-3; x < keeper.pos.x+4; x++) {
+                for (let y = keeper.pos.y-3; y < keeper.pos.y+4; y++) {
+                    costMatrix.set(x,y,255);
+                }
             }
         }
     }
