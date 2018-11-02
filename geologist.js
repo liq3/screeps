@@ -35,7 +35,7 @@ module.exports = {
             let room = _.findKey(open)
             delete open[room]
             closed[room] = true
-            let otherCreeps = _.filter(Game.creeps, {filter: c=>c.memory.role === 'geologist' && c.memory.target && c.memory.target === room}).length
+            let otherCreeps = _.filter(Game.creeps, c=>c.memory.role === 'geologist' && c.memory.target && c.memory.target === room).length
             if ((!Memory.rooms[room] || !Memory.rooms[room].lastScouted || Game.time - Memory.rooms[room].lastScouted > 500) && !otherCreeps) {
                 creep.memory.target = room
                 break;
