@@ -162,6 +162,29 @@ let mainLoop = function() {
         }
     }
 
+    if (Game.flags.intel) {
+        let room = Game.flags.intel.room;
+        let [left, top, width, height] = [10,10,11,11];
+        for (let x = 0; x < width+1; x++) {
+
+        }
+        for (let x = 0; x < height+1; x++) {
+            room.visual.line(x-0.5, top-0.5, x-0.5, top+height-0.5, x == 0 || x == width-1 ? {width=0.2, color='red'} : {})
+        }
+        for (let y = 0; y < height+1; y++) {
+            room.visual.line(left-0.5, y-0.5, left+width+0.5, y-0.5, y == 0 || y == height-1 ? {width=0.2, color='red'} : {})
+        }
+        let [roomLeft, roomTop] = [30,40]
+        for (let x = 0; x < width; x++) {
+            for (let y = 0; y < height; y++) {
+                let name = `W${roomLeft-x}N${roomTop-y}`
+                if (Memory.rooms[name]) {
+                    room.visual.circle(left+x, top+y)
+                }
+            }
+        }
+    }
+
     if (Memory.cpuTimes === undefined) {
         Memory.cpuTimes = [];
     }
