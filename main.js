@@ -296,12 +296,11 @@ global.myUtils.createRoadBetweenFlags = function() {
     }
 }
 
-global.costMatrixCallback = function(roomName) {
+global.costMatrixCallback = function(roomName, costMatrix) {
     if (Memory.rooms[roomName] && Memory.rooms[roomName].hostile) {
         return false;
     }
 
-    var costMatrix = new PathFinder.CostMatrix;
     if (Game.rooms[roomName]) {
         for (let structure of Game.rooms[roomName].find(FIND_STRUCTURES)) {
             if (structure.structureType === STRUCTURE_ROAD) {
