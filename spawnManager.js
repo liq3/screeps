@@ -272,9 +272,9 @@ module.exports = {
                 && room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType:STRUCTURE_CONTAINER}}).length
                 && numberStationaryUpgraders < 3) {
             this.createCreep(spawn, 'SU', {role:'stationaryUpgrader', bossRoom:room.name});
-        } else if (Memory.spawnGeologist === room.name) {
+        } else if (Memory.spawnGeologist > 0) {
             this.createCreep(spawn, 'GEO', {role:'geologist'});
-            delete Memory.spawnGeologist
+            Memory.spawnGeologist -= 1
         }
     },
 
