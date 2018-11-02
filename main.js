@@ -506,8 +506,17 @@ global.myUtils.clearCache = function() {
 
 }
 
-globa.myUtils.pathfind = function(start, goal, opts) {
-    let [path, cost, ops, incomplete] = PathFinder.search(start, goal, opts); 
+global.myUtils.pathfind = function(start, goal, opts) {
+    let allowedRooms = Game.map.findRoute(start.roomName, goal.pos.roomName).reduce((o, v) => {o[v.room] = v; return o})
+    function callback(room) {
+        if (allowedRooms[room]) {
+            return PathFinder.CostMatrix()
+        } else {
+            return false
+        }
+    }
+    opts['roomCallback'] = callback
+    let {path, cost, ops, incomplete} = PathFinder.search(start, goal, opts);
     console.log(cost, ops, incomplete);
 }
 
