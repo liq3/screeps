@@ -2,20 +2,20 @@ const spawnManager = require('spawnManager');
 
 module.exports = {
     run: function(room) {
-        if (Game.rooms[room] && Game.rooms.controller && !Game.rooms[room].controller.my) {
+        if (rooms.controller && !room.controller.my) {
             let danger = false;
-            let hostileCreeps = Game.rooms[room].find(FIND_HOSTILE_CREEPS);
+            let hostileCreeps = room.find(FIND_HOSTILE_CREEPS);
             for (let creep of hostileCreeps) {
                 if (creep.getActiveBodyparts(ATTACK) > 0 || creep.getActiveBodyparts(RANGED_ATTACK) > 0) {
                     danger = true;
                     break;
                 }
             }
-            if (danger && !Memory.dangerRooms.includes(room)) {
+            if (danger && !Memory.dangerRooms.includes(room.name)) {
                 console.log(room + " is dangerous!")
-                Memory.dangerRooms.push(room);
-            } else if (!danger && Memory.dangerRooms.includes(room)){
-                Memory.dangerRooms.splice(Memory.dangerRooms.indexOf(room), 1);
+                Memory.dangerRooms.push(room.name);
+            } else if (!danger && Memory.dangerRooms.includes(room.name)){
+                Memory.dangerRooms.splice(Memory.dangerRooms.indexOf(room.name), 1);
             }
         }
 
