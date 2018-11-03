@@ -20,8 +20,6 @@ for (let i of creepRoles) {
 
 var debug = false;
 
-//Memory.ownedRooms = {'blah': []};
-
 let mainLoop = function() {
     for(let i in Memory.creeps) {
         if(!Game.creeps[i]) {
@@ -31,15 +29,6 @@ let mainLoop = function() {
 
     if (Memory.dangerRooms === undefined) {
         Memory.dangerRooms = []
-    }
-
-    if (!Memory.ownedRooms) {
-        Memory.ownedRooms = {};
-    }
-    for (let i in Game.spawns) {
-        if (!Memory.ownedRooms[Game.spawns[i].room.name]) {
-            Memory.ownedRooms[Game.spawns[i].room.name] = [Game.spawns[i].room.name]
-        }
     }
 
     if (Game.flags.baseTest) {
@@ -202,6 +191,18 @@ let mainLoop = function() {
 
 module.exports.loop = mainLoop
 
+global.getOwnedRooms = function() {
+    let rooms = []
+    for (let r in Game.rooms) {
+        if (Game.rooms[r] && Game.rooms[r].controller && Game.room[r].controller
+            && ((Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.username === Memory.username)
+                || Game.rooms[r].controller.my)) {
+            rooms.push(Game.rooms[r])
+        }
+    }
+    return rooms
+}
+
 global.myUtils = {};
 
 global.myUtils.avgCpu = function() {
@@ -239,9 +240,9 @@ global.myUtils.toggleJobDisplay = function() {
 }
 
 global.myUtils.sourceInfo = function () {
-    for (let r in Memory.ownedRooms) {
+    for (let r of global.getOwnedRooms()) {
         let desiredEnergy = 0;
-        for (let rr of Memory.ownedRooms[r]) {
+        for (let rr of r.getRoomNames()) {
             if (Game.rooms[rr]) {
                 for (let source of Game.rooms[rr].find(FIND_SOURCES)) {
                     let path = PathFinder.search(Game.rooms[r].find(FIND_MY_SPAWNS)[0].pos, {pos:source.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
@@ -249,16 +250,16 @@ global.myUtils.sourceInfo = function () {
                 }
             }
         }
-        console.log(`Desired energy total for ${Memory.ownedRooms[r]}: ${desiredEnergy}`);
+        console.log(`Desired energy total for ${room.getRoomNames()}: ${desiredEnergy}`);
     }
 }
 
 global.myUtils.partInfo = function () {
-    for (let r in Memory.ownedRooms) {
+    for (let mainRoom of _.filter(Game.rooms, r => r.controller && r.controller.my)) {
         let parts = 0;
         let desiredCapacity = 0;
-        let spawn = Game.rooms[r].find(FIND_MY_SPAWNS)[0];
-        for (let rr of Memory.ownedRooms[r]) {
+        let spawn = mainRoom.find(FIND_MY_SPAWNS)[0];
+        for (let rr of mainRoom.getRoomNames()) {
             if (Game.rooms[rr]) {
                 for (let source of Game.rooms[rr].find(FIND_SOURCES)) {
                     let path = PathFinder.search(spawn.pos, {pos:source.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});

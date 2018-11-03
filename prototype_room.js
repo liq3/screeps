@@ -41,3 +41,7 @@ Object.defineProperty(Room.prototype, 'mineral', {
         return this._mineral
     }
 });
+
+Room.prototype.getRoomNames = function() {
+    return this.memory.remoteMining ? this.memory.remoteMining.concat(this.name) : [this.name]
+}

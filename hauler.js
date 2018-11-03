@@ -201,7 +201,7 @@ module.exports = {
 			creep.memory.job = 'tower'
 		}
 		if (!creep.memory.job && ((creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level]/2 )
-				|| (creep.room.controller.progress > creep.room.controller.progressTotal || creep.room.controller.level < 2))) {
+				|| (creep.room.controller.progress > creep.room.controller.progressTotal || creep.room.controller.level < 2))``) {
 			creep.memory.job = 'praise'
 		}
 
@@ -353,32 +353,30 @@ module.exports = {
 			}
 		} else {
 			let possibleSources = [];
-			for (let room in Memory.ownedRooms) {
-				for (let r of Memory.ownedRooms[room]) {
-					if (Game.rooms[r] && room == creep.memory.bossRoom && !(r in Memory.dangerRooms)) {
-						for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-							let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
-							if (path.incomplete) {
-								console.log(`Incomplete path: ${creep.pos} ${soucre.pos}`);
-							}
-							let distance = path.cost/2;
-							let energy = 0;
-							for (let creep of _.filter(Game.creeps, c=>c.memory.sourceId == source.id && c.memory.gathering)) {
-								energy -= creep.carryCapacity - creep.carry.energy;
-							}
-							if (source.container) {
-								energy += source.container.store[RESOURCE_ENERGY];
-							}
-							for (let r of source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY})) {
-								energy += r.amount;
-							}
-							let reserved = energy;
-							if (source.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c=>c.memory.role == 'miner'}).length > 0) {
-								energy += distance*6;
-							}
-							if (distance*2 < creep.ticksToLive) {
-								possibleSources.push({id:source.id, distance:distance, energy:energy, r:reserved});
-							}
+			for (let r of Game.rooms[creep.memory.bossRoom].getRooms()) {
+				if (Game.rooms[r] && !(r in Memory.dangerRooms)) {
+					for (let source of Game.rooms[r].find(FIND_SOURCES)) {
+						let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+						if (path.incomplete) {
+							console.log(`Incomplete path: ${creep.pos} ${soucre.pos}`);
+						}
+						let distance = path.cost/2;
+						let energy = 0;
+						for (let creep of _.filter(Game.creeps, c=>c.memory.sourceId == source.id && c.memory.gathering)) {
+							energy -= creep.carryCapacity - creep.carry.energy;
+						}
+						if (source.container) {
+							energy += source.container.store[RESOURCE_ENERGY];
+						}
+						for (let r of source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: r=>r.resourceType == RESOURCE_ENERGY})) {
+							energy += r.amount;
+						}
+						let reserved = energy;
+						if (source.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c=>c.memory.role == 'miner'}).length > 0) {
+							energy += distance*6;
+						}
+						if (distance*2 < creep.ticksToLive) {
+							possibleSources.push({id:source.id, distance:distance, energy:energy, r:reserved});
 						}
 					}
 				}

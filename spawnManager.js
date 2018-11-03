@@ -28,7 +28,7 @@ module.exports = {
         let spawnHauler = false;
         let desiredTransportCapacity = 0;
         let sourceList = [];
-        for (let r of Memory.ownedRooms[room.name]) {
+        for (let r of room.getRoomNames()) {
             if (Game.rooms[r] === undefined && scoutTarget === undefined
                     && _.filter(Game.creeps, c => c.memory.role === 'scout' && c.memory.targetPos.roomName === r).length === 0) {
                 scoutTarget = r;
@@ -95,7 +95,7 @@ module.exports = {
         }
 
         let reserveTargetRoom = null;
-        for (let r of Memory.ownedRooms[room.name]) {
+        for (let r of room.getRoomNames()) {
             if (Game.rooms[r] && !Game.rooms[r].controller.my) {
                 let a = _.filter(Game.creeps, c => c.memory.role === 'claimer' && c.memory.targetRoom === r).length;
                 if (((a < 1 && !Game.rooms[r].controller.reservation) || (Game.rooms[r].controller.reservation &&
@@ -115,7 +115,6 @@ module.exports = {
             if (itr && itr.controller.my && itr.controller.level >= 1) {
                 itr.createConstructionSite(Game.flags.claim.pos, STRUCTURE_SPAWN)
                 itr.memory.supportNewRoom = Game.flags.claim.room.name
-                Memory.ownedRooms[itr] = [itr]
                 Game.flags.claim.remove()
             }
         }
@@ -209,7 +208,7 @@ module.exports = {
         }
 
         let desiredBuilders = 1;
-        for (let r of Memory.ownedRooms[room.name]) {
+        for (let r of room.getRoomNames()) {
             if (room.find(FIND_CONSTRUCTION_SITES).length > 0) {
                 desiredBuilders = 3;
                 break
