@@ -31,10 +31,15 @@ module.exports = {
             spawnManager.spawnCreeps(room);
         }
 
-        while (room.memory.plannedRoads && room.memory.plannedRoads.length && _.size(Game.constructionSites) < 20) {
-            let [x,y,type] = room.memory.plannedRoads.pop()
-            if (!_.any(room.lookForAt( FIND_STRUCTURES, x,y), {stuctureType:STRUCTURE_RAMPART})) {
-                room.createConstructionSite(site)
+        if (room.memory.plannedRoads && room.memory.plannedRoads.length && _.size(Game.constructionSites) < 20)
+            for (let i = 0; i < 5; i++) {
+                let {x,y,type} = room.memory.plannedRoads.pop()
+                if (!_.any(room.lookForAt( FIND_STRUCTURES, x,y), {stuctureType:STRUCTURE_RAMPART})) {
+                    room.createConstructionSite(x,y,type)
+                }
+                if (!room.memory.plannedRoads.length) {
+                    break;
+                }
             }
         }
     }
