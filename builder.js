@@ -20,25 +20,27 @@ module.exports = {
 					if (!Game.rooms[r]) {
 						continue;
 					}
-					for (let itr of Game.rooms[r].find(FIND_STRUCTURES, {filter: s => s.hits < s.hitsMax && s.hits < 500000})) {
-						let score = creep.pos.getRangeTo(itr);
-						if (itr.structureType === STRUCTURE_WALL || itr.structureType === STRUCTURE_RAMPART) {
-							if (itr.hits > 10000) {
-								score += 1000 + itr.hits / 1000;
-							} else {
-								score -= 100;
+					if (Game.rooms[r].controller.my) {
+						for (let itr of Game.rooms[r].find(FIND_STRUCTURES, {filter: s => s.hits < s.hitsMax && s.hits < 500000})) {
+							let score = creep.pos.getRangeTo(itr);
+							if (itr.structureType === STRUCTURE_WALL || itr.structureType === STRUCTURE_RAMPART) {
+								if (itr.hits > 10000) {
+									score += 1000 + itr.hits / 1000;
+								} else {
+									score -= 100;
+								}
 							}
-						}
-						if ((itr.structureType === STRUCTURE_ROAD || itr.structureType === STRUCTURE_CONTAINER)) {
-						    if (itr.hits > (itr.hits/2)) {
-							    score += 300;
-						    } else {
-						        score -= 100;
-						    }
-						}
-						if (score < possible.best) {
-							possible.best = score;
-							possible.id = itr.id;
+							if ((itr.structureType === STRUCTURE_ROAD || itr.structureType === STRUCTURE_CONTAINER)) {
+							    if (itr.hits > (itr.hits/2)) {
+								    score += 300;
+							    } else {
+							        score -= 100;
+							    }
+							}
+							if (score < possible.best) {
+								possible.best = score;
+								possible.id = itr.id;
+							}
 						}
 					}
 					let priorityMods = {
