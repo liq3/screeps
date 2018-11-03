@@ -11,12 +11,8 @@ module.exports = {
 	    } else if (!creep.memory.gathering && creep.carry.energy === 0) {
 	        creep.memory.gathering = true;
 	    } else {
-			var target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-				s => s.structureType === STRUCTURE_TOWER && s.energy < s.energyCapacity});
-	        if (target === null) {
-				target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
-	            	s => (s.structureType === STRUCTURE_EXTENSION || s.structureType === STRUCTURE_SPAWN) && s.energy < s.energyCapacity});
-			}
+			target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter:
+            	s => (s.structureType === STRUCTURE_EXTENSION || s.structureType === STRUCTURE_SPAWN) && s.energy < s.energyCapacity});
 	        if (creep.transfer(target, RESOURCE_ENERGY) === ERR_NOT_IN_RANGE) {
 	            creep.moveTo(target);
 	        }

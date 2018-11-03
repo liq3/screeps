@@ -182,8 +182,10 @@ let mainLoop = function() {
                 if (Memory.rooms[name]) {
                     if (Memory.rooms[name].hostile) {
                         color = 'red';
+                    } else if (Game.rooms[name] && Game.rooms[name].controller && Game.rooms[name].controller.my) {
+                        color = 'green';
                     }
-                    room.visual.circle(left+x, top+y, {color:color});
+                    room.visual.circle(left+x, top+y, {fill:color});
                 }
             }
         }
