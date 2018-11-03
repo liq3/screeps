@@ -2,7 +2,7 @@ const spawnManager = require('spawnManager');
 
 module.exports = {
     run: function(room) {
-        if (rooms.controller && !room.controller.my) {
+        if (room.controller && !room.controller.my) {
             let danger = false;
             let hostileCreeps = room.find(FIND_HOSTILE_CREEPS);
             for (let creep of hostileCreeps) {
@@ -12,7 +12,7 @@ module.exports = {
                 }
             }
             if (danger && !Memory.dangerRooms.includes(room.name)) {
-                console.log(room + " is dangerous!")
+                console.log(room + " is dangerous!"),
                 Memory.dangerRooms.push(room.name);
             } else if (!danger && Memory.dangerRooms.includes(room.name)){
                 Memory.dangerRooms.splice(Memory.dangerRooms.indexOf(room.name), 1);

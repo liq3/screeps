@@ -105,7 +105,8 @@ module.exports = {
 	},
 	jobGuard: function (creep) {
 		var target = Game.getObjectById(creep.memory.targetId);
-		if (!target) {
+		var targetRoom = creep.memory.targetRoom;
+		if (!target && !targetRoom) {
 			for (let room of global.getOwnedRooms()) {
 				if (Game.rooms[room] && !target) {
 					let possibleTargets = Game.rooms[room].find(FIND_HOSTILE_CREEPS);
@@ -117,6 +118,21 @@ module.exports = {
 			}
 		}
 
+		if (!target && !targetRoom) {
+			let best = {room:null, score:Infinity}
+			for (let room in Memory.dangerRooms) {
+				let score = _.size(Game.map.findRoute(creep.room.name, room))
+				if (score < best.score) {
+					best.socre = score;
+					best.room = room
+				}
+			}
+			if (best.room) {
+				target = room;
+				creep.memory.targetRoom = room;
+			}
+		}
+
 		if (target) {
 			creep.rangedAttack(target);
 			if (creep.hits < creep.hitsMax) {
@@ -125,6 +141,11 @@ module.exports = {
 			creep.moveTo(target);
 		} else if (creep.hits < creep.hitsMax) {
 			creep.heal(creep);
+		}
+		if (targetRoom && !target) {
+			if (creep.room.name !== targetRoom) {
+				creep.moveTo(new RoomPosition(25,25,targetRooM), {range:22})
+			}
 		}
 	}
 };
