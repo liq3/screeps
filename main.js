@@ -551,10 +551,10 @@ global.myUtils.clearCache = function() {
 global.myUtils.planRemoteMineRoads = function() {
     function addPath(path) {
         for (let pos of path) {
-            if (!Memory.rooms[pos.roomName].plannedBuildings) {
-                Memory.rooms[pos.roomName].plannedBuildings = []
+            if (!Memory.rooms[pos.roomName].plannedRoads) {
+                Memory.rooms[pos.roomName].plannedRoads = []
             }
-            Memory.rooms[pos.roomName].plannedBuildings.push({x:pos.x, y:pos.y, type:STRUCTURE_ROAD})
+            Memory.rooms[pos.roomName].plannedRoads.push({x:pos.x, y:pos.y, type:STRUCTURE_ROAD})
         }
     }
     for (let room of global.getOwnedRooms()) {

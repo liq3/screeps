@@ -31,8 +31,8 @@ module.exports = {
             spawnManager.spawnCreeps(room);
         }
 
-        while (room.memory.plannedBuildings && _.size(Game.constructionSites) < 20) {
-            let site = room.memory.plannedBuildings.pop()
+        while (room.memory.plannedRoads && _.size(Game.constructionSites) < 20) {
+            let site = room.memory.plannedRoads.pop()
             room.createConstructionSite(...Object.values(site))
         }
     }
