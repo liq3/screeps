@@ -106,14 +106,12 @@ module.exports = {
 	jobGuard: function (creep) {
 		var target = Game.getObjectById(creep.memory.targetId);
 		var targetRoom = creep.memory.targetRoom;
-		if (!target && !targetRoom) {
+		if (!target) {
 			for (let room of global.getOwnedRooms()) {
-				if (Game.rooms[room] && !target) {
-					let possibleTargets = Game.rooms[room].find(FIND_HOSTILE_CREEPS);
-					if (possibleTargets.length > 0) {
-						target = possibleTargets[0];
-						creep.memory.targetId = target.id;
-					}
+				let possibleTargets = room.find(FIND_HOSTILE_CREEPS);
+				if (possibleTargets.length > 0) {
+					target = possibleTargets[0];
+					creep.memory.targetId = target.id;
 				}
 			}
 		}
