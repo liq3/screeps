@@ -353,7 +353,7 @@ module.exports = {
 			}
 		} else {
 			let possibleSources = [];
-			for (let r of Game.rooms[creep.memory.bossRoom].getRooms()) {
+			for (let r of Game.rooms[creep.memory.bossRoom].getRoomNames()) {
 				if (Game.rooms[r] && !(r in Memory.dangerRooms)) {
 					for (let source of Game.rooms[r].find(FIND_SOURCES)) {
 						let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
