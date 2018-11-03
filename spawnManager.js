@@ -16,7 +16,7 @@ module.exports = {
         var RCL = room.controller.level;
         let numberHarvesters = sumCreeps('harvester', room);
         let numberSpawnHelpers = sumCreeps('spawnHelper', room);
-        let numberGuards = _(Game.creeps).filter( c => c.memory.job === 'guard').length;
+        let numberGuards = _.filter(Game.creeps, c => c.memory.job === 'guard').length;
         let numberMiners = sumCreeps('miner', room)
         let numberHaulers = sumCreeps('hauler', room)
         let numberBuilders = sumCreeps ('builder', room);
