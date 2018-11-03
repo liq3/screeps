@@ -7,7 +7,7 @@ module.exports = {
 
         function sumCreeps(role, room) {
             if (room === undefined) {
-                return _.size(Game.creeps, c => c.memory.role === role);
+                return _.filter(Game.creeps, c => c.memory.role === role).length;
             } else {
                 return room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role === role}).length;
             }
@@ -257,7 +257,7 @@ module.exports = {
         } else if (numberBuilders < desiredBuilders) {
             this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
         } else if (numberGuards < 3) {
-            this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
+            this.createCreep(spawn, 'G', {role:'combat', job:'guard'});
         } else if (numberSpawnHelpers < 1 && ((room.storage && room.storage.store[RESOURCE_ENERGY] > 5000) || room.container)) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (reserveTargetRoom && RCL > 2) {
@@ -381,13 +381,6 @@ module.exports = {
             }
         }
         error = spawn.createCreep(parts, this.getName(name), data);
-        if (error === -10) {
-            console.log("Error spawning creep: " + error + JSON.stringify(data) + parts);
-        } else if (error === -3) {
-            console.log("Error! Trying to spawn creep with same name");
-        } else if (error === -6 && spawn.room.energyAvailable === spawn.room.energyCapacityAvailable) {
-            console.log("Error! Trying to spawn creep that costs too much" + data.role + parts);
-        }
         if (typeof(error) === 'string') {
             logStr = `${spawn.room.name} spawning ${error} in ${parts.length*3} ticks with ${spawn.name}. ` + JSON.stringify(data);
             console.log(logStr);
@@ -396,6 +389,14 @@ module.exports = {
             } catch (err) {
                 console.log(err)
             }
+        } else if (error === ERR_INVALID_ARGS) {
+            console.log("Error spawning creep: " + error + JSON.stringify(data) + parts);
+        } else if (error === ERR_NAME_EXISTS) {
+            console.log("Error! Trying to spawn creep with same name");
+        } else if (error === ERR_NOT_ENOUGH_ENERGY && spawn.room.energyAvailable === spawn.room.energyCapacityAvailable) {
+            console.log("Error! Trying to spawn creep that costs too much" + data.role + parts);
+        } else {
+            console.log(`Error:${error} spawning creep with ${spawn.name} in ${spawn.room.name}: ${parts} ${JSON.stringify(data)}`)
         }
         return error;
     },
