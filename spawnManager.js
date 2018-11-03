@@ -258,7 +258,7 @@ module.exports = {
             this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
         } else if (numberGuards < 3) {
             this.createCreep(spawn, 'G', {role:'combat',job:'guard'});
-        } else if (false && numberSpawnHelpers < 1 && room.storage && room.storage.store[RESOURCE_ENERGY] > 5000) {
+        } else if (numberSpawnHelpers < 1 && ((room.storage && room.storage.store[RESOURCE_ENERGY] > 5000) || room.container)) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
         } else if (reserveTargetRoom && RCL > 2) {
             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
@@ -327,7 +327,7 @@ module.exports = {
             parts = [WORK, MOVE, MOVE, CARRY]
             data.role = 'hauler'
         } else if (data.role === 'spawnHelper') {
-            let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 150);
+            let numberParts = Math.min(10, Math.floor(spawn.room.energyCapacityAvailable / 150));
             parts = Array(numberParts).fill(CARRY);
             parts = parts.concat(Array(numberParts).fill(CARRY));
             parts = parts.concat(Array(numberParts).fill(MOVE));
