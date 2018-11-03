@@ -194,7 +194,7 @@ module.exports.loop = mainLoop
 global.getOwnedRooms = function() {
     let rooms = []
     for (let r in Game.rooms) {
-        if (Game.rooms[r] && Game.rooms[r].controller && Game.room[r].controller
+        if (Game.rooms[r] && Game.rooms[r].controller && Game.rooms[r].controller
             && ((Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.username === Memory.username)
                 || Game.rooms[r].controller.my)) {
             rooms.push(Game.rooms[r])
