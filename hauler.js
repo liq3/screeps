@@ -201,7 +201,7 @@ module.exports = {
 			creep.memory.job = 'tower'
 		}
 		if (!creep.memory.job && ((creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level]/2 )
-				|| (creep.room.controller.progress > creep.room.controller.progressTotal || creep.room.controller.level < 2))``) {
+				|| (creep.room.controller.progress > creep.room.controller.progressTotal || creep.room.controller.level < 2))) {
 			creep.memory.job = 'praise'
 		}
 
