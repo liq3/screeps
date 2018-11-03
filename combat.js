@@ -128,8 +128,8 @@ module.exports = {
 				}
 			}
 			if (best.room) {
-				target = room;
-				creep.memory.targetRoom = room;
+				target = best.room;
+				creep.memory.targetRoom = best.room;
 			}
 		}
 
@@ -144,7 +144,7 @@ module.exports = {
 		}
 		if (targetRoom && !target) {
 			if (creep.room.name !== targetRoom) {
-				creep.moveTo(new RoomPosition(25,25,targetRooM), {range:22})
+				creep.moveTo(new RoomPosition(25,25,targetRoom), {range:22})
 			}
 		}
 	}
