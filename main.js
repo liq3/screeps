@@ -558,17 +558,17 @@ global.myUtils.planRemoteMineRoads = function() {
         }
     }
     for (let room of global.getOwnedRooms()) {
-        if (room.controller.my && Memory.rooms[room].remoteMining) {
-            for (let remoteName of Memory.rooms[room].remoteMining) {
+        if (room.controller.my && Memory.rooms[room.name].remoteMining) {
+            for (let remoteName of Memory.rooms[room.name].remoteMining) {
                 if (Game.rooms[remoteName]) {
                     for (let source of Game.rooms[remoteName].find(FIND_SOURCES)) {
-                        let path = PathFinder.search(Game.rooms[remoteName].find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_SPAWN}})[0].pos,
+                        let path = PathFinder.search(room.find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_SPAWN}})[0].pos,
                             {pos:source.pos, range:2}, {callback:global.costMatrixCallback, plainCost:2, swampCost:10})
                         addPath(path.path);
                     }
                 } else if (Memory.rooms[remoteName] && Memory.rooms[remoteName].sources) {
                     for (let source of Memory.rooms[remoteName].sources) {
-                        let path = PathFinder.search(Game.rooms[remoteName].find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_SPAWN}})[0].pos,
+                        let path = PathFinder.search(room.find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_SPAWN}})[0].pos,
                             {pos:new RoomPosition(...Object.values(source.pos)), range:2}, {callback:global.costMatrixCallback, plainCost:2, swampCost:10})
                         addPath(path.path);
                     }
