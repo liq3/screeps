@@ -200,7 +200,8 @@ module.exports = {
 		if (creep.room.find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity}).length > 0) {
 			creep.memory.job = 'tower'
 		}
-		if (!creep.memory.job && (creep.room.controller.progress > creep.room.controller.progressTotal || creep.room.controller.level < 2)) {
+		if (!creep.memory.job && ((creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level]/2 )
+				|| (creep.room.controller.progress > creep.room.controller.progressTotal || creep.room.controller.level < 2)) {
 			creep.memory.job = 'praise'
 		}
 
@@ -282,7 +283,7 @@ module.exports = {
 				}
 			}
 		}
-		
+
 		if (!creep.memory.job) {
 			creep.memory.job = 'source';
 		}
