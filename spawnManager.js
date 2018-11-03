@@ -363,7 +363,11 @@ module.exports = {
         } else if (data.role === 'scout' || data.role === 'geologist') {
             parts = [MOVE];
         } else if (data.role === 'claimer') {
-            parts = spawn.room.energyCapacityAvailable < 1450 ? [CLAIM,MOVE,MOVE,MOVE] : [CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
+            if (data.claimRoom) {
+                parts = [MOVE,MOVE,MOVE,MOVE,MOVE,CLAIM]
+            } else {
+                parts = spawn.room.energyCapacityAvailable < 1450 ? [CLAIM,MOVE,MOVE,MOVE] : [CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];                              
+            }
         } else if (data.role === 'miner') {
             let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 50) / 450);
             parts = Array(numberParts*4).fill(WORK);

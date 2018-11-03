@@ -30,5 +30,10 @@ module.exports = {
         && room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning})[0] != undefined) {
             spawnManager.spawnCreeps(room);
         }
+
+        while (room.memory.plannedBuildings && _.size(Game.constructionSites) < 20) {
+            let site = room.memory.plannedBuildings.pop()
+            room.createConstructionSite(...Object.values(site))
+        }
     }
 };
