@@ -256,7 +256,7 @@ module.exports = {
             this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.memory.supportNewRoom});
         } else if (numberBuilders < desiredBuilders) {
             this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
-        } else if (numberGuards < 3) {
+        } else if (numberGuards < 3 && Memory.dangerRooms.length > 0) {
             this.createCreep(spawn, 'G', {role:'combat', job:'guard'});
         } else if (numberSpawnHelpers < 1 && ((room.storage && room.storage.store[RESOURCE_ENERGY] > 5000) || room.container)) {
             this.createCreep(spawn, 'SH', {role:'spawnHelper'});
