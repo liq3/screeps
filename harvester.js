@@ -3,7 +3,7 @@ module.exports = {
  	run: function (creep) {
 		var source = Game.getObjectById(creep.memory.sourceId);
         if (source) {
-            if (creep.room.energyCapacityAvailable >= 550) {
+            if (creep.room.energyCapacityAvailable >= 550 || !creep.room.my) {
                 if (source.link) {
                     if (creep.getActiveBodyparts(WORK)*2 + creep.carry.energy > creep.carryCapacity) {
                         let err = creep.transfer(source.link, RESOURCE_ENERGY)
