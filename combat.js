@@ -126,7 +126,7 @@ module.exports = {
 				}
 			}
 			if (best.room) {
-				target = best.room;
+				targetRoom = best.room;
 				creep.memory.targetRoom = best.room;
 			}
 		}

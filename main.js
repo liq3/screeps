@@ -7,6 +7,7 @@ require('prototype_source')
 require('prototype_room')
 require('prototype_mineral')
 require('prototype_controller')
+require('RoomVisual')
 const spawnManager = require('spawnManager');
 const roomManager = require('roomManager');
 
@@ -528,19 +529,9 @@ global.myUtils.baseTest = function() {
         let type = flag.memory.buildings[i]
         let x = i % 50
         let y = Math.floor(i/50)
-        if (type === STRUCTURE_ROAD) {
-            //visual.rect(x-0.4, y-0.4, 0.8,0.8)
-            for (let dx = x-1; dx < x+2; dx++) {
-                for (let dy = y-1; dy < y+2; dy++) {
-                    if (dx != dy && get(dx,dy) === STRUCTURE_ROAD) {
-                        visual.line(x,y,dx,dy)
-                    }
-                }
-            }
-        } else if (type === STRUCTURE_EXTENSION) {
-            visual.circle(x,y)
-        }
+        visual.structure(x,y,type);
     }
+    visual.connectRoads()
     console.log(`baseTest() took ${Game.cpu.getUsed() - startTime}`)
 }
 
@@ -600,5 +591,6 @@ if (useProfiler) {
     }
     profiler.registerObject(spawnManager, 'spawnManager')
     global.CostMatrixCallback = profiler.registerFN(global.costMatrixCallback, 'global.costMatrixCallback');
+    PathFinder.search = profiler.registerFN(PathFinder.search, 'PathFinder.search')
     module.exports.loop = () => profiler.wrap(mainLoop);
 }
