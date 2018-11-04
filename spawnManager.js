@@ -48,7 +48,7 @@ module.exports = {
                 harvesterTargetId = source.id;
             } else if (miners.length > 0) {
                 if (source.container) {
-                    desiredTransportCapacity += Math.ceil( 2 * (2 * pathCost) * source.energyCapacity / ENERGY_REGEN_TIME);
+                    desiredTransportCapacity += Math.ceil(2 * pathCost * source.energyCapacity / ENERGY_REGEN_TIME);
                     numberContainers += 1;
                 }
             }
