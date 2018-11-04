@@ -292,7 +292,7 @@ module.exports = {
 	},
 
 	decideStorage: function(creep) {
-		if (!creep.memory.task && (creep.room.storage || creep.room.container) && creep.carry.energy == creep.carryCapacity) {
+		if (!creep.memory.task && (creep.room.storage || creep.room.container) && creep.carry.energy > 0) {
 			creep.memory.task = 'storage'
 			creep.memory.lastTaskId = creep.room.storage ? creep.room.storage.id : creep.room.container.id;
 		}
