@@ -11,7 +11,7 @@ module.exports = {
 			let possiblePositions = {}
 			for (let x = target.pos.x-1; x < target.pos.x+2; x++) {
 				for (let y = target.pos.y-1; y < target.pos.y+2; y++) {
-					if (terrain.get(x,y) != TERRAIN_MASK_WALL && target.inRangeTo(x,y,3)) {
+					if (terrain.get(x,y) != TERRAIN_MASK_WALL && target.pos.inRangeTo(x,y,3)) {
 						possiblePositions[`${x}_${y}`] = true
 					}
 				}
