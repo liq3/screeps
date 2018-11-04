@@ -202,6 +202,6 @@ if (useProfiler) {
     }
     profiler.registerObject(spawnManager, 'spawnManager')
     profiler.registerObject(Empire, 'Empire')
-    PathFinder.search = profiler.registerFN(PathFinder.search, 'PathFinder.search')
+    //PathFinder.search = profiler.registerFN(PathFinder.search, 'PathFinder.search')
     module.exports.loop = () => profiler.wrap(mainLoop);
 }

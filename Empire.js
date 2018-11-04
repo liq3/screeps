@@ -62,10 +62,10 @@ Empire.getPathCost = function(a,b) {
         Memory.pathCosts[a.id] = {}
     }
     if (path.incomplete) {
-        if (!Memory.pathCosts[a][b]) {
-            Memory.pathCosts[a][b] = {cost:path.cost, time:Game.time + 100};
+        if (!Memory.pathCosts[a.id][b.id]) {
+            Memory.pathCosts[a.id][b.id] = {cost:path.cost, time:Game.time + 100};
         } else {
-            Memory.pathCosts[a][b] = Game.time + 100;
+            Memory.pathCosts[a.id][b.id] = Game.time + 100;
         }
         console.log(`Incomplete path: ${JSON.stringify(a.pos)} to ${JSON.stringify(b.pos)}`)
     } else {
