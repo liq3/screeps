@@ -211,7 +211,7 @@ module.exports = {
 		}
 
 		if (creep.memory.task) {
-			creep.memory.gathering = (!creep.memory.job == 'storage') && (creep.carry.energy < creep.carryCapacity);
+			creep.memory.gathering = !(creep.memory.job == 'storage') && (creep.carry.energy < creep.carryCapacity);
 			creep.memory.taskAssignedTime = Game.time
 			creep.say(creep.memory.task)
 			this.run(creep)
