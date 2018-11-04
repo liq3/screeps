@@ -72,7 +72,9 @@ Empire.getPathCost = function(a,b) {
         let pathTime = 50000;
         for (let pos of path.path) {
             let road = false
-            for (let s of pos.lookFor(FIND_STRUCTURES)) {
+            let found = pos.lookFor(FIND_STRUCTURES)
+            for (let i in found) {
+                let s = found[i]
                 if (s.structureType === STRUCTURE_ROAD) {
                     road = true;
                 }
