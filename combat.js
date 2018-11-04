@@ -118,7 +118,7 @@ module.exports = {
 
 		if (!target && !targetRoom) {
 			let best = {room:null, score:Infinity}
-			for (let room in Memory.dangerRooms) {
+			for (let room of Memory.dangerRooms) {
 				let score = _.size(Game.map.findRoute(creep.room.name, room))
 				if (score < best.score) {
 					best.score = score;
