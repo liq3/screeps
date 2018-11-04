@@ -235,7 +235,7 @@ module.exports = {
 	},
 
 	decideSpawn: function(creep) {
-		if (!creep.memory.task && !creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'})) {
+		if (!creep.memory.task && !creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'}).length) {
 			let totalSpawn = 0;
 			for (let c of _.filter(Game.creeps, c=>c.memory.task && c.memory.task == 'spawn' && c.memory.bossRoom == creep.room.name)) {
 				totalSpawn += c.carry.energy;
@@ -348,11 +348,11 @@ module.exports = {
 				var err;
 				let withdrawAmount = 0;
 				let droppedEnergy;
-				if (source.container) {
-					droppedEnergy = source.container.pos.lookFor(LOOK_RESOURCES);
-				} else {
+				//if (source.container) {
+					//droppedEnergy = source.container.pos.lookFor(LOOK_RESOURCES);
+				//} else {
 					droppedEnergy = source.pos.findInRange(FIND_DROPPED_RESOURCES, 1);
-				}
+				//}
 				if (droppedEnergy.length) {
 					droppedEnergy = droppedEnergy[0]
 				}
@@ -384,9 +384,9 @@ module.exports = {
 				   	}
 				}
 				if (!target) {
-					creep.moveTo(source, {range:2, ignoreCreeps:true});
+					creep.moveTo(source, {range:2});
 				} else if (err == ERR_NOT_IN_RANGE) {
-					creep.moveTo(target, {range:1, ignoreCreeps:true});
+					creep.moveTo(target, {range:1});
 				}
 				if (creep.carry.energy == creep.carryCapacity) {
 					creep.memory.gathering = false;
