@@ -6,15 +6,12 @@ module.exports = {
 		}
 		var target;
 		if (!creep.memory.finalPos) {
-			target = creep.room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType:STRUCTURE_CONTAINER}});
-			if (target.length) {
-				target = target[0]
-			}
+			target = creep.room.controller.container;
 			let terrain = creep.room.getTerrain()
 			let possiblePositions = {}
 			for (let x = target.pos.x-1; x < target.pos.x+2; x++) {
 				for (let y = target.pos.y-1; y < target.pos.y+2; y++) {
-					if (terrain.get(x,y) != TERRAIN_MASK_WALL) {
+					if (terrain.get(x,y) != TERRAIN_MASK_WALL && target.inRangeTo(x,y,3)) {
 						possiblePositions[`${x}_${y}`] = true
 					}
 				}
@@ -25,8 +22,6 @@ module.exports = {
 			for (let otherCreep of creep.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role=='stationaryUpgrader'})) {
 				if (creep.memory.finalPos) {
 					possiblePositions[`${otherCreep.memory.finalPos.x}_${otherCreep.memory.finalPos.y}`] = false
-				} else {
-					possiblePositions[`${otherCreep.pos.x}_${otherCreep.pos.y}`] = false
 				}
 			}
 			for (let pos in possiblePositions) {
