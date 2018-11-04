@@ -173,8 +173,8 @@ module.exports = {
 			if (err == ERR_NOT_IN_RANGE) {
 				creep.moveTo(target, {range:1});
 			}
-			this.repairRoads(creep)
 		}
+		this.repairRoads(creep)
 		if (Memory.visuals.displayJobs) {
 			let text = creep.memory.job || 'idle';
 			creep.room.visual.text(text, creep.pos);
