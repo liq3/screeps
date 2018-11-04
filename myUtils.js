@@ -40,8 +40,7 @@ global.myUtils.sourceInfo = function () {
         for (let rr of r.getRoomNames()) {
             if (Game.rooms[rr]) {
                 for (let source of Game.rooms[rr].find(FIND_SOURCES)) {
-                    let path = PathFinder.search(Game.rooms[r].find(FIND_MY_SPAWNS)[0].pos, {pos:source.pos, range: 2}, {roomCallBack:Empire.costMatrixCallback, swamp:10, plains:2});
-                    desiredEnergy += Math.ceil( 4 * path.cost * source.energyCapacity / ENERGY_REGEN_TIME);
+                    desiredEnergy += Math.ceil( 3 * Empire.getPathCost(Game.rooms[r].find(FIND_MY_SPAWNS)[0].id, source.id) * source.energyCapacity / ENERGY_REGEN_TIME);
                 }
             }
         }

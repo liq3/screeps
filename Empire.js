@@ -39,3 +39,47 @@ Empire.costMatrixCallback = function(roomName, costMatrix) {
     }
     return costMatrix;
 }
+
+Empire.getPathCost = function(a,b) {
+    [a,b] = [a,b].sort()
+
+    if (Memory.pathCosts[a] &&  Memory.pathCosts[a][b] && Memory.pathCosts[a][b].time > Game.time) {
+        return Memory.pathCosts[a][b].cost;
+    }
+
+    [a,b] = [a,b].map(i=>Game.getObjectById(i))
+    for (let v of [a,b]) {
+        if (!v) {
+            return;
+        }
+    }
+
+    let path = PathFinder.search(a.pos, {pos:b.pos, range:1}, {roomCallback:Empire.costMatrixCallback, swampCost:2, plainsCost:2,maxOps:5000});
+    if (!Memory.pathCosts[a.id]) {
+        Memory.pathCosts[a.id] = {}
+    }
+    if (path.incomplete) {
+        if (!Memory.pathCosts[a][b]) {
+            Memory.pathCosts[a][b] = {cost:path.cost, time:Game.time + 100};
+        } else {
+            Memory.pathCosts[a][b] = Game.time + 100;
+        }
+        console.log(`Incomplete path: ${JSON.stringify(a.pos)} to ${JSON.stringify(b.pos)}`)
+    } else {
+        let pathTime = 50000;
+        for (let pos of path.path) {
+            let road = false
+            for (let s of pos.lookFor(FIND_STRUCTURES)) {
+                if (s.structureType === STRUCTURE_ROAD) {
+                    road = true;
+                }
+            }
+            if (!road) {
+                pathTime = 1000;
+                break;
+            }
+        }
+        Memory.pathCosts[a.id][b.id] = {cost:path.cost, time:Game.time + pathTime}
+    }
+    return path.cost;
+}
