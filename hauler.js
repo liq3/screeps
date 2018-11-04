@@ -69,6 +69,8 @@ module.exports = {
 			    } else {
 			        creep.gatherEnergy(creep)
 			    }
+			} else {
+				creep.memory.gathering = false
 			}
 			if (!creep.memory.task || creep.memory.gathering && creep.carry.energy == creep.carryCapacity) {
 				creep.memory.gathering = false;
