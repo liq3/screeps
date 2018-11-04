@@ -203,6 +203,7 @@ module.exports = {
 		if (!creep.memory.task && ((creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level]/2 )
 				|| (creep.room.controller.progress > creep.room.controller.progressTotal || creep.room.controller.level < 2))) {
 			creep.memory.task = 'praise'
+			creep.memory.lastTaskId = creep.room.controller.id;
 		}
 
 		if (!creep.memory.task) {
@@ -213,6 +214,7 @@ module.exports = {
 			let desired = creep.room.energyCapacityAvailable - creep.room.energyAvailable
 			if (totalSpawn < desired) {
 				creep.memory.task = 'spawn';
+				creep.memory.lastTaskId = creep.room.storage.id;
 			}
 			//console.log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
 		}
@@ -232,13 +234,13 @@ module.exports = {
 				let metric = minerals + upgradeParts*distance/5;
 				if (distance*2 < creep.ticksToLive && (metric > creep.carryCapacity || metric > 1900)) {
 					creep.memory.task = 'collectMinerals';
+					creep.memory.lastTaskId = container.id;
 				}
 			}
 		}
 
 		if (!creep.memory.task) {
-			let upgradeContainer = creep.room.controller.pos.findClosestByRange(FIND_STRUCTURES,
-				{filter: s=>s.structureType == STRUCTURE_CONTAINER && s.pos.inRangeTo(s.room.controller, 3)});
+			let upgradeContainer = creep.room.controller.container;
 			if (upgradeContainer) {
 				let totalUpgrade = upgradeContainer.store[RESOURCE_ENERGY];
 				for (let c of _.filter(Game.creeps, c=>c.memory.task && c.memory.task == 'upgrade' && c.memory.bossRoom == creep.room.name)) {
@@ -252,12 +254,14 @@ module.exports = {
 				let metric = upgradeContainer.storeCapacity - (totalUpgrade - upgradeParts*distance);
 				if (distance*2 < creep.ticksToLive && metric > creep.carryCapacity && ((!creep.room.storage && creep.room.container) || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
 					creep.memory.task = 'upgrade';
+					creep.memory.lastTaskId = upgradeContainer.id;
 				}
 			}
 		}
 
 		if (!creep.memory.task && (creep.room.storage || creep.room.container) && creep.carry.energy == creep.carryCapacity) {
 			creep.memory.task = 'storage'
+			creep.memory.lastTaskId = creep.room.storage ? creep.room.storage.id : creep.room.container.id;
 		}
 
 		if (!creep.memory.task && creep.room.storage && creep.room.terminal && creep.room.memory.desiredTerminalResources) {
@@ -266,6 +270,7 @@ module.exports = {
 				if (creep.room.storage.store[res] > 0 && ((res === RESOURCE_ENERGY && creep.room.storage.store.energy > 40000) || res !== RESOURCE_ENERGY)
 					&& (!creep.room.terminal.store[res] || creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res])) {
 					creep.memory.task = 'deliverToTerminal';
+					creep.memory.lastTaskId = creep.room.terminal.id;
 					break;
 				}
 			}
@@ -364,9 +369,6 @@ module.exports = {
 			for (let r of Game.rooms[creep.memory.bossRoom].getRoomNames()) {
 				if (Game.rooms[r] && !(r in Memory.dangerRooms)) {
 					for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-						if (path.incomplete) {
-							console.log(`Incomplete path: ${creep.pos} ${soucre.pos}`);
-						}
 						let distance = this.getDistance(creep, source)
 						let energy = 0;
 						for (let creep of _.filter(Game.creeps, c=>c.memory.sourceId == source.id && c.memory.gathering)) {
@@ -399,6 +401,7 @@ module.exports = {
 				if (best.energy >= creep.carryCapacity) {
 					//console.log(JSON.stringify(best), Game.time);
 					creep.memory.sourceId = best.id;
+					creep.memory.lastTaskId = best.id;
 				}
 			}
 		}
