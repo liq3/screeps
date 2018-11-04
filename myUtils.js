@@ -34,17 +34,9 @@ global.myUtils.toggleJobDisplay = function() {
     }
 }
 
-global.myUtils.sourceInfo = function () {
+global.myUtils.getSourceInfo = function () {
     for (let r of Empire.getOwnedRooms()) {
-        let desiredEnergy = 0;
-        for (let rr of r.getRoomNames()) {
-            if (Game.rooms[rr]) {
-                for (let source of Game.rooms[rr].find(FIND_SOURCES)) {
-                    desiredEnergy += Math.ceil( 3 * Empire.getPathCost(Game.rooms[r].find(FIND_MY_SPAWNS)[0].id, source.id) * source.energyCapacity / ENERGY_REGEN_TIME);
-                }
-            }
-        }
-        console.log(`Desired energy total for ${room.getRoomNames()}: ${desiredEnergy}`);
+
     }
 }
 

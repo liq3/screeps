@@ -197,15 +197,42 @@ module.exports = {
 		delete creep.memory.target;
 	},
 	getNewTask: function(creep) {
+		this.decideTowers(creep);
+		this.decidePraise(creep);
+		this.decideSpawn(creep);
+		this.decideMinerals(creep);
+		this.decideDeliverPraise(creep);
+		this.decideStorage(creep);
+		this.decideTerminal(creep);
+		this.decidePickup(creep);
+
+		if (!creep.memory.task) {
+			creep.memory.task = 'source';
+		}
+
+		if (creep.memory.task) {
+			creep.memory.gathering = creep.carry.energy < creep.carryCapacity;
+			creep.memory.taskAssignedTime = Game.time
+			creep.say(creep.memory.task)
+			this.run(creep)
+		}
+	},
+
+	decideTowers: function(creep) {
 		if (creep.room.find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity}).length > 0) {
 			creep.memory.task = 'tower'
 		}
+	},
+
+	decidePraise: function(creep) {
 		if (!creep.memory.task && ((creep.room.controller.ticksToDowngrade < CONTROLLER_DOWNGRADE[creep.room.controller.level]/2 )
-				|| (creep.room.controller.progress > creep.room.controller.progressTotal || creep.room.controller.level < 2))) {
+		|| (creep.room.controller.progress > creep.room.controller.progressTotal || creep.room.controller.level < 2))) {
 			creep.memory.task = 'praise'
 			creep.memory.lastTaskId = creep.room.controller.id;
 		}
+	},
 
+	decideSpawn: function(creep) {
 		if (!creep.memory.task) {
 			let totalSpawn = 0;
 			for (let c of _.filter(Game.creeps, c=>c.memory.task && c.memory.task == 'spawn' && c.memory.bossRoom == creep.room.name)) {
@@ -218,7 +245,9 @@ module.exports = {
 			}
 			//console.log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
 		}
+	},
 
+	decideMinerals: function(creep) {
 		if (!creep.memory.task && creep.room.storage && _.sum(creep.carry) == 0) {
 			let container = creep.room.mineral.container
 			if (container) {
@@ -238,7 +267,9 @@ module.exports = {
 				}
 			}
 		}
+	},
 
+	decideDeliverPraise: function(creep) {
 		if (!creep.memory.task) {
 			let upgradeContainer = creep.room.controller.container;
 			if (upgradeContainer) {
@@ -258,24 +289,30 @@ module.exports = {
 				}
 			}
 		}
+	},
 
+	decideStorage: function(creep) {
 		if (!creep.memory.task && (creep.room.storage || creep.room.container) && creep.carry.energy == creep.carryCapacity) {
 			creep.memory.task = 'storage'
 			creep.memory.lastTaskId = creep.room.storage ? creep.room.storage.id : creep.room.container.id;
 		}
+	},
 
+	decideTerminal: function(creep) {
 		if (!creep.memory.task && creep.room.storage && creep.room.terminal && creep.room.memory.desiredTerminalResources) {
 			for (let res in creep.room.memory.desiredTerminalResources) {
 				//console.log(res, creep.room.memory.desiredTerminalResources[res], creep.room.terminal.store[res], creep.room.storage.store[res])
 				if (creep.room.storage.store[res] > 0 && ((res === RESOURCE_ENERGY && creep.room.storage.store.energy > 40000) || res !== RESOURCE_ENERGY)
-					&& (!creep.room.terminal.store[res] || creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res])) {
+				&& (!creep.room.terminal.store[res] || creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res])) {
 					creep.memory.task = 'deliverToTerminal';
 					creep.memory.lastTaskId = creep.room.terminal.id;
 					break;
 				}
 			}
 		}
+	},
 
+	decidePickup: function(creep) {
 		if (!creep.memory.task && creep.carry.energy < creep.carryCapacity) {
 			let pickups = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 5);
 			if (pickups.length > 0) {
@@ -287,17 +324,6 @@ module.exports = {
 					}
 				}
 			}
-		}
-
-		if (!creep.memory.task) {
-			creep.memory.task = 'source';
-		}
-
-		if (creep.memory.task) {
-			creep.memory.gathering = creep.carry.energy < creep.carryCapacity;
-			creep.memory.taskAssignedTime = Game.time
-			creep.say(creep.memory.task)
-			this.run(creep)
 		}
 	},
 
