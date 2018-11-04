@@ -384,9 +384,9 @@ module.exports = {
 				   	}
 				}
 				if (!target) {
-					creep.moveTo(source, {range:2});
+					creep.moveTo(source, {range:2, ignoreCreeps:true});
 				} else if (err == ERR_NOT_IN_RANGE) {
-					creep.moveTo(target, {range:1});
+					creep.moveTo(target, {range:1, ignoreCreeps:true});
 				}
 				if (creep.carry.energy == creep.carryCapacity) {
 					creep.memory.gathering = false;
