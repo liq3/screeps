@@ -22,7 +22,7 @@ module.exports = {
             this.getNewTargetRoom(creep)
         }
         if (creep.memory.target) {
-            let err = creep.moveTo(new RoomPosition(25,25, creep.memory.target), {range:24, costCallback:global.costMatrixCallback})
+            let err = creep.moveTo(new RoomPosition(25,25, creep.memory.target), {range:24, costCallback:Empire.costMatrixCallback})
             if (err != OK) {
                 console.log("balh geo error " + err)
             }

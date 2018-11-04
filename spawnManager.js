@@ -55,7 +55,7 @@ module.exports = {
         }
 
         if (numberStationaryUpgraders > 0) {
-            let path = PathFinder.search(firstSpawn.pos, {pos:room.controller.pos, range: 2}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+            let path = PathFinder.search(firstSpawn.pos, {pos:room.controller.pos, range: 2}, {roomCallBack:Empire.costMatrixCallback, swamp:10, plains:2});
             for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role === 'stationaryUpgrader'})) {
                 desiredTransportCapacity += 2 * path.cost * praiser.getActiveBodyparts(WORK)
             }
@@ -65,7 +65,7 @@ module.exports = {
             let mineral = room.find(FIND_MINERALS)[0];
             let mineralContainer = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
             if (mineralContainer && mineral.mineralAmount > 0) {
-                let mineralPath = PathFinder.search(firstSpawn.pos, {pos:mineral.pos, range: 1}, {roomCallBack:global.costMatrixCallback, swamp:10, plains:2});
+                let mineralPath = PathFinder.search(firstSpawn.pos, {pos:mineral.pos, range: 1}, {roomCallBack:Empire.costMatrixCallback, swamp:10, plains:2});
                 let miners = _.filter(Game.creeps, {filter: c => c.memory.role === 'miner'})
                 for (let miner of miners) {
                     desiredTransportCapacity += 2 * path.cost * miner.getActiveBodyparts(WORK) / 5

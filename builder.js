@@ -91,6 +91,6 @@ module.exports = {
 	    }
 	},
 	getScore: function(target, creep) {
-	    return PathFinder.search(creep.pos, {pos:target.pos, range:3}, {swampCost:10, plainCost:2, roomCallback:global.costMatrixCallback}).cost;
+	    return PathFinder.search(creep.pos, {pos:target.pos, range:3}, {swampCost:10, plainCost:2, roomCallback:Empire.costMatrixCallback}).cost;
 	}
 };

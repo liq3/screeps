@@ -107,7 +107,7 @@ module.exports = {
 		var target = Game.getObjectById(creep.memory.targetId);
 		var targetRoom = creep.memory.targetRoom;
 		if (!target) {
-			for (let room of global.getOwnedRooms()) {
+			for (let room of Empire.getOwnedRooms()) {
 				let possibleTargets = room.find(FIND_HOSTILE_CREEPS);
 				if (possibleTargets.length > 0) {
 					target = possibleTargets[0];
