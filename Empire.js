@@ -17,6 +17,9 @@ Empire.costMatrixCallback = function(roomName, costMatrix) {
         return false;
     }
 
+    if (!costMatrix) {
+        var costMatrix = new PathFinder.CostMatrix;
+    }
     if (Game.rooms[roomName]) {
         for (let structure of Game.rooms[roomName].find(FIND_STRUCTURES)) {
             if (structure.structureType === STRUCTURE_ROAD) {
