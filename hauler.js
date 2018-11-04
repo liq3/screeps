@@ -228,7 +228,7 @@ module.exports = {
 				for (let c of creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'miner'})) {
 					upgradeParts += c.getActiveBodyparts(WORK);
 				}
-				let distance = creep.pos.findPathTo(container).length;
+				let distance = this.getDistance(creep, container)
 				let metric = minerals + upgradeParts*distance/5;
 				if (distance*2 < creep.ticksToLive && (metric > creep.carryCapacity || metric > 1900)) {
 					creep.memory.task = 'collectMinerals';
@@ -248,7 +248,7 @@ module.exports = {
 				for (let c of creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'stationaryUpgrader'})) {
 					upgradeParts += c.getActiveBodyparts(WORK);
 				}
-				let distance = creep.pos.findPathTo(upgradeContainer).length;
+				let distance = this.getDistance(creep, upgradeContainer)
 				let metric = upgradeContainer.storeCapacity - (totalUpgrade - upgradeParts*distance);
 				if (distance*2 < creep.ticksToLive && metric > creep.carryCapacity && ((!creep.room.storage && creep.room.container) || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
 					creep.memory.task = 'upgrade';
@@ -293,6 +293,14 @@ module.exports = {
 			creep.memory.taskAssignedTime = Game.time
 			creep.say(creep.memory.task)
 			this.run(creep)
+		}
+	},
+
+	getDistance: function(creep, target) {
+		if (creep.memory.lastTaskId) {
+			return Empire.getPathCost(creep.memory.lastTaskId, target.id)
+		} else {
+			return creep.pos.findPathTo(target).length;
 		}
 	},
 	gatherFromSource: function(creep) {
@@ -356,11 +364,10 @@ module.exports = {
 			for (let r of Game.rooms[creep.memory.bossRoom].getRoomNames()) {
 				if (Game.rooms[r] && !(r in Memory.dangerRooms)) {
 					for (let source of Game.rooms[r].find(FIND_SOURCES)) {
-						let path = PathFinder.search(creep.pos, {pos:source.pos, range:2}, {roomCallBack:Empire.costMatrixCallback, swamp:10, plains:2});
 						if (path.incomplete) {
 							console.log(`Incomplete path: ${creep.pos} ${soucre.pos}`);
 						}
-						let distance = path.cost/2;
+						let distance = this.getDistance(creep, source)
 						let energy = 0;
 						for (let creep of _.filter(Game.creeps, c=>c.memory.sourceId == source.id && c.memory.gathering)) {
 							energy -= creep.carryCapacity - creep.carry.energy;
