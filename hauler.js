@@ -233,7 +233,7 @@ module.exports = {
 	},
 
 	decideSpawn: function(creep) {
-		if (!creep.memory.task && !Game.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'})) {
+		if (!creep.memory.task && !creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'spawnHelper'})) {
 			let totalSpawn = 0;
 			for (let c of _.filter(Game.creeps, c=>c.memory.task && c.memory.task == 'spawn' && c.memory.bossRoom == creep.room.name)) {
 				totalSpawn += c.carry.energy;
