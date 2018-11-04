@@ -201,7 +201,7 @@ if (useProfiler) {
         profiler.registerObject(creepFunctions[i], i);
     }
     profiler.registerObject(spawnManager, 'spawnManager')
-    Empire.CostMatrixCallback = profiler.registerFN(Empire.costMatrixCallback, 'Empire.costMatrixCallback');
+    profiler.registerObject(Empire, 'Empire')
     PathFinder.search = profiler.registerFN(PathFinder.search, 'PathFinder.search')
     module.exports.loop = () => profiler.wrap(mainLoop);
 }
