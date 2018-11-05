@@ -377,11 +377,11 @@ module.exports = {
             parts = Array(numberParts*4).fill(WORK);
             parts.push(CARRY)
             parts = parts.concat(Array(numberParts).fill(MOVE))
-        } else {
+        } else { // builder mainly
             if (spawn.room.energyCapacityAvailable < 350) {
                 parts = [WORK, CARRY, CARRY, MOVE, MOVE];
             } else {
-                let numberParts = Math.min(3,Math.floor(spawn.room.energyCapacityAvailable / 350));
+                let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 350);
                 parts = Array(numberParts).fill(WORK);
                 parts = parts.concat(Array(numberParts*2).fill(CARRY));
                 parts = parts.concat(Array(numberParts*3).fill(MOVE));
