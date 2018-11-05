@@ -55,6 +55,6 @@ module.exports = {
 	},
 
 	death: function(creep) {
-		Game.rooms[creep.memory.bossRoom].controller.memory.rate -= creep.getActiveBodyparts(WORK);
+		Game.rooms[creep.memory.bossRoom].controller.memory.rate -= creep.body.filter(x=>x.type===WORK).length;
 	}
 };
