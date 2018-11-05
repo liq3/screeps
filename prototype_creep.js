@@ -94,7 +94,7 @@ Creep.prototype.makeSureInBossRoom = function () {
 Creep.prototype.recycle = function() {
     if (this.memory.role === 'praiser'
         || this.memory.role === 'hauler') {
-        Empire.creepFunctions[this.memory.role].death(this)
+        creepFunctions[this.memory.role].death(this)
     }
     this.memory.role = 'recycle'
 }
