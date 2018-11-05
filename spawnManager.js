@@ -94,7 +94,7 @@ module.exports = {
             spawnHauler = true;
         } else if (RCL > 4) {
             for (let creep of room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role === 'hauler' && c.carryCapacity < 200})) {
-                creep.memory.role = 'recycle'
+                creep.recycle()
             }
         }
 
@@ -223,11 +223,11 @@ module.exports = {
             for (let creep of room.find(FIND_MY_CREEPS, {filter: c => c.memory.role === 'builder'})) {
                 if (best === null || best.ticksToLive < creep.ticksToLive) {
                     if (best != null) {
-                        best.memory.role = 'recycle'
+                        best.recycle()
                     }
                     best = creep
                 } else {
-                    creep.memory.role = 'recycle'
+                    creep.recycle()
                 }
             }
         }

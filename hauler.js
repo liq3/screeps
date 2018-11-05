@@ -89,7 +89,7 @@ module.exports = {
 			}  else if (creep.pos.roomName != creep.memory.bossRoom) {
 				if (creep.makeSureInBossRoom) {
 				} else {
-				    creep.memory.role = 'recycle';
+				    creep.recycle();
 				}
 			}
 
@@ -138,6 +138,7 @@ module.exports = {
 	                } else if (err == OK) {
 						this.doneDelivering(creep);
 						creep.room.controller.memory.incoming = creep.room.controller.memory.incoming - creep.carryCapacity || 0;
+						log(`${creep.room.controller.memory.incoming} ${creep.name} ${creep.room} Minus ${-creep.carryCapacity || 0}`)
 					} else if (err == ERR_INVALID_TARGET) {
 						delete creep.memory.target;
 					} else if (err != ERR_FULL) {
@@ -284,6 +285,7 @@ module.exports = {
 					creep.memory.task = 'upgrade';
 					creep.memory.lastTaskId = upgradeContainer.id;
 					creep.room.controller.memory.incoming = creep.room.controller.memory.incoming + creep.carryCapacity || creep.carryCapacity;
+					log(`${creep.room.controller.memory.incoming} ${creep.name} ${creep.room} Add ${creep.carryCapacity || creep.carryCapacity}`)
 				}
 			}
 		}
@@ -437,6 +439,7 @@ module.exports = {
 	death: function(creep) {
 		if (creep.memory.task == 'upgrade') {
 			Game.rooms[creep.memory.bossRoom].controller.memory.incoming -= creep.carryCapacity;
+			log(`${creep.room.controller.memory.incoming} ${creep.name} ${creep.room} Minus ${-creep.carryCapacity || 0}`)
 		}
 	}
 };

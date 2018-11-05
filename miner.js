@@ -8,7 +8,7 @@ module.exports = {
                 if (container && _.sum(creep.carry) + creep.getActiveBodyparts(WORK) <= creep.carryCapacity) {
                     let err = creep.harvest(mineral)
                     if (err == ERR_NOT_ENOUGH_RESOURCES) {
-                        creep.memory.role = 'recycle'
+                        creep.recycle();
                     } else if (err != OK) {
                         log(`${creep.name} Error harvesting mineral ${err}`);
                     }

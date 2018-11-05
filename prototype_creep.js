@@ -90,3 +90,11 @@ Creep.prototype.makeSureInBossRoom = function () {
    }
    return false
 };
+
+Creep.protoype.recycle = function() {
+    if (this.memory.role === 'praiser'
+        || this.memory.role === 'hauler') {
+        Empire.creepFunctions[this.memory.role].death(this)
+    }
+    this.memory.role = 'recycle'
+}
