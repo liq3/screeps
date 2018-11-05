@@ -36,7 +36,13 @@ global.myUtils.toggleJobDisplay = function() {
 
 global.myUtils.getSourceInfo = function () {
     for (let r of Empire.getOwnedRooms()) {
-
+        for (let source of r.find(FIND_SOURCES)) {
+            let amount = source.container.store.energy;
+            for (let res of source.pos.findInRange(FIND_DROPPED_ENERGY)) {
+                amount += res.amount;
+            }
+            console.log(`${source.pos} ${amount}`)
+        }
     }
 }
 
