@@ -1,4 +1,7 @@
 global.log = function(str) {
+    if (typeof(str) !== 'string') {
+        str = toString(str)
+    }
     console.log(str.replace(/[WE](\d{1,2})[NS](\d{1,2})/g, '<a href="#!/room/shard3/$&">$&</a>'))
 }
 
