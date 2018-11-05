@@ -8,13 +8,10 @@ module.exports = {
 			let possiblePositions = {}
 			for (let x = target.pos.x-1; x < target.pos.x+2; x++) {
 				for (let y = target.pos.y-1; y < target.pos.y+2; y++) {
-					if (terrain.get(x,y) != TERRAIN_MASK_WALL && target.pos.inRangeTo(x,y,3)) {
+					if (terrain.get(x,y) != TERRAIN_MASK_WALL && target.pos.inRangeTo(x,y,3) && !target.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType !== STRUCTURE_CONTAINER}).length) {
 						possiblePositions[`${x}_${y}`] = true
 					}
 				}
-			}
-			for (let thing of target.pos.findInRange(FIND_STRUCTURES, 1, {filter:{structureType:STRUCTURE_ROAD}})) {
-				possiblePositions[`${thing.pos.x}_${thing.pos.y}`] = false
 			}
 			for (let otherCreep of creep.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role=='praiser'})) {
 				if (otherCreep.memory.finalPos) {
