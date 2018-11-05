@@ -1,7 +1,7 @@
 global.myUtils = {};
 
 global.myUtils.avgCpu = function() {
-    console.log(_.sum(Memory.cpuTimes) / Memory.cpuTimes.length);
+    log(_.sum(Memory.cpuTimes) / Memory.cpuTimes.length);
 }
 
 global.myUtils.changeRole = function(role1, role2) {
@@ -19,7 +19,7 @@ global.myUtils.getSpawnTimes = function() {
         for (let {tick, time} of Memory.spawnTimes[spawn.id]) {
             totalTimeSpawning += time;
         }
-        console.log(`Spawn: ${spawn.id} Time: ${totalTime} / ${Game.time - Memory.spawnTimes[spawn.id][0].time}`);
+        log(`Spawn: ${spawn.id} Time: ${totalTime} / ${Game.time - Memory.spawnTimes[spawn.id][0].time}`);
     }
 }
 
@@ -38,10 +38,10 @@ global.myUtils.getSourceInfo = function () {
     for (let r of Empire.getOwnedRooms()) {
         for (let source of r.find(FIND_SOURCES)) {
             let amount = source.container.store.energy;
-            for (let res of source.pos.findInRange(FIND_DROPPED_ENERGY)) {
+            for (let res of source.pos.findInRange(FIND_DROPPED_RESOURCES, 1, {filter: {resourceType:RESOURCE_ENERGY}})) {
                 amount += res.amount;
             }
-            console.log(`${source.pos} ${amount}`)
+            log(`${source.pos} ${amount}`)
         }
     }
 }
@@ -66,7 +66,7 @@ global.myUtils.partInfo = function () {
         let haulerCapacity = Math.floor((spawn.room.energyCapacityAvailable - 150) / 150);
         let desiredHaulerAmount = Math.ceil(desiredCapacity / haulerCapacity);
         parts += desiredHaulerAmount * (haulerCapacity * 3 + 2);
-        console.log(`Room: ${r} Parts: ${parts}`);
+        log(`Room: ${r} Parts: ${parts}`);
     }
 }
 
@@ -74,7 +74,7 @@ global.myUtils.energyPullInfo = function() {
     for (let id in Memory.energyPull) {
         let thing = Game.getObjectById(id);
         let mem = Memory.energyPull[id];
-        console.log(thing +" "+ mem.desired + " " + mem.reserved)
+        log(thing +" "+ mem.desired + " " + mem.reserved)
     }
 }
 
@@ -87,7 +87,7 @@ global.myUtils.createRoadBetweenFlags = function() {
             Game.rooms[pos.roomName].createConstructionSite(pos.x,pos.y, STRUCTURE_ROAD);
         }
     } else {
-        console.log('Flags not set properly! Need "roadStart" and "roadEnd"');
+        log('Flags not set properly! Need "roadStart" and "roadEnd"');
     }
 }
 
@@ -110,7 +110,7 @@ global.myUtils.countParts = function(rooms) {
             ret += creep.body.length;
         }
     }
-    console.log (ret + " parts.");
+    log (ret + " parts.");
 }
 
 global.myUtils.dumpMarket = function() {
@@ -121,7 +121,7 @@ global.myUtils.dumpMarket = function() {
             orders[order.resourceType][ORDER_BUY] = []
             orders[order.resourceType][ORDER_SELL] = []
         }
-        //console.log(JSON.stringify(order, null, 4), JSON.stringify(orders))
+        //log(JSON.stringify(order, null, 4), JSON.stringify(orders))
         orders[order.resourceType][order.type].push({price:order.price, amount:order.amount})
     }
     for (let resourceType in orders) {
@@ -139,18 +139,18 @@ global.myUtils.dumpMarket = function() {
                 }
             }
         }
-        console.log(`${resourceType}: Sell Min:${stats[ORDER_SELL].min} Max:${stats[ORDER_SELL].max} Average:${stats[ORDER_SELL].total / stats[ORDER_SELL].count} Count:${stats[ORDER_SELL].count} Buy Min:${stats[ORDER_BUY].min} Max:${stats[ORDER_BUY].max} Average:${stats[ORDER_BUY].total / stats[ORDER_BUY].count} Count:${stats[ORDER_BUY].count}`)
+        log(`${resourceType}: Sell Min:${stats[ORDER_SELL].min} Max:${stats[ORDER_SELL].max} Average:${stats[ORDER_SELL].total / stats[ORDER_SELL].count} Count:${stats[ORDER_SELL].count} Buy Min:${stats[ORDER_BUY].min} Max:${stats[ORDER_BUY].max} Average:${stats[ORDER_BUY].total / stats[ORDER_BUY].count} Count:${stats[ORDER_BUY].count}`)
     }
 }
 
 global.myUtils.resourceTradeCost = function(room, resource, type) {
     for (let order of Game.market.getAllOrders({type:type, resourceType:resource, price:1})) {
-        console.log(`${order.roomName}: ${Game.market.calcTransactionCost(1000, room, order.roomName)}`)
+        log(`${order.roomName}: ${Game.market.calcTransactionCost(1000, room, order.roomName)}`)
     }
 }
 
 global.myUtils.help = function() {
-    console.log(JSON.stringify(myUtils))
+    log(JSON.stringify(myUtils))
 }
 
 global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
@@ -173,7 +173,7 @@ global.myUtils.calcRoomEnergyForSpawn = function(spawn) {
             let path = PathFinder.search(spawn.pos, {pos:room.controller.pos, range:1}, {maxOps:10000})
             upkeep -= 650 / (600 - path.cost)
         }
-        console.log(`Room:${r} EnergyRate:${energyRate} Upkeep:${upkeep} Net:${energyRate+upkeep}`)
+        log(`Room:${r} EnergyRate:${energyRate} Upkeep:${upkeep} Net:${energyRate+upkeep}`)
     }
 }
 
@@ -295,7 +295,7 @@ global.myUtils.baseTest = function() {
         visual.structure(x,y,type);
     }
     visual.connectRoads()
-    console.log(`baseTest() took ${Game.cpu.getUsed() - startTime}`)
+    log(`baseTest() took ${Game.cpu.getUsed() - startTime}`)
 }
 
 global.myUtils.clearCache = function() {
@@ -343,5 +343,5 @@ global.myUtils.pathfind = function(start, goal, opts) {
     }
     opts['roomCallback'] = callback
     let {path, cost, ops, incomplete} = PathFinder.search(start, goal, opts);
-    console.log(cost, ops, incomplete);
+    log(cost, ops, incomplete);
 }

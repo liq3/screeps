@@ -42,7 +42,7 @@ module.exports = {
 					if (err === ERR_NOT_ENOUGH_ENERGY) {
 						let err = creep.withdraw(controller.link, RESOURCE_ENERGY);
 					} else if (err != OK) {
-						console.log(`Creep ${creep.name}: ${err} withdrawing from container`)
+						log(`Creep ${creep.name}: ${err} withdrawing from container`)
 					}
 				}
 			} else {
@@ -50,7 +50,7 @@ module.exports = {
 				creep.moveTo(target)
 			}
 		} else {
-			console.log(`Creep ${creep.name}: Error getting final position near controller`)
+			log(`Creep ${creep.name}: Error getting final position near controller`)
 		}
 	}
 };

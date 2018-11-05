@@ -44,7 +44,7 @@ let mainLoop = function() {
         try {
             roomManager.run(Game.rooms[i])
         } catch (err) {
-            console.log(err.stack || err);
+            log(err.stack || err);
         }
     }
 
@@ -66,11 +66,11 @@ let mainLoop = function() {
                 } else if (creep.memory.role === 'recycle') {
                     creep.moveTo(creep.pos.findClosestByPath(FIND_MY_SPAWNS));
                 } else {
-                    console.log("Undefined function for role: " + creep.memory.role);
+                    log("Undefined function for role: " + creep.memory.role);
                 }
             }
         } catch (err) {
-            console.log(`${name} ${creep.pos} \n ${err.stack || err}`);
+            log(`${name} ${creep.pos} \n ${err.stack || err}`);
         }
 	}
 
@@ -122,7 +122,7 @@ let mainLoop = function() {
         if (false && Game.market.credits < 1000) {
             let orders = Game.market.getAllOrders(order => order.resourceType === RESOURCE_ENERGY && order.type === ORDER_BUY && order.price >= 0.018);
             if (orders.length > 0) {
-                console.log(JSON.stringify(orders));
+                log(JSON.stringify(orders));
                 orders.sort((a,b) => b.price - a.price);
                 for (let order of orders) {
                     if (order.amount > 100) {
@@ -132,7 +132,7 @@ let mainLoop = function() {
                             sendAmount = order.amount * order.amount / (order.amount * (1+sendCost));
                         }
                         let err = Game.market.deal(order.id, sendAmount, 'E61N94');
-                        console.log(`Deal: ${err}. ${sendAmount} for ${order.price} total ${order.amount*order.price}`);
+                        log(`Deal: ${err}. ${sendAmount} for ${order.price} total ${order.amount*order.price}`);
                     }
                 }
             }
@@ -147,7 +147,7 @@ let mainLoop = function() {
                 let cost = Game.market.calcTransactionCost(amount, room.name, order.roomName)
                 if (cost < room.terminal.store.energy && amount > 0) {
                     let err = Game.market.deal(order.id, amount, room.name)
-                    console.log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${order.amount*order.price}`);
+                    log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${order.amount*order.price}`);
                     maxResources -= amount
                 }
             }

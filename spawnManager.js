@@ -387,20 +387,20 @@ module.exports = {
         error = spawn.createCreep(parts, this.getName(name), data);
         if (typeof(error) === 'string') {
             logStr = `${spawn.room.name} spawning ${error} in ${parts.length*3} ticks with ${spawn.name}. ` + JSON.stringify(data);
-            console.log(logStr);
+            log(logStr);
             try {
                 Memory.spawnTimes[spawn.id].push({tick:Game.time, time:parts.length*3});
             } catch (err) {
-                console.log(err)
+                log(err)
             }
         } else if (error === ERR_INVALID_ARGS) {
-            console.log("Error spawning creep: " + error + JSON.stringify(data) + parts);
+            log("Error spawning creep: " + error + JSON.stringify(data) + parts);
         } else if (error === ERR_NAME_EXISTS) {
-            console.log("Error! Trying to spawn creep with same name");
+            log("Error! Trying to spawn creep with same name");
         } else if (error === ERR_NOT_ENOUGH_ENERGY && spawn.room.energyAvailable === spawn.room.energyCapacityAvailable) {
-            console.log("Error! Trying to spawn creep that costs too much" + data.role + parts);
+            log("Error! Trying to spawn creep that costs too much" + data.role + parts);
         } else if (error !== ERR_NOT_ENOUGH_ENERGY) {
-            console.log(`Error:${error} spawning creep with ${spawn.name} in ${spawn.room.name}: ${parts} ${JSON.stringify(data)}`)
+            log(`Error:${error} spawning creep with ${spawn.name} in ${spawn.room.name}: ${parts} ${JSON.stringify(data)}`)
         }
         return error;
     },

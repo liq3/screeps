@@ -86,7 +86,7 @@ module.exports = {
 			if (err === ERR_NOT_IN_RANGE) {
 				creep.moveTo(target);
 			} else if (err != 0) {
-			    //console.log(err + " " + target);
+			    //log(err + " " + target);
 			}
 	    }
 	},

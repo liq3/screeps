@@ -54,7 +54,7 @@ module.exports = {
 				} else if (err === ERR_NOT_ENOUGH_RESOURCES) {
 					delete creep.memory.targetResource;
 				} else if (err != OK) {
-					console.log(`${creep.name} ${creep.room.name}: err withdrawing ${resource} from storage ${err}`)
+					log(`${creep.name} ${creep.room.name}: err withdrawing ${resource} from storage ${err}`)
 				} else {
 					creep.memory.gathering = false
 				}
@@ -140,7 +140,7 @@ module.exports = {
 					} else if (err == ERR_INVALID_TARGET) {
 						delete creep.memory.target;
 					} else if (err != ERR_FULL) {
-						console.log(`${creep.name}: weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
+						log(`${creep.name}: weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
 					}
 	            }
 			} else if (creep.memory.task == 'deliverToTerminal') {
@@ -245,7 +245,7 @@ module.exports = {
 				creep.memory.task = 'spawn';
 				creep.memory.lastTaskId = creep.room.storage.id;
 			}
-			//console.log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
+			//log(`Hauling choice: ${totalSpawn} / ${desired}. Upgrade: ${totalUpgrade} - ${upgradeParts*distance}(${upgradeParts}*${distance})`);
 		}
 	},
 
@@ -303,7 +303,7 @@ module.exports = {
 	decideTerminal: function(creep) {
 		if (!creep.memory.task && creep.room.storage && creep.room.terminal && creep.room.memory.desiredTerminalResources) {
 			for (let res in creep.room.memory.desiredTerminalResources) {
-				//console.log(res, creep.room.memory.desiredTerminalResources[res], creep.room.terminal.store[res], creep.room.storage.store[res])
+				//log(res, creep.room.memory.desiredTerminalResources[res], creep.room.terminal.store[res], creep.room.storage.store[res])
 				if (creep.room.storage.store[res] > 0 && ((res === RESOURCE_ENERGY && creep.room.storage.store.energy > 40000) || res !== RESOURCE_ENERGY)
 				&& (!creep.room.terminal.store[res] || creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res])) {
 					creep.memory.task = 'deliverToTerminal';
@@ -427,7 +427,7 @@ module.exports = {
 					}
 				}
 				if (best.energy >= creep.carryCapacity) {
-					//console.log(JSON.stringify(best), Game.time);
+					//log(JSON.stringify(best), Game.time);
 					creep.memory.sourceId = best.id;
 					creep.memory.lastTaskId = best.id;
 				}

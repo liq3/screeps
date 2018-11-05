@@ -1,3 +1,7 @@
+global.log = function(str) {
+    console.log(str.replace(/[WE](\d{1,2})[NS](\d{1,2})/g, '<a href="#!/room/shard3/$&">$&</a>'))
+}
+
 global.Empire = {}
 
 Empire.getOwnedRooms = function() {
@@ -67,7 +71,7 @@ Empire.getPathCost = function(a,b) {
         } else {
             Memory.pathCosts[a.id][b.id] = Game.time + 100;
         }
-        console.log(`Incomplete path: ${JSON.stringify(a.pos)} to ${JSON.stringify(b.pos)}`)
+        log(`Incomplete path: ${JSON.stringify(a.pos)} to ${JSON.stringify(b.pos)}`)
     } else {
         let pathTime = 50000;
         for (let pos of path.path) {

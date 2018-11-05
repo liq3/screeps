@@ -12,7 +12,7 @@ module.exports = {
                 }
             }
             if (danger && !Memory.dangerRooms.includes(room.name)) {
-                console.log(room + " is dangerous!"),
+                log(room + " is dangerous!"),
                 Memory.dangerRooms.push(room.name);
             } else if (!danger && Memory.dangerRooms.includes(room.name)){
                 Memory.dangerRooms.splice(Memory.dangerRooms.indexOf(room.name), 1);
