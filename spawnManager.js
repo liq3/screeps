@@ -274,7 +274,7 @@ module.exports = {
                 || room.storage === undefined)
                 && room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType:STRUCTURE_CONTAINER}}).length
                 && numberPraisers < 3) {
-            this.createCreep(spawn, 'SU', {role:'praiser', bossRoom:room.name});
+            this.createCreep(spawn, 'SU', {role:'praiser', bossRoom:room.name, finalPos:null});
         } else if (Memory.spawnGeologist > 0) {
             this.createCreep(spawn, 'GEO', {role:'geologist'});
             Memory.spawnGeologist -= 1
