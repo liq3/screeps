@@ -1,9 +1,6 @@
 module.exports = {
 
 	run: function (creep) {
-		if (creep.makeSureInBossRoom()) {
-			return
-		}
 		var target;
 		if (!creep.memory.finalPos) {
 			target = creep.room.controller.link || creep.room.controller.container;
@@ -36,11 +33,11 @@ module.exports = {
 			pos = creep.memory.finalPos
 			if (creep.pos.isEqualTo(pos.x,pos.y)) {
 				let controller = creep.room.controller
-				var error = creep.transfer(controller,RESOURCE_ENERGY);
+				var error = creep.upgradeController(controller,RESOURCE_ENERGY);
 				if (error === ERR_NOT_ENOUGH_ENERGY || creep.carry.energy < creep.getActiveBodyparts(WORK)) {
-					let err = creep.withdraw(controller.container, RESOURCE_ENERGY);
-					if (err === ERR_NOT_ENOUGH_ENERGY) {
-						let err = creep.withdraw(controller.link, RESOURCE_ENERGY);
+					let err = creep.withdraw(controller.link, RESOURCE_ENERGY);
+					if (err === ERR_NOT_ENOUGH_ENERGY || err === ERR_INVALID_TARGET) {
+						let err = creep.withdraw(controller.container, RESOURCE_ENERGY);
 					} else if (err != OK) {
 						log(`Creep ${creep.name}: ${err} withdrawing from container`)
 					}

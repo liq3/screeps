@@ -171,8 +171,8 @@ function profileObjectFunctions(object, label) {
 function profileFunction(fn, functionName) {
   const fnName = functionName || fn.name;
   if (!fnName) {
-    log('Couldn\'t find a function name for - ', fn);
-    log('Will not profile this function.');
+    console.log('Couldn\'t find a function name for - ', fn);
+    console.log('Will not profile this function.');
     return fn;
   }
 
@@ -181,7 +181,7 @@ function profileFunction(fn, functionName) {
 
 const Profiler = {
   printProfile() {
-    log(Profiler.output());
+    console.log(Profiler.output());
   },
 
   emailProfile() {
@@ -329,7 +329,7 @@ module.exports = {
       // var profilerTime = (end - start) - (callbackEnd - callbackStart);
       // var callbackTime = callbackEnd - callbackStart;
       // var unaccounted = end - profilerTime - callbackTime;
-      // log('total-', end, 'profiler-', profilerTime, 'callbacktime-',
+      // console.log('total-', end, 'profiler-', profilerTime, 'callbacktime-',
       // callbackTime, 'start-', start, 'unaccounted', unaccounted);
       return returnVal;
     }
