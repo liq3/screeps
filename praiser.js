@@ -43,6 +43,7 @@ module.exports = {
 		} else if (creep.memory.finalPos) {
 			pos = creep.memory.finalPos
 			if (creep.pos.isEqualTo(pos.x,pos.y)) {
+				creep.room.controller.memory.rate = creep.room.controller.memory.rate + creep.getActiveBodyparts(WORK) || creep.getActiveBodyparts(WORK);
 				delete creep.memory.finalPos;
 			} else {
 				target = new RoomPosition(pos.x, pos.y, creep.memory.bossRoom)
@@ -51,5 +52,9 @@ module.exports = {
 		} else {
 			log(`Creep ${creep.name}: Error getting final position near controller`)
 		}
+	},
+
+	death: function(creep) {
+		Game.rooms[creep.memory.bossRoom].controller.memory.rate -= creep.getActiveBodyparts(WORK);
 	}
 };

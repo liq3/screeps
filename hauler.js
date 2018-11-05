@@ -137,6 +137,7 @@ module.exports = {
 	                    creep.moveTo(target);
 	                } else if (err == OK) {
 						this.doneDelivering(creep);
+						creep.room.controller.memory.incoming = creep.room.controller.memory.incoming - creep.carryCapacity || 0;
 					} else if (err == ERR_INVALID_TARGET) {
 						delete creep.memory.target;
 					} else if (err != ERR_FULL) {
@@ -276,18 +277,13 @@ module.exports = {
 			let upgradeContainer = creep.room.controller.container;
 			if (upgradeContainer) {
 				let totalUpgrade = upgradeContainer.store[RESOURCE_ENERGY];
-				for (let c of _.filter(Game.creeps, c=>c.memory.task && c.memory.task == 'upgrade' && c.memory.bossRoom == creep.room.name)) {
-					totalUpgrade += c.carry.energy;
-				}
-				let upgradeParts = 0;
-				for (let c of creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'praiser'})) {
-					upgradeParts += c.getActiveBodyparts(WORK);
-				}
+				totalUpgrade += creep.room.controller.memory.incoming || 0;
 				let distance = this.getDistance(creep, upgradeContainer)
-				let metric = upgradeContainer.storeCapacity - (totalUpgrade - upgradeParts*distance);
+				let metric = upgradeContainer.storeCapacity - (totalUpgrade - (creep.room.controller.memory.rate || 1)*distance);
 				if (distance*2 < creep.ticksToLive && metric > creep.carryCapacity && ((!creep.room.storage && creep.room.container) || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
 					creep.memory.task = 'upgrade';
 					creep.memory.lastTaskId = upgradeContainer.id;
+					creep.room.controller.memory.incoming = creep.room.controller.memory.incoming + creep.carryCapacity || creep.carryCapacity;
 				}
 			}
 		}
@@ -436,6 +432,11 @@ module.exports = {
 		if (!creep.memory.sourceId && (Game.time - creep.memory.taskAssignedTime) >= 10) {
 			this.doneDelivering(creep)
 			this.getNewTask(creep)
+		}
+	},
+	death: function(creep) {
+		if (creep.memory.task == 'upgrade') {
+			Game.rooms[creep.memory.bossRoom].controller.memory.incoming -= creep.carryCapacity;
 		}
 	}
 };

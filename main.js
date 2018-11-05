@@ -16,7 +16,7 @@ const roomManager = require('roomManager');
 let creepRoles = ['builder','claimer','combat','hauler','decoy','geologist','harvester',
     'miner','praiser','scout','spawnHelper'];
 
-let creepFunctions = {};
+global.creepFunctions = {};
 for (let i of creepRoles) {
     creepFunctions[i] = require(i);
 }
@@ -24,9 +24,15 @@ for (let i of creepRoles) {
 var debug = false;
 
 let mainLoop = function() {
+    Empire.deadCreeps = []
     for(let i in Memory.creeps) {
         if(!Game.creeps[i]) {
-            delete Memory.creeps[i];
+            let creep = Memory.creeps[i]
+            if (creep.role === 'hauler' || creep.role === 'praiser') {
+                Empire.deadCreeps.push(i)
+            } else {
+                delete Memory.creeps[i];
+            }
         }
     }
 

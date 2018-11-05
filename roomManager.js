@@ -2,6 +2,21 @@ const spawnManager = require('spawnManager');
 
 module.exports = {
     run: function(room) {
+        if (Empire.deadCreeps.length) {
+            let done = []
+            for (let name of Empire.deadCreeps) {
+                let tombstone = room.find(FIND_TOMBSTONES, {filter: t=>t.creep.name === name})
+                if (tombstone.length) {
+                    creepFunctions[Memory.creeps[name].role].death(tombstone[0].creep);
+                    delete Memory.creeps[name];
+                    done.push(name)
+                }
+            }
+            for (let name of done) {
+                Empire.deadCreeps.splice(Empire.deadCreeps.indexOf(name), 1)
+            }
+        }
+
         if (room.controller && !room.controller.my) {
             let danger = false;
             let hostileCreeps = room.find(FIND_HOSTILE_CREEPS);
