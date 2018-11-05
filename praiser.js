@@ -6,7 +6,7 @@ module.exports = {
 		}
 		var target;
 		if (!creep.memory.finalPos) {
-			target = creep.room.controller.container;
+			target = creep.room.controller.link || creep.room.controller.container;
 			let terrain = creep.room.getTerrain()
 			let possiblePositions = {}
 			for (let x = target.pos.x-1; x < target.pos.x+2; x++) {

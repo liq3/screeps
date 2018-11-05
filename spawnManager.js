@@ -20,7 +20,7 @@ module.exports = {
         let numberMiners = sumCreeps('miner', room)
         let numberHaulers = sumCreeps('hauler', room)
         let numberBuilders = sumCreeps ('builder', room);
-        let numberpraisers = sumCreeps('praiser', room);
+        let numberPraisers = sumCreeps('praiser', room);
 
         let firstSpawn = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_SPAWN}})[0]
         let scoutTarget;
@@ -54,7 +54,7 @@ module.exports = {
             }
         }
 
-        if (numberpraisers > 0) {
+        if (numberPraisers > 0) {
             let pathCost = Empire.getPathCost(firstSpawn.id, room.controller.id)
             for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role === 'praiser'})) {
                 desiredTransportCapacity += 2 * pathCost * praiser.getActiveBodyparts(WORK)
@@ -266,10 +266,10 @@ module.exports = {
             this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
         } else if (spawnMiner) {
             this.createCreep(spawn, 'M', {role:'miner'});
-        } else if (((room.storage && numberpraisers < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)))
+        } else if (((room.storage && numberPraisers < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)))
                 || room.storage === undefined)
                 && room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType:STRUCTURE_CONTAINER}}).length
-                && numberpraisers < 3) {
+                && numberPraisers < 3) {
             this.createCreep(spawn, 'SU', {role:'praiser', bossRoom:room.name});
         } else if (Memory.spawnGeologist > 0) {
             this.createCreep(spawn, 'GEO', {role:'geologist'});
