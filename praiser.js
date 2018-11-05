@@ -8,7 +8,7 @@ module.exports = {
 			let possiblePositions = {}
 			for (let x = target.pos.x-1; x < target.pos.x+2; x++) {
 				for (let y = target.pos.y-1; y < target.pos.y+2; y++) {
-					if (terrain.get(x,y) != TERRAIN_MASK_WALL && target.pos.inRangeTo(x,y,3) && !target.pos.findInRange(FIND_STRUCTURES, 1, {filter: s=>s.structureType !== STRUCTURE_CONTAINER}).length) {
+					if (terrain.get(x,y) != TERRAIN_MASK_WALL && target.pos.inRangeTo(x,y,3) && !_.filter(room.lookForAt(FIND_STRUCTURES,x,y), s=>s.structureType !== STRUCTURE_CONTAINER).length) {
 						possiblePositions[`${x}_${y}`] = true
 					}
 				}
