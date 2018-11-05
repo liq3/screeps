@@ -14,7 +14,7 @@ const spawnManager = require('spawnManager');
 const roomManager = require('roomManager');
 
 let creepRoles = ['builder','claimer','combat','hauler','decoy','geologist','harvester',
-    'miner','stationaryUpgrader','scout','spawnHelper'];
+    'miner','praiser','scout','spawnHelper'];
 
 let creepFunctions = {};
 for (let i of creepRoles) {

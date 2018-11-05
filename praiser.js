@@ -19,7 +19,7 @@ module.exports = {
 			for (let thing of target.pos.findInRange(FIND_STRUCTURES, 1, {filter:{structureType:STRUCTURE_ROAD}})) {
 				possiblePositions[`${thing.pos.x}_${thing.pos.y}`] = false
 			}
-			for (let otherCreep of creep.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role=='stationaryUpgrader'})) {
+			for (let otherCreep of creep.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role=='praiser'})) {
 				if (otherCreep.memory.finalPos) {
 					possiblePositions[`${otherCreep.memory.finalPos.x}_${otherCreep.memory.finalPos.y}`] = false
 				}

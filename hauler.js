@@ -280,7 +280,7 @@ module.exports = {
 					totalUpgrade += c.carry.energy;
 				}
 				let upgradeParts = 0;
-				for (let c of creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'stationaryUpgrader'})) {
+				for (let c of creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role == 'praiser'})) {
 					upgradeParts += c.getActiveBodyparts(WORK);
 				}
 				let distance = this.getDistance(creep, upgradeContainer)
