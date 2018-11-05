@@ -92,6 +92,10 @@ module.exports = {
         }
         if (transportCapacity < desiredTransportCapacity) {
             spawnHauler = true;
+        } else if (RCL > 4) {
+            for (let creep of room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role === 'hauler' && c.carryCapacity < 200})) {
+                creep.memory.role = 'recycle'
+            }
         }
 
         let reserveTargetRoom = null;
@@ -324,7 +328,7 @@ module.exports = {
                 parts = parts.concat(Array(numberParts).fill(MOVE));
             }
         } else if (data.role === 'smallHauler') {
-            parts = [WORK, MOVE, MOVE, CARRY]
+            parts = spawn.room.controller.level < 3 ? [WORK, MOVE, MOVE, CARRY] : [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
             data.role = 'hauler'
         } else if (data.role === 'spawnHelper') {
             let numberParts = Math.min(10, Math.floor(spawn.room.energyCapacityAvailable / 150));
