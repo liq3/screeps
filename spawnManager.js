@@ -67,19 +67,24 @@ module.exports = {
                             skip = true;
                         }
                     }
-                }                
+                }
             } else if (entry.role === 'miner') {
                 if (entry.amount > numberMiners) {
                     this.createCreep(spawn, 'M', {role:'miner'});
                     break;
                 }
             } else if (entry.role === 'claimer') {
-                if (entry.claimTarget) {
-                    this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:entry.claimTarget});
-                    break;
-                } else {
-                    this.createCreep(spawn, 'C', {role:'claimer', targetRoom: entry.reserveTarget});
-                    break;
+                if (!(Memory.dangerRooms.includes(r))) {
+                    if (entry.claimTarget) {
+                        this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:entry.claimTarget});
+                        break;
+                    } else {
+                        let numberClaimers = _.filter(Game.creeps, c => c.memory.role === 'claimer' && c.memory.targetRoom === entry.reserveTarget).length;
+                        if (numberClaimers < entry.amount) {
+                            this.createCreep(spawn, 'C', {role:'claimer', targetRoom: entry.reserveTarget});
+                        }
+                        break;
+                    }
                 }
             } else if (entry.role === 'combat') {
                 let name = {healer:'CH', attack:'A', attackRanged:'AR'}[entry.job]
@@ -172,12 +177,16 @@ module.exports = {
         for (let r of room.getRoomNames()) {
             if (Game.rooms[r] && !Game.rooms[r].controller.my) {
                 let a = _.filter(Game.creeps, c => c.memory.role === 'claimer' && c.memory.targetRoom === r).length;
-                if (((a < 1 && !Game.rooms[r].controller.reservation) || (Game.rooms[r].controller.reservation &&
-                    ((a < 1 && Game.rooms[r].controller.reservation.ticksToEnd < 4000)
-                    || (a < 2 && Game.rooms[r].controller.reservation.ticksToEnd < 4500 && RCL < 5)))) && !(Memory.dangerRooms.includes(r))) {
-                    spawnCensus.push({role:'claimer', reserveTarget:r, priority:10})
-                    break;
+                let amount = 0;
+                if (!Game.rooms[r].controller.reservation
+                    || (Game.rooms[r].controller.reservation
+                        && Game.rooms[r].controller.reservation.ticksToEnd < 4000)) {
+                    amount = 1;
                 }
+                if (Game.rooms[r].controller.reservation.ticksToEnd < 4500 && RCL < 5) {
+                    amount = 2;
+                }
+                spawnCensus.push({role:'claimer', reserveTarget:r, amount:amount, priority:50})
             }
         }
 
