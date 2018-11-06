@@ -267,7 +267,7 @@ module.exports = {
 				let metric = minerals + upgradeParts*distance/5;
 				if (distance*2 < creep.ticksToLive && (metric > creep.carryCapacity || metric > 1900)) {
 					creep.memory.task = 'collectMinerals';
-					creep.memory.lastTaskId = container.id;
+					creep.memory.lastTaskId = creep.room.storage.id;
 				}
 			}
 		}
