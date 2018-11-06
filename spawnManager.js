@@ -1,10 +1,291 @@
 module.exports = {
     spawnCreeps: function(room) {
-        let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning})[0]
-        if (!spawn) {
-            return
-        }
+       let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning})[0]
+       if (!spawn) {
+           return
+       }
 
+       function sumCreeps(role, room) {
+           if (room === undefined) {
+               return _.filter(Game.creeps, c => c.memory.role === role).length;
+           } else {
+               return room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role === role}).length;
+           }
+       }
+
+       if (!room.memory.spawnCensus) {
+           room.memory.spawnCensus = []
+       }
+
+       var RCL = room.controller.level;
+       let numberHarvesters = sumCreeps('harvester', room);
+       let numberSpawnHelpers = sumCreeps('spawnHelper', room);
+       let numberGuards = _.filter(Game.creeps, c => c.memory.job === 'guard').length;
+       let numberMiners = sumCreeps('miner', room)
+       let numberHaulers = sumCreeps('hauler', room)
+       let numberBuilders = sumCreeps ('builder', room);
+       let numberPraisers = sumCreeps('praiser', room);
+
+       let firstSpawn = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_SPAWN}})[0]
+       let scoutTarget;
+       let harvesterTargetId = null;
+       let spawnHauler = false;
+       let desiredTransportCapacity = 0;
+       let sourceList = [];
+       for (let r of room.getRoomNames()) {
+           if (Game.rooms[r] === undefined && scoutTarget === undefined
+                   && _.filter(Game.creeps, c => c.memory.role === 'scout' && c.memory.targetPos.roomName === r).length === 0) {
+               scoutTarget = r;
+           } else if (Game.rooms[r]) {
+               for (let source of Game.rooms[r].find(FIND_SOURCES)) {
+                   let pathCost = Empire.getPathCost(firstSpawn.id, source.id)
+                   sourceList.push({source:source, pathCost:pathCost});
+               }
+           }
+       }
+
+       sourceList.sort((a,b) => a.pathCost - b.pathCost );
+       let numberContainers = 0;
+       for (let {source,pathCost} of sourceList) {
+           let miners = _.filter(Game.creeps, c => c.memory.sourceId === source.id && c.memory.role === 'harvester');
+           if (harvesterTargetId === null && (miners.length === 0 || (miners.length === 1 && miners[0].ticksToLive < ((pathCost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
+               harvesterTargetId = source.id;
+           } else if (miners.length > 0) {
+               if (source.container) {
+                   desiredTransportCapacity += Math.ceil(2 * pathCost * source.energyCapacity / ENERGY_REGEN_TIME);
+                   numberContainers += 1;
+               }
+           }
+       }
+
+       if (numberPraisers > 0) {
+           let pathCost = Empire.getPathCost(firstSpawn.id, room.controller.id)
+           for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role === 'praiser'})) {
+               desiredTransportCapacity += 2 * pathCost * praiser.getActiveBodyparts(WORK)
+           }
+       }
+
+       if (room.find(FIND_MY_STRUCTURES, {filter:{structureType:STRUCTURE_EXTRACTOR}}).length) {
+           let mineral = room.find(FIND_MINERALS)[0];
+           let mineralContainer = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
+           if (mineralContainer && mineral.mineralAmount > 0) {
+               let pathCost = Empire.getPathCost(firstSpawn.id, mineral.id)
+               let miners = _.filter(Game.creeps, {filter: c => c.memory.role === 'miner'})
+               for (let miner of miners) {
+                   desiredTransportCapacity += 2 * pathCost * miner.getActiveBodyparts(WORK) / 5
+               }
+
+               let spots = 0
+               let terrain = room.getTerrain()
+               for (let x = mineral.pos.x-1; x < mineral.pos.x+2; x++) {
+                   for (let y = mineral.pos.y-1; y < mineral.pos.y+2; y++) {
+                       if (terrain.get(x,y) != TERRAIN_MASK_WALL) {
+                           spots += 1
+                       }
+                   }
+               }
+               if (numberMiners < spots) {
+                   var spawnMiner = true
+               }
+           }
+       }
+
+       let transportCapacity = 0;
+       for (let creep of _.filter(Game.creeps, c => c.memory.role === 'hauler' && c.memory.bossRoom === room.name)) {
+           transportCapacity += creep.carryCapacity;
+       }
+       if (transportCapacity < desiredTransportCapacity) {
+           spawnHauler = true;
+       } else if (RCL > 4) {
+           for (let creep of room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role === 'hauler' && c.carryCapacity < 200})) {
+               //creep.recycle()
+           }
+       }
+
+       let reserveTargetRoom = null;
+       for (let r of room.getRoomNames()) {
+           if (Game.rooms[r] && !Game.rooms[r].controller.my) {
+               let a = _.filter(Game.creeps, c => c.memory.role === 'claimer' && c.memory.targetRoom === r).length;
+               if (((a < 1 && !Game.rooms[r].controller.reservation) || (Game.rooms[r].controller.reservation &&
+                   ((a < 1 && Game.rooms[r].controller.reservation.ticksToEnd < 4000)
+                   || (a < 2 && Game.rooms[r].controller.reservation.ticksToEnd < 4500 && RCL < 5)))) && !(Memory.dangerRooms.includes(r))) {
+                   reserveTargetRoom = r;
+                   break;
+               }
+           }
+       }
+
+       let searchRooms = [];
+       searchRooms = _.filter(Game.flags, f => f.name === 'claim');
+       for (let i in searchRooms) {
+           searchRooms[i] = searchRooms[i].pos.roomName;
+           itr = Game.rooms[searchRooms[i]]
+           if (itr && itr.controller.my && itr.controller.level >= 1) {
+               itr.createConstructionSite(Game.flags.claim.pos, STRUCTURE_SPAWN)
+               itr.memory.supportNewRoom = Game.flags.claim.room.name
+               Game.flags.claim.remove()
+           }
+       }
+       let claimTargetRoom = null;
+       for (let r of searchRooms) {
+           let trans = _.filter(Game.creeps, c => c.memory.claimRoom === r && c.memory.role === 'claimer').length;
+           if (trans === 0) {
+               claimTargetRoom = r;
+               break;
+           }
+       }
+
+       function processAttackFlag(name) {
+           let spawnAttacker = false;
+           let targetRoom;
+           searchRooms = [];
+           let attackFlags = _.filter(Game.flags, f => f.name.split(" ")[0] === name);
+           let desiredAttackers = [];
+           for (let i in attackFlags) {
+               let flagName = attackFlags[i].name.split(" ");
+               if (flagName.length > 1) {
+                   let num = parseInt(flagName[1]);
+                   if (num) {
+                       desiredAttackers[i] = num;
+                   }
+               } else {
+                   desiredAttackers[i] = 1;
+               }
+               searchRooms[i] = attackFlags[i].pos.roomName;
+           }
+           for (let i in searchRooms) {
+               let r = searchRooms[i];
+               let attackers = _.filter(Game.creeps, c => c.memory.targetRoom === r && c.memory.role === 'combat' && c.memory.job === name).length;
+               if (attackers < desiredAttackers[i]) {
+                   spawnAttacker = true;
+                   targetRoom = r;
+                   break;
+               }
+           }
+           if (spawnAttacker) {
+               return targetRoom
+           } else {
+               return
+           }
+       }
+
+       let attackerTargetRoom = processAttackFlag("attack")
+       if (!attackerTargetRoom) {
+           var attackerRangedTargetRoom = processAttackFlag("attackRanged")
+           if (!attackerRangedTargetRoom) {
+               var healerTargetRoom = processAttackFlag("healer")
+           }
+       }
+
+       searchRooms = [];
+       searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] === 'harass');
+       for (let i in searchRooms) {
+           searchRooms[i] = searchRooms[i].pos.roomName;
+       }
+       let attackerParts;
+       for (let r of searchRooms) {
+           let attackers = _.filter(Game.creeps, c => c.memory.targetRoom === r && c.memory.job === 'attack' && c.memory.role === `combat`).length;
+           if (attackers === 0) {
+               spawnAttacker = true;
+               attackerTargetRoom = r;
+               attackerParts = 1;
+               break;
+           }
+       }
+
+
+
+       searchRooms = [];
+       searchRooms = _.filter(Game.flags, f => f.name.split(" ")[0] === 'decoy');
+       for (let i in searchRooms) {
+           searchRooms[i] = searchRooms[i].pos.roomName;
+       }
+       let decoyTargetRoom;
+       for (let r of searchRooms) {
+           decoyTargetRoom = r;
+           break;
+       }
+
+       let upgradeWorkParts = 0;
+       for (let creep of room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role === 'praiser'})) {
+           for (let part in creep.body) {
+               if (creep.body[part].type === WORK) {
+                   upgradeWorkParts += 1;
+               }
+           }
+       }
+
+       let desiredBuilders = 1;
+       for (let r of room.getRoomNames()) {
+           if (room.find(FIND_CONSTRUCTION_SITES).length > 0) {
+               desiredBuilders = 3;
+               break
+           }
+       }
+       if (desiredBuilders === 1 && numberBuilders > desiredBuilders) {
+           best = null
+           for (let creep of room.find(FIND_MY_CREEPS, {filter: c => c.memory.role === 'builder'})) {
+               if (best === null || best.ticksToLive < creep.ticksToLive) {
+                   if (best != null) {
+                       best.recycle()
+                   }
+                   best = creep
+               } else {
+                   creep.recycle()
+               }
+           }
+       }
+
+       if (room.memory.supportNewRoom !== undefined) {
+           if (Game.rooms[room.memory.supportNewroom] && Game.rooms[room.memory.supportNewRoom].find(FIND_MY_STRUCTURES, {filter: s=> s.structureType === 'STRUCTURE_SPAWN'}).length > 0) {
+               delete room.memory.supportNewRoom
+           } else {
+               var numberNewRoomBuilders = _.filter(Game.creeps, c => c.memory.role === 'builder' && c.memory.bossRoom === room.memory.supportNewRoom).length
+           }
+       }
+
+       if (numberHaulers < 2) {
+           this.createCreep(spawn, 'H', {role:'hauler', design:'small', bossRoom:room.name});
+       } else if (attackerTargetRoom) {
+           this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
+       } else if (attackerRangedTargetRoom) {
+           this.createCreep(spawn, 'AR', {role:'combat',targetRoom:attackerRangedTargetRoom, job:'attackRanged'});
+       } else if (healerTargetRoom) {
+           this.createCreep(spawn, 'CH', {role:'combat',targetRoom:healerTargetRoom, job:'healer'});
+       } else if (scoutTarget) {
+           this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
+       } else if (claimTargetRoom) {
+           this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
+       } else if (spawnHauler || (room.energyCapacityAvailable < 550 && numberHaulers < 5)) {
+           this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
+       } else if (harvesterTargetId && RCL >= 2) {
+           this.createCreep(spawn, 'HV', {role:'harvester',sourceId:harvesterTargetId});
+       } else if (numberNewRoomBuilders !== undefined && numberNewRoomBuilders < 5) {
+           this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.memory.supportNewRoom});
+       } else if (numberBuilders < desiredBuilders) {
+           this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
+       } else if (numberGuards < 3 && Memory.dangerRooms.length > 0) {
+           this.createCreep(spawn, 'G', {role:'combat', job:'guard'});
+       } else if (numberSpawnHelpers < 1 && ((room.storage && room.storage.store[RESOURCE_ENERGY] > 5000) || room.container)) {
+           this.createCreep(spawn, 'SH', {role:'spawnHelper'});
+       } else if (reserveTargetRoom && RCL > 2) {
+           this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
+       } else if (decoyTargetRoom) {
+           this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
+       } else if (spawnMiner) {
+           this.createCreep(spawn, 'M', {role:'miner'});
+       } else if (((room.storage && numberPraisers < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)))
+               || room.storage === undefined)
+               && room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType:STRUCTURE_CONTAINER}}).length
+               && numberPraisers < 3) {
+           this.createCreep(spawn, 'SU', {role:'praiser', bossRoom:room.name, finalPos:null});
+       } else if (Memory.spawnGeologist > 0) {
+           this.createCreep(spawn, 'GEO', {role:'geologist'});
+           Memory.spawnGeologist -= 1
+       }
+   },
+
+    spawnCreepsTest: function(room) {
         function sumCreeps(role, room) {
             if (room === undefined) {
                 return _.filter(Game.creeps, c => c.memory.role === role).length;
@@ -14,8 +295,9 @@ module.exports = {
         }
 
         if (!room.memory.spawnCensus) {
-            room.memory.spawnCensus = []
+            //room.memory.spawnCensus = [{role:'hauler', num:2, design:'small'}]
         }
+        let spawnCensus =  [{role:'hauler', amount:2, design:'small'}];//room.memory.spawnCensus;
 
         var RCL = room.controller.level;
         let numberHarvesters = sumCreeps('harvester', room);
@@ -48,11 +330,11 @@ module.exports = {
         let numberContainers = 0;
         for (let {source,pathCost} of sourceList) {
             let miners = _.filter(Game.creeps, c => c.memory.sourceId === source.id && c.memory.role === 'harvester');
-            if (harvesterTargetId === null && (miners.length === 0 || (miners.length === 1 && miners[0].ticksToLive < ((pathCost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
-                harvesterTargetId = source.id;
+            if ((miners.length === 0 || (miners.length === 1 && miners[0].ticksToLive < ((pathCost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
+                 spawnCensus.push({role:'harvester', target:source.id});
             } else if (miners.length > 0) {
                 if (source.container) {
-                    desiredTransportCapacity += Math.ceil(2 * pathCost * source.energyCapacity / ENERGY_REGEN_TIME);
+                    spawnCensus.push({role:'transportCapacity', amount:Math.ceil(2 * pathCost * source.energyCapacity / ENERGY_REGEN_TIME)});
                     numberContainers += 1;
                 }
             }
@@ -61,7 +343,7 @@ module.exports = {
         if (numberPraisers > 0) {
             let pathCost = Empire.getPathCost(firstSpawn.id, room.controller.id)
             for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role === 'praiser'})) {
-                desiredTransportCapacity += 2 * pathCost * praiser.getActiveBodyparts(WORK)
+                spawnCensus.push({role:'transportCapacity', amount:2 * pathCost * praiser.getActiveBodyparts(WORK)});
             }
         }
 
@@ -72,7 +354,7 @@ module.exports = {
                 let pathCost = Empire.getPathCost(firstSpawn.id, mineral.id)
                 let miners = _.filter(Game.creeps, {filter: c => c.memory.role === 'miner'})
                 for (let miner of miners) {
-                    desiredTransportCapacity += 2 * pathCost * miner.getActiveBodyparts(WORK) / 5
+                    spawnCensus.push({role:'transportCapacity', amount:2 * pathCost * miner.getActiveBodyparts(WORK) / 5});
                 }
 
                 let spots = 0
@@ -85,18 +367,12 @@ module.exports = {
                     }
                 }
                 if (numberMiners < spots) {
-                    var spawnMiner = true
+                    spawnCensus.push({role:'miner', amount:1})
                 }
             }
         }
 
-        let transportCapacity = 0;
-        for (let creep of _.filter(Game.creeps, c => c.memory.role === 'hauler' && c.memory.bossRoom === room.name)) {
-            transportCapacity += creep.carryCapacity;
-        }
-        if (transportCapacity < desiredTransportCapacity) {
-            spawnHauler = true;
-        } else if (RCL > 4) {
+        if (RCL > 4) {
             for (let creep of room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role === 'hauler' && c.carryCapacity < 200})) {
                 //creep.recycle()
             }
@@ -222,6 +498,8 @@ module.exports = {
                 break
             }
         }
+        spawnCensus.push({role:'builder', amount:desiredBuilders})
+
         if (desiredBuilders === 1 && numberBuilders > desiredBuilders) {
             best = null
             for (let creep of room.find(FIND_MY_CREEPS, {filter: c => c.memory.role === 'builder'})) {
@@ -244,45 +522,11 @@ module.exports = {
             }
         }
 
-        if (numberHaulers < 2) {
-            this.createCreep(spawn, 'H', {role:'hauler', design:'small', bossRoom:room.name});
-        } else if (attackerTargetRoom) {
-            this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
-        } else if (attackerRangedTargetRoom) {
-            this.createCreep(spawn, 'AR', {role:'combat',targetRoom:attackerRangedTargetRoom, job:'attackRanged'});
-        } else if (healerTargetRoom) {
-            this.createCreep(spawn, 'CH', {role:'combat',targetRoom:healerTargetRoom, job:'healer'});
-        } else if (scoutTarget) {
-            this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:scoutTarget}})
-        } else if (claimTargetRoom) {
-            this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:claimTargetRoom});
-        } else if (spawnHauler || (room.energyCapacityAvailable < 550 && numberHaulers < 5)) {
-            this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
-        } else if (harvesterTargetId && RCL >= 2) {
-            this.createCreep(spawn, 'HV', {role:'harvester',sourceId:harvesterTargetId});
-        } else if (numberNewRoomBuilders !== undefined && numberNewRoomBuilders < 5) {
-            this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.memory.supportNewRoom});
-        } else if (numberBuilders < desiredBuilders) {
-            this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
-        } else if (numberGuards < 3 && Memory.dangerRooms.length > 0) {
-            this.createCreep(spawn, 'G', {role:'combat', job:'guard'});
-        } else if (numberSpawnHelpers < 1 && ((room.storage && room.storage.store[RESOURCE_ENERGY] > 5000) || room.container)) {
-            this.createCreep(spawn, 'SH', {role:'spawnHelper'});
-        } else if (reserveTargetRoom && RCL > 2) {
-            this.createCreep(spawn, 'C', {role:'claimer', targetRoom: reserveTargetRoom});
-        } else if (decoyTargetRoom) {
-            this.createCreep(spawn, 'D', {role:'decoy', targetRoom:decoyTargetRoom});
-        } else if (spawnMiner) {
-            this.createCreep(spawn, 'M', {role:'miner'});
-        } else if (((room.storage && numberPraisers < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)))
-                || room.storage === undefined)
-                && room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType:STRUCTURE_CONTAINER}}).length
-                && numberPraisers < 3) {
-            this.createCreep(spawn, 'SU', {role:'praiser', bossRoom:room.name, finalPos:null});
-        } else if (Memory.spawnGeologist > 0) {
-            this.createCreep(spawn, 'GEO', {role:'geologist'});
-            Memory.spawnGeologist -= 1
-        }
+        log(JSON.stringify(spawnCensus, null, 4));
+    },
+
+    createCreepTest: function(spawn, name, data, partNumber) {
+        log('this is just a test');
     },
 
     createCreep: function(spawn, name, data, partNumber) {
