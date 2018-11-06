@@ -123,7 +123,6 @@ module.exports = {
         let numberPraisers = this.sumCreeps('praiser', room);
 
         let firstSpawn = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_SPAWN}})[0]
-        let scoutTarget;
         let harvesterTargetId = null;
         let spawnHauler = false;
         let sourceList = [];
@@ -446,7 +445,7 @@ module.exports = {
         if (typeof(error) === 'string') {
             logStr = `${spawn.room.name} spawning ${error} in ${parts.length*3} ticks with ${spawn.name}. ` + JSON.stringify(data);
             log(logStr);
-            delete spawn.room.memory.spanwCensus;
+            delete spawn.room.memory.spawnCensus;
             try {
                 Memory.spawnTimes[spawn.id].push({tick:Game.time, time:parts.length*3});
             } catch (err) {
