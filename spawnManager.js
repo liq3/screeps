@@ -286,6 +286,11 @@ module.exports = {
    },
 
     spawnCreepsTest: function(room) {
+        let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning})[0]
+        if (!spawn) {
+            return
+        }
+
         function sumCreeps(role, room) {
             if (room === undefined) {
                 return _.filter(Game.creeps, c => c.memory.role === role).length;
@@ -531,18 +536,18 @@ module.exports = {
             }
             if (entry.role === 'hauler' && entry.design === 'small') {
                 if (entry.amount > numberHaulers) {
-                    this.createCreepTest(null, 'smallHauler');
+                    this.createCreep(spawn, 'H', {role:'hauler', design:'small', bossRoom:room.name});
                     break;
                 }
             } else if (entry.role === 'builder') {
                 if (entry.amount > numberBuilders) {
-                    this.createCreepTest(null, 'builder');
+                    this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
                     break;
                 }
             } else if (entry.role === 'transportCapacity') {
                 desiredTransportCapacity += entry.amount;
                 if (desiredTransportCapacity < transportCapacity) {
-                    this.createCreepTest(null, 'hauler');
+                    this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
                     break;
                 }
             } else if (entry.role === 'harvester') {
@@ -551,7 +556,7 @@ module.exports = {
                 if (harvester.length === 0
                     || (harvester.length === 1 && harvester[0].ticksToLive < ((Empire.getPathCost(firstSpawn.id, entry.target)+11)*3))) {
                     if (!(Memory.dangerRooms.includes(source.pos.roomName))) {
-                        this.createCreepTest(null, 'harvester');
+                        this.createCreep(spawn, 'HV', {role:'harvester',sourceId:harvesterTargetId});
                         break;
                     } else {
                         skip = true;
@@ -559,29 +564,27 @@ module.exports = {
                 }
             } else if (entry.role === 'miner') {
                 if (entry.amount > numberMiners) {
-                    this.createCreepTest(null, 'miner');
+                    this.createCreep(spawn, 'M', {role:'miner'});
                     break;
                 }
             } else if (entry.role === 'claimer') {
                 if (entry.claimTarget) {
-                    this.createCreepTest(null, 'claimer');
+                    this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:entry.claimTarget});
                     break;
                 } else {
-                    this.createCreepTest(null, 'claimer');
+                    this.createCreep(spawn, 'C', {role:'claimer', targetRoom: entry.reserveTarget});
+                    break;
                 }
             } else if (entry.role === 'combat') {
-                this.createCreepTest(null, 'combat')
+                let name = {healer:'CH', attack:'A', attackRanged:'AR'}[entry.job]
+                this.createCreep(spawn, name, {role:'combat', job:entry.job, targetRoom:entry.target}, entry.parts);
             } else if (entry.role === 'decoy') {
-                this.createCreeptest(null, 'decoy');
+                this.createCreep(spawn, 'D', {role:'decoy', targetRoom:entry.target});
             }
         }
 
         //(miners.length === 0 || (miners.length === 1 && miners[0].ticksToLive < ((pathCost+11)*3))) &
         //
-    },
-
-    createCreepTest: function(spawn, name, data, partNumber) {
-        log('Spawn test:'+name);
     },
 
     createCreep: function(spawn, name, data, partNumber) {
