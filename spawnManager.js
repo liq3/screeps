@@ -346,7 +346,7 @@ module.exports = {
                 if (harvester.length === 0
                     || (harvester.length === 1 && harvester[0].ticksToLive < ((Empire.getPathCost(firstSpawn.id, entry.target)+11)*3))) {
                     if (!(Memory.dangerRooms.includes(source.pos.roomName))) {
-                        this.createCreep(spawn, 'HV', {role:'harvester',sourceId:harvesterTargetId});
+                        this.createCreep(spawn, 'HV', {role:'harvester',sourceId:entry.target});
                         break;
                     } else {
                         skip = true;
