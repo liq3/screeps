@@ -378,6 +378,7 @@ module.exports = {
     },
 
     createSpawnCensus: function(room) {
+        let spawnCensus = [{role:'hauler', num:2, design:'small'}];
         var RCL = room.controller.level;
         let numberHarvesters = this.sumCreeps('harvester', room);
         let numberSpawnHelpers = this.sumCreeps('spawnHelper', room);
