@@ -90,8 +90,8 @@ module.exports = {
                         let numberClaimers = _.filter(Game.creeps, c => c.memory.role === 'claimer' && c.memory.targetRoom === entry.reserveTarget).length;
                         if (numberClaimers < entry.amount) {
                             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: entry.reserveTarget});
-                        }
-                        break;
+                            break;
+                        }                        
                     }
                 }
             } else if (entry.role === 'combat') {
