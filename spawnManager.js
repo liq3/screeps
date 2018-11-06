@@ -29,9 +29,10 @@ module.exports = {
         let numberPraisers = this.sumCreeps('praiser', room);
 
         for (let r of room.getRoomNames()) {
-            if (Game.rooms[r] === undefined && scoutTarget === undefined
+            if (Game.rooms[r] === undefined
                     && _.filter(Game.creeps, c => c.memory.role === 'scout' && c.memory.targetPos.roomName === r).length === 0) {
                 spawnCensus.push({role:'scout', target:r});
+                break;
             }
         }
 
