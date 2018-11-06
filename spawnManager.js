@@ -312,7 +312,6 @@ module.exports = {
         let scoutTarget;
         let harvesterTargetId = null;
         let spawnHauler = false;
-        let desiredTransportCapacity = 0;
         let sourceList = [];
         for (let r of room.getRoomNames()) {
             if (Game.rooms[r] === undefined && scoutTarget === undefined
@@ -523,10 +522,40 @@ module.exports = {
         }
 
         log(JSON.stringify(spawnCensus, null, 4));
+
+        let transportCapacity = 0;
+        for (let creep of _.filter(Game.creeps, c => c.memory.role === 'hauler' && c.memory.bossRoom === room.name)) {
+            transportCapacity += creep.carryCapacity;
+        }
+        let desiredTransportCapacity = 0;
+        for (let entry of spawnCensus) {
+            if (entry.role === 'hauler' && entry.design === 'small') {
+                if (entry.amount > numberHaulers) {
+                    this.createCreepTest(null, 'smallHauler');
+                }
+            } else if (entry.role === 'builder') {
+                if (entry.amount > numberBuilders) {
+                    this.createCreepTest(null, 'smallHauler');
+                }
+            } else if (entry.role === 'transportCapacity') {
+                desiredTransportCapacity += entry.amount;
+                if (desiredTransportCapacity < transportCapacity) {
+                    this.createCreepTest(null, 'hauler');
+                }
+            } else if (entry.role === 'harvester') {
+                if (entry.amount > numberHarvesters) {
+                    this.createCreepTest(null, 'harvester');
+                }
+            } else if (entry.role === 'miner') {
+                if (entry.amount > numberMiners) {
+                    this.createCreepTest(null, 'miner');
+                }
+            }
+        }
     },
 
     createCreepTest: function(spawn, name, data, partNumber) {
-        log('this is just a test');
+        log('Spawn test:'+name);
     },
 
     createCreep: function(spawn, name, data, partNumber) {
