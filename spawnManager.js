@@ -285,20 +285,19 @@ module.exports = {
        }
    },
 
+    sumCreeps: function (role, room) {
+       if (room === undefined) {
+           return _.filter(Game.creeps, c => c.memory.role === role).length;
+       } else {
+           return room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role === role}).length;
+       }
+   },
+
     spawnCreepsTest: function(room) {
         let spawn = room.find(FIND_MY_STRUCTURES, {filter: s => s.structureType === STRUCTURE_SPAWN && !s.spawning})[0]
         if (!spawn) {
             return
         }
-
-        function sumCreeps(role, room) {
-            if (room === undefined) {
-                return _.filter(Game.creeps, c => c.memory.role === role).length;
-            } else {
-                return room.find(FIND_MY_CREEPS, {filter: c=> c.memory.role === role}).length;
-            }
-        }
-
 
         if (!room.memory.spawnCensus) {
             room.memory.spawnCensus = this.createSpawnCensus(room);
@@ -307,13 +306,13 @@ module.exports = {
         let spawnCensus = room.memory.spawnCensus;
 
         var RCL = room.controller.level;
-        let numberHarvesters = sumCreeps('harvester', room);
-        let numberSpawnHelpers = sumCreeps('spawnHelper', room);
+        let numberHarvesters = this.sumCreeps('harvester', room);
+        let numberSpawnHelpers = this.sumCreeps('spawnHelper', room);
         let numberGuards = _.filter(Game.creeps, c => c.memory.job === 'guard').length;
-        let numberMiners = sumCreeps('miner', room)
-        let numberHaulers = sumCreeps('hauler', room)
-        let numberBuilders = sumCreeps ('builder', room);
-        let numberPraisers = sumCreeps('praiser', room);
+        let numberMiners = this.sumCreeps('miner', room)
+        let numberHaulers = this.sumCreeps('hauler', room)
+        let numberBuilders = this.sumCreeps ('builder', room);
+        let numberPraisers = this.sumCreeps('praiser', room);
 
         let transportCapacity = 0;
         for (let creep of _.filter(Game.creeps, c => c.memory.role === 'hauler' && c.memory.bossRoom === room.name)) {
@@ -380,13 +379,13 @@ module.exports = {
 
     createSpawnCensus: function(room) {
         var RCL = room.controller.level;
-        let numberHarvesters = sumCreeps('harvester', room);
-        let numberSpawnHelpers = sumCreeps('spawnHelper', room);
+        let numberHarvesters = this.sumCreeps('harvester', room);
+        let numberSpawnHelpers = this.sumCreeps('spawnHelper', room);
         let numberGuards = _.filter(Game.creeps, c => c.memory.job === 'guard').length;
-        let numberMiners = sumCreeps('miner', room)
-        let numberHaulers = sumCreeps('hauler', room)
-        let numberBuilders = sumCreeps ('builder', room);
-        let numberPraisers = sumCreeps('praiser', room);
+        let numberMiners = this.sumCreeps('miner', room)
+        let numberHaulers = this.sumCreeps('hauler', room)
+        let numberBuilders = this.sumCreeps ('builder', room);
+        let numberPraisers = this.sumCreeps('praiser', room);
 
         let firstSpawn = room.find(FIND_MY_STRUCTURES, {filter: {structureType: STRUCTURE_SPAWN}})[0]
         let scoutTarget;
