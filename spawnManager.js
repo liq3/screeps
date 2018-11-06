@@ -632,7 +632,7 @@ module.exports = {
                 parts = parts.concat(Array(numberParts-1).fill(RANGED_ATTACK));
                 parts.push(HEAL,RANGED_ATTACK);
             }  else if (data.job === 'guard') {
-                let numberParts = partNumber ? partNumber : Math.floor((spawn.room.energyCapacityAvailable - 450) / 130);
+                let numberParts = partNumber ? partNumber : Math.min( 23, Math.floor((spawn.room.energyCapacityAvailable - 450) / 130));
                 parts = Array(numberParts+1).fill(MOVE);
                 parts = parts.concat(Array(numberParts).fill(ATTACK));
                 parts.push(HEAL,RANGED_ATTACK);
