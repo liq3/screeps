@@ -74,7 +74,7 @@ module.exports = {
                     break;
                 }
             } else if (entry.role === 'claimer') {
-                if (!(Memory.dangerRooms.includes(r))) {
+                if (!(Memory.dangerRooms.includes(entry.claimTarget || entry.reserveTarget))) {
                     if (entry.claimTarget) {
                         this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:entry.claimTarget});
                         break;
