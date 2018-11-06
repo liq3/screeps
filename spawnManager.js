@@ -91,7 +91,7 @@ module.exports = {
                         if (numberClaimers < entry.amount) {
                             this.createCreep(spawn, 'C', {role:'claimer', targetRoom: entry.reserveTarget});
                             break;
-                        }                        
+                        }
                     }
                 }
             } else if (entry.role === 'combat') {
@@ -112,7 +112,7 @@ module.exports = {
     },
 
     createSpawnCensus: function(room) {
-        let spawnCensus = [{role:'hauler', num:2, design:'small'}];
+        let spawnCensus = [{role:'hauler', amount:2, design:'small'}];
         var RCL = room.controller.level;
         let numberHarvesters = this.sumCreeps('harvester', room);
         let numberSpawnHelpers = this.sumCreeps('spawnHelper', room);
