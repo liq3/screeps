@@ -320,7 +320,7 @@ module.exports = {
                 parts = spawn.room.controller.level < 3 ? [WORK, MOVE, MOVE, CARRY] : [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
                 delete data.design;
             } else if (spawn.room.energyCapacityAvailable >= 550) {
-                let numberParts = Math.min(23, Math.floor((spawn.room.energyCapacityAvailable - 200) / 150));
+                let numberParts = Math.min(15, Math.floor((spawn.room.energyCapacityAvailable - 200) / 150));
                 parts = [WORK]
                 parts = parts.concat(Array(numberParts*2+1).fill(CARRY));
                 parts = parts.concat(Array(numberParts+1).fill(MOVE));
@@ -334,9 +334,6 @@ module.exports = {
                 parts = parts.concat(Array(numberParts).fill(CARRY));
                 parts = parts.concat(Array(numberParts).fill(MOVE));
             }
-        } else if (data.role === 'smallHauler') {
-
-            data.role = 'hauler'
         } else if (data.role === 'spawnHelper') {
             let numberParts = Math.min(10, Math.floor(spawn.room.energyCapacityAvailable / 150));
             parts = Array(numberParts).fill(CARRY);

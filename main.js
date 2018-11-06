@@ -62,7 +62,7 @@ let mainLoop = function() {
         }
     }
 
-	for(let name in Game.creeps) {
+	for (let name in Game.creeps) {
 	    let creep = Game.creeps[name];
 
         try {
