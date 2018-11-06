@@ -56,16 +56,18 @@ module.exports = {
                 }
             } else if (entry.role === 'harvester') {
                 let source = Game.getObjectById(entry.target)
-                let harvester = _.filter(Game.creeps, c => c.memory.sourceId === source.id && c.memory.role === 'harvester');
-                if (harvester.length === 0
-                    || (harvester.length === 1 && harvester[0].ticksToLive < ((Empire.getPathCost(spawn.id, entry.target)+11)*3))) {
-                    if (!(Memory.dangerRooms.includes(source.pos.roomName))) {
-                        this.createCreep(spawn, 'HV', {role:'harvester',sourceId:entry.target});
-                        break;
-                    } else {
-                        skip = true;
+                if (source) {
+                    let harvester = _.filter(Game.creeps, c => c.memory.sourceId === source.id && c.memory.role === 'harvester');
+                    if (harvester.length === 0
+                        || (harvester.length === 1 && harvester[0].ticksToLive < ((Empire.getPathCost(spawn.id, entry.target)+11)*3))) {
+                        if (!(Memory.dangerRooms.includes(source.pos.roomName))) {
+                            this.createCreep(spawn, 'HV', {role:'harvester',sourceId:entry.target});
+                            break;
+                        } else {
+                            skip = true;
+                        }
                     }
-                }
+                }                
             } else if (entry.role === 'miner') {
                 if (entry.amount > numberMiners) {
                     this.createCreep(spawn, 'M', {role:'miner'});
