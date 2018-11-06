@@ -596,6 +596,8 @@ module.exports = {
                 var numberNewRoomBuilders = _.filter(Game.creeps, c => c.memory.role === 'builder' && c.memory.bossRoom === room.memory.supportNewRoom).length
             }
         }
+
+        return spawnCensus;
     },
 
     createCreep: function(spawn, name, data, partNumber) {
