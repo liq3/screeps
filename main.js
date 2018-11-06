@@ -66,7 +66,7 @@ let mainLoop = function() {
 	    let creep = Game.creeps[name];
 
         try {
-            if (Game.cpu.bucket > 500) {
+            if (Game.cpu.bucket > 5000) {
                 if (creepFunctions[creep.memory.role] != undefined && !creep.spawning) {
                     creepFunctions[creep.memory.role].run(creep);
                 } else if (creep.memory.role === 'recycle') {
@@ -124,7 +124,7 @@ let mainLoop = function() {
         }
     }
 
-    if (Game.cpu.bucket > 5000) {
+    if (Game.cpu.bucket > 8000) {
         if (false && Game.market.credits < 1000) {
             let orders = Game.market.getAllOrders(order => order.resourceType === RESOURCE_ENERGY && order.type === ORDER_BUY && order.price >= 0.018);
             if (orders.length > 0) {
