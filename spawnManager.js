@@ -711,7 +711,7 @@ module.exports = {
         if (typeof(error) === 'string') {
             logStr = `${spawn.room.name} spawning ${error} in ${parts.length*3} ticks with ${spawn.name}. ` + JSON.stringify(data);
             log(logStr);
-            delete room.memory.spanwCensus;
+            delete spawn.room.memory.spanwCensus;
             try {
                 Memory.spawnTimes[spawn.id].push({tick:Game.time, time:parts.length*3});
             } catch (err) {
