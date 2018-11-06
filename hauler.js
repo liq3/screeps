@@ -256,7 +256,7 @@ module.exports = {
 			let container = creep.room.mineral.container
 			if (container) {
 				let minerals = _.sum(container.store)
-				for (let c of _.filter(Game.creeps, c=>c.memory.task && c.memory.task == 'collectMinerals' && c.memory.bossRoom == creep.room.name)) {
+				for (let c of _.filter(Game.creeps, c=>c.memory.task && c.memory.task == 'collectMinerals' && c.memory.bossRoom == creep.room.name && c.memory.gathering)) {
 					minerals += _.sum(c.carry) - creep.carryCapacity;
 				}
 				let upgradeParts = 0;

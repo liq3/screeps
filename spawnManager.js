@@ -174,9 +174,10 @@ module.exports = {
             }
         }
 
-        if (RCL > 4) {
+        if (RCL > 4 && numberHaulers > 2) {
             for (let creep of room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role === 'hauler' && c.carryCapacity < 200})) {
-                //creep.recycle()
+                creep.recycle()
+                break;
             }
         }
 
@@ -571,9 +572,9 @@ module.exports = {
        }
        if (transportCapacity < desiredTransportCapacity) {
            spawnHauler = true;
-       } else if (RCL > 4) {
+       } else if (RCL > 4 && numberHaulers > 2) {
            for (let creep of room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role === 'hauler' && c.carryCapacity < 200})) {
-               //creep.recycle()
+               creep.recycle()
            }
        }
 
