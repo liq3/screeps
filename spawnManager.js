@@ -50,7 +50,7 @@ module.exports = {
                 }
             } else if (entry.role === 'transportCapacity') {
                 desiredTransportCapacity += entry.amount;
-                if (desiredTransportCapacity < transportCapacity) {
+                if (desiredTransportCapacity > transportCapacity) {
                     this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
                     break;
                 }
@@ -82,8 +82,10 @@ module.exports = {
             } else if (entry.role === 'combat') {
                 let name = {healer:'CH', attack:'A', attackRanged:'AR'}[entry.job]
                 this.createCreep(spawn, name, {role:'combat', job:entry.job, targetRoom:entry.target}, entry.parts);
+                break;
             } else if (entry.role === 'decoy') {
                 this.createCreep(spawn, 'D', {role:'decoy', targetRoom:entry.target});
+                break;
             }
         }
 
