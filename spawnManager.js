@@ -328,13 +328,10 @@ module.exports = {
         sourceList.sort((a,b) => a.pathCost - b.pathCost );
         let numberContainers = 0;
         for (let {source,pathCost} of sourceList) {
-            let miners = _.filter(Game.creeps, c => c.memory.sourceId === source.id && c.memory.role === 'harvester');
-            if ((miners.length === 0 || (miners.length === 1 && miners[0].ticksToLive < ((pathCost+11)*3))) && !(Memory.dangerRooms.includes(source.pos.roomName))) {
-                 spawnCensus.push({role:'harvester', target:source.id});
-            } else if (miners.length > 0) {
+            if (!(Memory.dangerRooms.includes(source.pos.roomName))) {
+                spawnCensus.push({role:'harvester', target:source.id});
                 if (source.container) {
                     spawnCensus.push({role:'transportCapacity', amount:Math.ceil(2 * pathCost * source.energyCapacity / ENERGY_REGEN_TIME)});
-                    numberContainers += 1;
                 }
             }
         }
@@ -365,9 +362,7 @@ module.exports = {
                         }
                     }
                 }
-                if (numberMiners < spots) {
-                    spawnCensus.push({role:'miner', amount:1})
-                }
+                spawnCensus.push({role:'miner', amount:spots})
             }
         }
 
@@ -535,7 +530,7 @@ module.exports = {
                 }
             } else if (entry.role === 'builder') {
                 if (entry.amount > numberBuilders) {
-                    this.createCreepTest(null, 'smallHauler');
+                    this.createCreepTest(null, 'builder');
                 }
             } else if (entry.role === 'transportCapacity') {
                 desiredTransportCapacity += entry.amount;
@@ -543,7 +538,9 @@ module.exports = {
                     this.createCreepTest(null, 'hauler');
                 }
             } else if (entry.role === 'harvester') {
-                if (entry.amount > numberHarvesters) {
+                let source = Game.getObjectById(entry.target)
+                let harvester = _.filter(Game.creeps, c => c.memory.sourceId === source.id && c.memory.role === 'harvester');
+                if (harvester.length === 0 || (harvester.length === 1 && harvester[0].ticksToLive < ((pathCost+11)*3))) {
                     this.createCreepTest(null, 'harvester');
                 }
             } else if (entry.role === 'miner') {
@@ -552,6 +549,9 @@ module.exports = {
                 }
             }
         }
+
+        //(miners.length === 0 || (miners.length === 1 && miners[0].ticksToLive < ((pathCost+11)*3))) &
+        //
     },
 
     createCreepTest: function(spawn, name, data, partNumber) {

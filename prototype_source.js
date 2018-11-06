@@ -49,3 +49,23 @@ Object.defineProperty(Source.prototype, 'link', {
         return this._link
     }
 });
+
+Object.defineProperty(Source.prototype, 'harvester', {
+    get: function() {
+        if (!this._harvester) {
+            if (!this.memory.harvesterId) {
+                let harvester = this.pos.findInRange(FIND_MY_CREEPS, 1, {filter: c=>c.memory.role === 'harvester'})[0]
+                if (harvester) {
+                    this.memory.harvesterId = harvester.id
+                } else {
+                    return
+                }
+            }
+            this._harvester = Game.getObjectById(this.memory.harvesterId)
+            if (!this._harvester) {
+                delete this.memory.harvesterId
+            }
+        }
+        return this._harvester
+    }
+});
