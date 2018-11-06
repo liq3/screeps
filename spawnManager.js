@@ -285,7 +285,7 @@ module.exports = {
        }
    },
 
-    spawnCreepsTest: function(room) {
+    spawnCreepsTest: function(room) {        
         function sumCreeps(role, room) {
             if (room === undefined) {
                 return _.filter(Game.creeps, c => c.memory.role === role).length;
@@ -540,7 +540,7 @@ module.exports = {
             } else if (entry.role === 'harvester') {
                 let source = Game.getObjectById(entry.target)
                 let harvester = _.filter(Game.creeps, c => c.memory.sourceId === source.id && c.memory.role === 'harvester');
-                if (harvester.length === 0 || (harvester.length === 1 && harvester[0].ticksToLive < ((pathCost+11)*3))) {
+                if (harvester.length === 0 || (harvester.length === 1 && harvester[0].ticksToLive < ((Empire.getPathCost(firstSpawn.id, entry.target)+11)*3))) {
                     this.createCreepTest(null, 'harvester');
                 }
             } else if (entry.role === 'miner') {
