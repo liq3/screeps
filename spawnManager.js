@@ -13,6 +13,10 @@ module.exports = {
             }
         }
 
+        if (!room.memory.spawnCensus) {
+            room.memory.spawnCensus = []
+        }
+
         var RCL = room.controller.level;
         let numberHarvesters = sumCreeps('harvester', room);
         let numberSpawnHelpers = sumCreeps('spawnHelper', room);
@@ -94,7 +98,7 @@ module.exports = {
             spawnHauler = true;
         } else if (RCL > 4) {
             for (let creep of room.find(FIND_MY_CREEPS, {filter: c=>c.memory.role === 'hauler' && c.carryCapacity < 200})) {
-                creep.recycle()
+                //creep.recycle()
             }
         }
 
@@ -241,7 +245,7 @@ module.exports = {
         }
 
         if (numberHaulers < 2) {
-            this.createCreep(spawn, 'H', {role:'smallHauler', bossRoom:room.name});
+            this.createCreep(spawn, 'H', {role:'hauler', design:'small', bossRoom:room.name});
         } else if (attackerTargetRoom) {
             this.createCreep(spawn, 'A', {role:'combat',targetRoom:attackerTargetRoom,job:'attack'}, attackerParts);
         } else if (attackerRangedTargetRoom) {
@@ -312,8 +316,11 @@ module.exports = {
             }
             parts.push(CARRY,MOVE);
         } else if (data.role === 'hauler') {
-            if (spawn.room.energyCapacityAvailable >= 550) {
-                let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 200) / 150);
+            if (data.design === 'small') {
+                parts = spawn.room.controller.level < 3 ? [WORK, MOVE, MOVE, CARRY] : [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
+                delete data.design;
+            } else if (spawn.room.energyCapacityAvailable >= 550) {
+                let numberParts = Math.min(23, Math.floor((spawn.room.energyCapacityAvailable - 200) / 150));
                 parts = [WORK]
                 parts = parts.concat(Array(numberParts*2+1).fill(CARRY));
                 parts = parts.concat(Array(numberParts+1).fill(MOVE));
@@ -328,7 +335,7 @@ module.exports = {
                 parts = parts.concat(Array(numberParts).fill(MOVE));
             }
         } else if (data.role === 'smallHauler') {
-            parts = spawn.room.controller.level < 3 ? [WORK, MOVE, MOVE, CARRY] : [CARRY, CARRY, CARRY, MOVE, MOVE, MOVE];
+
             data.role = 'hauler'
         } else if (data.role === 'spawnHelper') {
             let numberParts = Math.min(10, Math.floor(spawn.room.energyCapacityAvailable / 150));
@@ -373,7 +380,7 @@ module.exports = {
                 parts = spawn.room.energyCapacityAvailable < 1450 ? [CLAIM,MOVE,MOVE,MOVE] : [CLAIM,CLAIM,MOVE,MOVE,MOVE,MOVE,MOVE];
             }
         } else if (data.role === 'miner') {
-            let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 50) / 450);
+            let numberParts = Math.min(9, Math.floor((spawn.room.energyCapacityAvailable - 50) / 450));
             parts = Array(numberParts*4).fill(WORK);
             parts.push(CARRY)
             parts = parts.concat(Array(numberParts).fill(MOVE))
@@ -381,7 +388,7 @@ module.exports = {
             if (spawn.room.energyCapacityAvailable < 350) {
                 parts = [WORK, CARRY, CARRY, MOVE, MOVE];
             } else {
-                let numberParts = Math.floor(spawn.room.energyCapacityAvailable / 350);
+                let numberParts = Math.min(8, Math.floor(spawn.room.energyCapacityAvailable / 350));
                 parts = Array(numberParts).fill(WORK);
                 parts = parts.concat(Array(numberParts*2).fill(CARRY));
                 parts = parts.concat(Array(numberParts*3).fill(MOVE));
