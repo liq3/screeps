@@ -28,6 +28,13 @@ module.exports = {
         let numberBuilders = this.sumCreeps ('builder', room);
         let numberPraisers = this.sumCreeps('praiser', room);
 
+        for (let r of room.getRoomNames()) {
+            if (Game.rooms[r] === undefined && scoutTarget === undefined
+                    && _.filter(Game.creeps, c => c.memory.role === 'scout' && c.memory.targetPos.roomName === r).length === 0) {
+                spawnCensus.push({role:'scout', target:r});
+            }
+        }
+
         let transportCapacity = 0;
         for (let creep of _.filter(Game.creeps, c => c.memory.role === 'hauler' && c.memory.bossRoom === room.name)) {
             transportCapacity += creep.carryCapacity;
@@ -93,6 +100,9 @@ module.exports = {
             } else if (entry.role === 'decoy') {
                 this.createCreep(spawn, 'D', {role:'decoy', targetRoom:entry.target});
                 break;
+            } else if (entry.role === 'scout') {
+                this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:entry.target}})
+                break;
             }
         }
 
@@ -117,10 +127,7 @@ module.exports = {
         let spawnHauler = false;
         let sourceList = [];
         for (let r of room.getRoomNames()) {
-            if (Game.rooms[r] === undefined && scoutTarget === undefined
-                    && _.filter(Game.creeps, c => c.memory.role === 'scout' && c.memory.targetPos.roomName === r).length === 0) {
-                scoutTarget = r;
-            } else if (Game.rooms[r]) {
+            if (Game.rooms[r]) {
                 for (let source of Game.rooms[r].find(FIND_SOURCES)) {
                     let pathCost = Empire.getPathCost(firstSpawn.id, source.id)
                     sourceList.push({source:source, pathCost:pathCost});
