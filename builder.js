@@ -32,7 +32,7 @@ module.exports = {
 							}
 							if ((itr.structureType === STRUCTURE_ROAD || itr.structureType === STRUCTURE_CONTAINER)) {
 							    if (itr.hits > (itr.hitsMax/2)) {
-								    score += 300;
+								    score += 2000;
 							    } else {
 							        score -= 100;
 							    }
