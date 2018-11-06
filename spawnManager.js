@@ -299,11 +299,86 @@ module.exports = {
             }
         }
 
-        if (!room.memory.spawnCensus) {
-            //room.memory.spawnCensus = [{role:'hauler', num:2, design:'small'}]
-        }
-        let spawnCensus =  [{role:'hauler', amount:2, design:'small'}];//room.memory.spawnCensus;
 
+        if (!room.memory.spawnCensus) {
+            room.memory.spawnCensus = this.createSpawnCensus(room);
+        }
+
+        let spawnCensus = room.memory.spawnCensus;
+
+        var RCL = room.controller.level;
+        let numberHarvesters = sumCreeps('harvester', room);
+        let numberSpawnHelpers = sumCreeps('spawnHelper', room);
+        let numberGuards = _.filter(Game.creeps, c => c.memory.job === 'guard').length;
+        let numberMiners = sumCreeps('miner', room)
+        let numberHaulers = sumCreeps('hauler', room)
+        let numberBuilders = sumCreeps ('builder', room);
+        let numberPraisers = sumCreeps('praiser', room);
+
+        let transportCapacity = 0;
+        for (let creep of _.filter(Game.creeps, c => c.memory.role === 'hauler' && c.memory.bossRoom === room.name)) {
+            transportCapacity += creep.carryCapacity;
+        }
+        let desiredTransportCapacity = 0;
+        let skip = false;
+        for (let entry of spawnCensus) {
+            if (skip) {
+                continue;
+            }
+            if (entry.role === 'hauler' && entry.design === 'small') {
+                if (entry.amount > numberHaulers) {
+                    this.createCreep(spawn, 'H', {role:'hauler', design:'small', bossRoom:room.name});
+                    break;
+                }
+            } else if (entry.role === 'builder') {
+                if (entry.amount > numberBuilders) {
+                    this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
+                    break;
+                }
+            } else if (entry.role === 'transportCapacity') {
+                desiredTransportCapacity += entry.amount;
+                if (desiredTransportCapacity < transportCapacity) {
+                    this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
+                    break;
+                }
+            } else if (entry.role === 'harvester') {
+                let source = Game.getObjectById(entry.target)
+                let harvester = _.filter(Game.creeps, c => c.memory.sourceId === source.id && c.memory.role === 'harvester');
+                if (harvester.length === 0
+                    || (harvester.length === 1 && harvester[0].ticksToLive < ((Empire.getPathCost(firstSpawn.id, entry.target)+11)*3))) {
+                    if (!(Memory.dangerRooms.includes(source.pos.roomName))) {
+                        this.createCreep(spawn, 'HV', {role:'harvester',sourceId:harvesterTargetId});
+                        break;
+                    } else {
+                        skip = true;
+                    }
+                }
+            } else if (entry.role === 'miner') {
+                if (entry.amount > numberMiners) {
+                    this.createCreep(spawn, 'M', {role:'miner'});
+                    break;
+                }
+            } else if (entry.role === 'claimer') {
+                if (entry.claimTarget) {
+                    this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:entry.claimTarget});
+                    break;
+                } else {
+                    this.createCreep(spawn, 'C', {role:'claimer', targetRoom: entry.reserveTarget});
+                    break;
+                }
+            } else if (entry.role === 'combat') {
+                let name = {healer:'CH', attack:'A', attackRanged:'AR'}[entry.job]
+                this.createCreep(spawn, name, {role:'combat', job:entry.job, targetRoom:entry.target}, entry.parts);
+            } else if (entry.role === 'decoy') {
+                this.createCreep(spawn, 'D', {role:'decoy', targetRoom:entry.target});
+            }
+        }
+
+        //(miners.length === 0 || (miners.length === 1 && miners[0].ticksToLive < ((pathCost+11)*3))) &
+        //
+    },
+
+    createSpawnCensus: function(room) {
         var RCL = room.controller.level;
         let numberHarvesters = sumCreeps('harvester', room);
         let numberSpawnHelpers = sumCreeps('spawnHelper', room);
@@ -521,70 +596,6 @@ module.exports = {
                 var numberNewRoomBuilders = _.filter(Game.creeps, c => c.memory.role === 'builder' && c.memory.bossRoom === room.memory.supportNewRoom).length
             }
         }
-
-        log(JSON.stringify(spawnCensus, null, 4));
-
-        let transportCapacity = 0;
-        for (let creep of _.filter(Game.creeps, c => c.memory.role === 'hauler' && c.memory.bossRoom === room.name)) {
-            transportCapacity += creep.carryCapacity;
-        }
-        let desiredTransportCapacity = 0;
-        let skip = false;
-        for (let entry of spawnCensus) {
-            if (skip) {
-                continue;
-            }
-            if (entry.role === 'hauler' && entry.design === 'small') {
-                if (entry.amount > numberHaulers) {
-                    this.createCreep(spawn, 'H', {role:'hauler', design:'small', bossRoom:room.name});
-                    break;
-                }
-            } else if (entry.role === 'builder') {
-                if (entry.amount > numberBuilders) {
-                    this.createCreep(spawn, 'B', {role:'builder', bossRoom:room.name});
-                    break;
-                }
-            } else if (entry.role === 'transportCapacity') {
-                desiredTransportCapacity += entry.amount;
-                if (desiredTransportCapacity < transportCapacity) {
-                    this.createCreep(spawn, 'H', {role:'hauler', bossRoom:room.name});
-                    break;
-                }
-            } else if (entry.role === 'harvester') {
-                let source = Game.getObjectById(entry.target)
-                let harvester = _.filter(Game.creeps, c => c.memory.sourceId === source.id && c.memory.role === 'harvester');
-                if (harvester.length === 0
-                    || (harvester.length === 1 && harvester[0].ticksToLive < ((Empire.getPathCost(firstSpawn.id, entry.target)+11)*3))) {
-                    if (!(Memory.dangerRooms.includes(source.pos.roomName))) {
-                        this.createCreep(spawn, 'HV', {role:'harvester',sourceId:harvesterTargetId});
-                        break;
-                    } else {
-                        skip = true;
-                    }
-                }
-            } else if (entry.role === 'miner') {
-                if (entry.amount > numberMiners) {
-                    this.createCreep(spawn, 'M', {role:'miner'});
-                    break;
-                }
-            } else if (entry.role === 'claimer') {
-                if (entry.claimTarget) {
-                    this.createCreep(spawn, "CLAIM THE ROOM", {role: 'claimer', claimRoom:entry.claimTarget});
-                    break;
-                } else {
-                    this.createCreep(spawn, 'C', {role:'claimer', targetRoom: entry.reserveTarget});
-                    break;
-                }
-            } else if (entry.role === 'combat') {
-                let name = {healer:'CH', attack:'A', attackRanged:'AR'}[entry.job]
-                this.createCreep(spawn, name, {role:'combat', job:entry.job, targetRoom:entry.target}, entry.parts);
-            } else if (entry.role === 'decoy') {
-                this.createCreep(spawn, 'D', {role:'decoy', targetRoom:entry.target});
-            }
-        }
-
-        //(miners.length === 0 || (miners.length === 1 && miners[0].ticksToLive < ((pathCost+11)*3))) &
-        //
     },
 
     createCreep: function(spawn, name, data, partNumber) {
@@ -698,6 +709,7 @@ module.exports = {
         if (typeof(error) === 'string') {
             logStr = `${spawn.room.name} spawning ${error} in ${parts.length*3} ticks with ${spawn.name}. ` + JSON.stringify(data);
             log(logStr);
+            delete room.memory.spanwCensus;
             try {
                 Memory.spawnTimes[spawn.id].push({tick:Game.time, time:parts.length*3});
             } catch (err) {
