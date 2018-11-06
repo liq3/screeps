@@ -190,7 +190,7 @@ module.exports = {
                         && Game.rooms[r].controller.reservation.ticksToEnd < 4000)) {
                     amount = 1;
                 }
-                if (Game.rooms[r].controller.reservation.ticksToEnd < 4500 && RCL < 5) {
+                if (Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500 && RCL < 5) {
                     amount = 2;
                 }
                 spawnCensus.push({role:'claimer', reserveTarget:r, amount:amount, priority:50})
