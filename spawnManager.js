@@ -58,7 +58,7 @@ module.exports = {
                 let source = Game.getObjectById(entry.target)
                 let harvester = _.filter(Game.creeps, c => c.memory.sourceId === source.id && c.memory.role === 'harvester');
                 if (harvester.length === 0
-                    || (harvester.length === 1 && harvester[0].ticksToLive < ((Empire.getPathCost(firstSpawn.id, entry.target)+11)*3))) {
+                    || (harvester.length === 1 && harvester[0].ticksToLive < ((Empire.getPathCost(spawn.id, entry.target)+11)*3))) {
                     if (!(Memory.dangerRooms.includes(source.pos.roomName))) {
                         this.createCreep(spawn, 'HV', {role:'harvester',sourceId:entry.target});
                         break;
