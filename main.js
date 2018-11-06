@@ -67,11 +67,11 @@ let mainLoop = function() {
 
         try {
             if (Game.cpu.bucket > 500) {
-                if (creepFunctions[creep.memory.role] != undefined) {
+                if (creepFunctions[creep.memory.role] != undefined && !creep.spawning) {
                     creepFunctions[creep.memory.role].run(creep);
                 } else if (creep.memory.role === 'recycle') {
                     creep.moveTo(creep.pos.findClosestByPath(FIND_MY_SPAWNS));
-                } else {
+                } else if (!creep.spawning){
                     log("Undefined function for role: " + creep.memory.role);
                 }
             }
