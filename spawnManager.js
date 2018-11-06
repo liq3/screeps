@@ -626,7 +626,7 @@ module.exports = {
                     parts = parts.concat([ATTACK,MOVE]);
                 }
             } else if (data.job === 'attackRanged' || data.job === 'guard') {
-                let numberParts = Math.floor((spawn.room.energyCapacityAvailable - 300) / 260);
+                let numberParts = Math.min(16, Math.floor((spawn.room.energyCapacityAvailable - 300) / 260));
                 parts = Array(numberParts).fill(TOUGH);
                 parts = parts.concat(Array(numberParts*2+1).fill(MOVE));
                 parts = parts.concat(Array(numberParts-1).fill(RANGED_ATTACK));
