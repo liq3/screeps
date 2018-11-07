@@ -77,10 +77,10 @@ module.exports = {
 					return;
 				}
 
-				let amount = creep.room.terminal.store[resource] - creep.room.memory.desiredTerminalResources[resource]
+				let amount = Math.min(creep.carryCapacity,creep.room.terminal.store[resource] - creep.room.memory.desiredTerminalResources[resource])
 				let err = creep.withdraw(creep.room.terminal, resource, amount ? amount : undefined);
 				if (err === ERR_NOT_IN_RANGE) {
-					creep.moveTo(creep.room.storage);
+					creep.moveTo(creep.room.terminal);
 				} else if (err === ERR_NOT_ENOUGH_RESOURCES) {
 					delete creep.memory.targetResource;
 				} else if (err != OK) {

@@ -57,5 +57,24 @@ module.exports = {
 				}
 			}
 		}
+
+		if (Game.cpu.bucket > 8000 && room.terminal && !room.terminal.cooldown) {
+			for (const resource in [RESOURCE_HYDROGEN, RESOURCE_OXYGEN]) {
+				if (room.terminal.store[resource] > 1000 && room.terminal.store[RESOURCE_ENERGY] > 1000) {
+					let orders = Game.market.getAllOrders({type:ORDER_BUY, resourceType:resource, price:1})
+					orders.sort(o => Game.market.calcTransactionCost(1000, room.name, o.roomName));
+					let maxResources = room.terminal.store[resource]
+					for (let order of orders) {
+						let amount = _.min([maxResources, order.amount])
+						let cost = Game.market.calcTransactionCost(amount, room.name, order.roomName)
+						if (cost < room.terminal.store.energy && amount > 0) {
+							let err = Game.market.deal(order.id, amount, room.name)
+							log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${order.amount*order.price}`);
+							maxResources -= amount
+						}
+					}
+				}
+			}
+		}
 	}
 };

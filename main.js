@@ -21,7 +21,7 @@ for (let i of creepRoles) {
 	creepFunctions[i] = require(i);
 }
 
-Memory.globalTicks.push(Memory.globalTime)
+Memory.globalTimes.push(Memory.globalTime)
 Memory.globalTime = 0
 
 let mainLoop = function() {
@@ -142,21 +142,6 @@ let mainLoop = function() {
 						let err = Game.market.deal(order.id, sendAmount, 'E61N94');
 						log(`Deal: ${err}. ${sendAmount} for ${order.price} total ${order.amount*order.price}`);
 					}
-				}
-			}
-		}
-		let room = Game.rooms['W22N32']
-		if (room && room.terminal && !room.terminal.cooldown && room.terminal.store[RESOURCE_HYDROGEN] > 1000) {
-			let orders = Game.market.getAllOrders({type:ORDER_BUY, resourceType:RESOURCE_HYDROGEN, price:1})
-			orders.sort(o => Game.market.calcTransactionCost(1000, room.name, o.roomName));
-			let maxResources = room.terminal.store[RESOURCE_HYDROGEN]
-			for (let order of orders) {
-				let amount = _.min([maxResources, order.amount])
-				let cost = Game.market.calcTransactionCost(amount, room.name, order.roomName)
-				if (cost < room.terminal.store.energy && amount > 0) {
-					let err = Game.market.deal(order.id, amount, room.name)
-					log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${order.amount*order.price}`);
-					maxResources -= amount
 				}
 			}
 		}
