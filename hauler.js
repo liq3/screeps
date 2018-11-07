@@ -261,7 +261,8 @@ module.exports = {
 	},
 
 	decideTowers: function(creep) {
-		if (creep.room.find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity}).length > 0) {
+		if (creep.room.find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity}).length > 0
+			&& !creep.room.find(FIND_MY_CREEPS, {filter: c=> c.memory.task === 'tower'}).length) {
 			creep.memory.task = 'tower'
 		}
 	},
