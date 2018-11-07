@@ -104,6 +104,11 @@ module.exports = {
 			} else if (entry.role === 'scout') {
 				this.createCreep(spawn, 'S', {role:'scout', targetPos:{x:25,y:25,roomName:entry.target}})
 				break;
+			} else if (entry.role === 'guard') {
+				if (numberGuards < entry.amount) {
+					this.createCreep(spawn, 'G', {role:'combat', job:'guard'});
+					break;
+				}
 			}
 		}
 
@@ -132,6 +137,10 @@ module.exports = {
 				}
 			}
 		}
+
+		if (Memory.dangerRooms.length > 0) {
+			spawnCensus.push({role:'guard', priority:5, amount:3});
+	   	}
 
 		sourceList.sort((a,b) => a.pathCost - b.pathCost );
 		for (let {source,pathCost} of sourceList) {
