@@ -10,7 +10,7 @@ module.exports = {
 		} else if (creep.memory.job === 'healer') {
 			this.jobHealer(creep);
 		} else {
-			log(`${creep.name} Error with job memory`);
+			log(`${creep.url} Error with job memory`);
 		}
 	},
 	jobAttack: function(creep) {

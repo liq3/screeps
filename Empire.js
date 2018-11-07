@@ -1,10 +1,13 @@
 /* eslint no-console:off*/
 
+REGEX_ROOM = /[WE](\d{1,2})[NS](\d{1,2})/g
+
 global.log = function(str) {
 	if (typeof(str) !== 'string') {
 		str = ''+str
 	}
-	console.log(str.replace(/[WE](\d{1,2})[NS](\d{1,2})/g, '<a href="#!/room/shard3/$&">$&</a>'))
+	str.replace(REGEX_ROOM, `<a href="#!/room/${Game.shard.name}/$&">$&</a>`)
+	console.log(str)
 }
 
 global.Empire = {}
