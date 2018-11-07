@@ -6,6 +6,14 @@ global.myUtils.avgCpu = function() {
 	log(_.sum(Memory.cpuTimes) / Memory.cpuTimes.length);
 }
 
+global.myUtils.deleteSpawnCensus() {
+	for (let i of Memory.rooms[i]) {
+		if (Memory.rooms[i].spawnCensus) {
+			delete Memory.rooms[i].spawnCensus
+		}
+	}
+}
+
 global.myUtils.changeRole = function(role1, role2) {
 	for (let c in Game.creeps) {
 		if (Game.creeps[c].memory.role === role1) {

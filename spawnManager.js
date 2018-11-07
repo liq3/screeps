@@ -32,6 +32,7 @@ module.exports = {
 			if (Game.rooms[r] === undefined
 					&& _.filter(Game.creeps, c => c.memory.role === 'scout' && c.memory.targetPos.roomName === r).length === 0) {
 				spawnCensus.unshift({role:'scout', target:r, priority:1});
+				spawnCensus.sort((a,b)=> a.priority - b.priority)
 				break;
 			}
 		}
@@ -117,7 +118,7 @@ module.exports = {
 	},
 
 	createSpawnCensus: function(room) {
-		let spawnCensus = [{role:'hauler', amount:2, design:'small', priority:12}];
+		let spawnCensus = [{role:'hauler', amount:2, design:'small', priority:0}];
 		var RCL = room.controller.level;
 		let numberHarvesters = this.sumCreeps('harvester', room);
 		let numberSpawnHelpers = this.sumCreeps('spawnHelper', room);
