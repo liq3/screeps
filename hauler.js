@@ -84,7 +84,7 @@ module.exports = {
 				} else if (err === ERR_NOT_ENOUGH_RESOURCES) {
 					delete creep.memory.targetResource;
 				} else if (err != OK) {
-					log(`${creep} ${creep.room.name}: err withdrawing ${resource} from storage ${err}`)
+					log(`${creep} ${creep.room.name}: err withdrawing ${amount} ${resource} from terminal ${err}`)
 				} else {
 					creep.memory.gathering = false
 				}
