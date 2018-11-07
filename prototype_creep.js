@@ -16,6 +16,12 @@ Creep.prototype.gatherEnergy = function () {
 			}
 		}
 		if (!energy) {
+			if (room.terminal && room.memory.desiredTerminalResources && room.memory.desiredTerminalResources.energy
+				&& room.terminal.energy > room.memory.desiredTerminalResources.energy) {
+				energy = room.terminal
+			}
+		}
+		if (!energy) {
 			energy = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES, {filter:
 				r => r.resourceType === RESOURCE_ENERGY && r.amount > 0, range:1});
 		}
