@@ -33,8 +33,8 @@ module.exports = {
 				let resource;
 				if (!creep.memory.targetResource) {
 					for (let res in creep.room.memory.desiredTerminalResources) {
-						if (creep.room.storage.store[res] > 0 && ((res === RESOURCE_ENERGY && creep.room.storage.store.energy > 40000) || res !== RESOURCE_ENERGY)
-							&& (!creep.room.terminal.store[res] || creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res])) {
+						if (creep.room.storage.store[res] > 0 && (res !== RESOURCE_ENERGY || creep.room.storage.store.energy > Empire.MIN_STORAGE_ENERGY)
+							&& creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res]) {
 							resource = res;
 							creep.memory.targetResource = res
 							break;
@@ -206,10 +206,10 @@ module.exports = {
 		this.decidePraise(creep);
 		this.decideSpawn(creep);
 		this.decideMinerals(creep);
-		this.decideDeliverPraise(creep);
 		this.decideStorage(creep);
 		this.decideTerminal(creep);
 		this.decidePickup(creep);
+		this.decideDeliverPraise(creep);
 
 		if (!creep.memory.task) {
 			creep.memory.task = 'source';
@@ -282,7 +282,7 @@ module.exports = {
 				totalUpgrade += creep.room.controller.memory.incoming || 0;
 				let distance = this.getDistance(creep, upgradeContainer)
 				let metric = upgradeContainer.storeCapacity - (totalUpgrade - (creep.room.controller.memory.rate || 1)*distance);
-				if (distance*2 < creep.ticksToLive && metric > creep.carryCapacity && ((!creep.room.storage && creep.room.container) || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > 50000))) {
+				if (distance*2 < creep.ticksToLive && metric > creep.carryCapacity && ((!creep.room.storage && creep.room.container) || (creep.room.storage && creep.room.storage.store[RESOURCE_ENERGY] > Empire.MIN_STORAGE_ENERGY))) {
 					creep.memory.task = 'upgrade';
 					creep.memory.lastTaskId = upgradeContainer.id;
 					creep.room.controller.memory.incoming = creep.room.controller.memory.incoming + creep.carryCapacity || creep.carryCapacity;

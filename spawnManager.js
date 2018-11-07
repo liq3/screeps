@@ -110,6 +110,14 @@ module.exports = {
 					this.createCreep(spawn, 'G', {role:'combat', job:'guard'});
 					break;
 				}
+			} else if (entry.role === 'spawnHelper') {
+				if (numberSpawnHelpers < entry.amount) {
+					this.createCreep(spawn, 'SH', {role:'spawnHelper'});
+				}
+			} else if (entry.role === 'praiser') {
+				if (numberPraisers < entry.amount) {
+					this.createCreep(spawn, 'SU', {role:'praiser', bossRoom:room.name, finalPos:null});
+				}
 			}
 		}
 
@@ -327,6 +335,23 @@ module.exports = {
 					creep.recycle()
 				}
 			}
+		}
+
+		let desiredPraisers = 0;
+		if (((room.storage && numberPraisers < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)))
+ 			   || room.storage === undefined)
+ 			   && room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType:STRUCTURE_CONTAINER}}).length
+ 			   && numberPraisers < 3) {
+		}
+		if (room.storage && room.storage.store.energy > Empire.MIN_STORAGE_ENERGY) {
+			desiredPraisers = Math.min(3, Math.ceiling((room.storage.store.energy - Empire.MIN_STORAGE_ENERGY) \ 40000));
+		} else if (!room.storage && room.container) {
+			desiredPraisers = 3;
+		}
+		spawnCensus.push({role:'praiser', amount:desiredPraisers, priority:100})
+
+		if ((room.storage && room.storage.store[RESOURCE_ENERGY] > 5000) || (!room.storage && room.container)) {
+ 			spawnCensus.push({role:'spawnHelper', amount:1, priority:50})
 		}
 
 		if (room.memory.supportNewRoom !== undefined) {

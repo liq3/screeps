@@ -14,6 +14,7 @@ global.log = function(str) {
 
 global.Empire = {}
 
+Empire.MIN_STORAGE_ENERGY = 100000
 Empire.getOwnedRooms = function() {
 	let rooms = []
 	for (let r in Game.rooms) {
