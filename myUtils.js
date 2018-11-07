@@ -7,7 +7,7 @@ global.myUtils.avgCpu = function() {
 }
 
 global.myUtils.deleteSpawnCensus = function() {
-	for (let i of Memory.rooms[i]) {
+	for (let i in Memory.rooms) {
 		if (Memory.rooms[i].spawnCensus) {
 			delete Memory.rooms[i].spawnCensus
 		}
