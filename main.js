@@ -70,7 +70,7 @@ let mainLoop = function() {
 				} else if (creep.memory.role === 'recycle') {
 					creep.moveTo(creep.pos.findClosestByPath(FIND_MY_SPAWNS));
 				} else if (!creep.spawning){
-					log("Undefined function for role: " + creep.memory.role);
+					log(`Undefined function for role: ${creep.memory.role} ${creep.name}`);
 				}
 			}
 		} catch (err) {
