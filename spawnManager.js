@@ -31,7 +31,7 @@ module.exports = {
 		for (let r of room.getRoomNames()) {
 			if (Game.rooms[r] === undefined
 					&& _.filter(Game.creeps, c => c.memory.role === 'scout' && c.memory.targetPos.roomName === r).length === 0) {
-				spawnCensus.push({role:'scout', target:r});
+				spawnCensus.shift({role:'scout', target:r, priority:1});
 				break;
 			}
 		}
@@ -135,16 +135,16 @@ module.exports = {
 
 		sourceList.sort((a,b) => a.pathCost - b.pathCost );
 		for (let {source,pathCost} of sourceList) {
-			spawnCensus.push({role:'harvester', target:source.id});
+			spawnCensus.push({role:'harvester', target:source.id, priority:25});
 			if (source.container) {
-				spawnCensus.push({role:'transportCapacity', amount:Math.ceil(2 * pathCost * source.energyCapacity / ENERGY_REGEN_TIME)});
+				spawnCensus.push({role:'transportCapacity', priority:25, amount:Math.ceil(2 * pathCost * source.energyCapacity / ENERGY_REGEN_TIME)});
 			}
 		}
 
 		if (numberPraisers > 0) {
 			let pathCost = Empire.getPathCost(firstSpawn.id, room.controller.id)
 			for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role === 'praiser'})) {
-				spawnCensus.push({role:'transportCapacity', amount:2 * pathCost * praiser.getActiveBodyparts(WORK)});
+				spawnCensus.push({role:'transportCapacity', priority:50, amount:2 * pathCost * praiser.getActiveBodyparts(WORK)});
 			}
 		}
 
@@ -153,10 +153,6 @@ module.exports = {
 			let mineralContainer = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
 			if (mineralContainer && mineral.mineralAmount > 0) {
 				let pathCost = Empire.getPathCost(firstSpawn.id, mineral.id)
-				let miners = _.filter(Game.creeps, {filter: c => c.memory.role === 'miner'})
-				for (let miner of miners) {
-					spawnCensus.push({role:'transportCapacity', amount:2 * pathCost * miner.getActiveBodyparts(WORK) / 5});
-				}
 
 				let spots = 0
 				let terrain = room.getTerrain()
@@ -167,7 +163,12 @@ module.exports = {
 						}
 					}
 				}
-				spawnCensus.push({role:'miner', amount:spots})
+				spawnCensus.push({role:'miner', amount:spots, priority:40})
+
+				let miners = _.filter(Game.creeps, {filter: c => c.memory.role === 'miner'})
+				for (let miner of miners) {
+					spawnCensus.push({role:'transportCapacity', priority:41, amount:2 * pathCost * miner.getActiveBodyparts(WORK) / 5});
+				}
 			}
 		}
 
@@ -189,7 +190,7 @@ module.exports = {
 				if (Game.rooms[r].controller.reservation && Game.rooms[r].controller.reservation.ticksToEnd < 4500 && RCL < 5) {
 					amount = 2;
 				}
-				spawnCensus.push({role:'claimer', reserveTarget:r, amount:amount, priority:50})
+				spawnCensus.push({role:'claimer', reserveTarget:r, amount:amount, priority:30})
 			}
 		}
 
@@ -302,7 +303,7 @@ module.exports = {
 				break
 			}
 		}
-		spawnCensus.push({role:'builder', amount:desiredBuilders})
+		spawnCensus.push({role:'builder', amount:desiredBuilders, priority:27})
 
 		if (desiredBuilders === 1 && numberBuilders > desiredBuilders) {
 			let best = null
@@ -326,6 +327,7 @@ module.exports = {
 			}
 		}
 
+		spawnCensus.sort((a,b) => a.priority - b.priority)
 		return spawnCensus;
 	},
 
