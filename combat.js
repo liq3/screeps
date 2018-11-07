@@ -60,7 +60,7 @@ module.exports = {
 				target = creep.pos.findClosestByPath(FIND_HOSTILE_STRUCTURES);
 			}
 			if(target) {
-				let err = creep.rangedAttack(target);
+				creep.rangedAttack(target);
 				if (creep.pos.getRangeTo(target) > 3 || (target instanceof Creep && (target.getActiveBodyparts(ATTACK) === 0))) {
 					creep.moveTo(target);
 				} else if (creep.pos.getRangeTo(target) < 3) {

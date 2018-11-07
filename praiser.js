@@ -23,7 +23,7 @@ module.exports = {
 			}
 			for (let pos in possiblePositions) {
 				if (possiblePositions[pos]) {
-					xy = pos.split("_")
+					let xy = pos.split("_")
 					creep.memory.finalPos = {x:parseInt(xy[0]), y:parseInt(xy[1])}
 					break;
 				}
@@ -35,13 +35,13 @@ module.exports = {
 			if (error === ERR_NOT_ENOUGH_ENERGY || creep.carry.energy < creep.getActiveBodyparts(WORK)) {
 				let err = creep.withdraw(controller.link, RESOURCE_ENERGY);
 				if (err === ERR_NOT_ENOUGH_ENERGY || err === ERR_INVALID_TARGET) {
-					let err = creep.withdraw(controller.container, RESOURCE_ENERGY);
+					creep.withdraw(controller.container, RESOURCE_ENERGY);
 				} else if (err != OK) {
 					log(`Creep ${creep.name}: ${err} withdrawing from container`)
 				}
 			}
 		} else if (creep.memory.finalPos) {
-			pos = creep.memory.finalPos
+			let pos = creep.memory.finalPos
 			if (creep.pos.isEqualTo(pos.x,pos.y)) {
 				creep.room.controller.memory.rate = creep.room.controller.memory.rate + creep.getActiveBodyparts(WORK) || creep.getActiveBodyparts(WORK);
 				delete creep.memory.finalPos;

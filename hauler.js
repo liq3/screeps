@@ -30,7 +30,7 @@ module.exports = {
 					creep.moveTo(target)
 				}
 			} else if (creep.memory.task == 'deliverToTerminal') {
-				let resesource;
+				let resource;
 				if (!creep.memory.targetResource) {
 					for (let res in creep.room.memory.desiredTerminalResources) {
 						if (creep.room.storage.store[res] > 0 && ((res === RESOURCE_ENERGY && creep.room.storage.store.energy > 40000) || res !== RESOURCE_ENERGY)
@@ -59,16 +59,16 @@ module.exports = {
 					creep.memory.gathering = false
 				}
 			} else if (creep.memory.task != 'storage') {
-			    if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
-    				let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
-    				if (err == ERR_NOT_IN_RANGE) {
-    					creep.moveTo(creep.room.storage);
-    				} else if (err == OK && creep.room.storage.store[RESOURCE_ENERGY] > creep.carryCapacity) {
-    					creep.memory.gathering = false;
-    				}
-			    } else {
-			        creep.gatherEnergy(creep)
-			    }
+				if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
+					let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
+					if (err == ERR_NOT_IN_RANGE) {
+						creep.moveTo(creep.room.storage);
+					} else if (err == OK && creep.room.storage.store[RESOURCE_ENERGY] > creep.carryCapacity) {
+						creep.memory.gathering = false;
+					}
+				} else {
+					creep.gatherEnergy(creep)
+				}
 			} else {
 				creep.memory.gathering = false
 			}
@@ -79,7 +79,7 @@ module.exports = {
 			this.doneDelivering(creep);
 			this.getNewTask(creep);
 		} else if (creep.makeSureInBossRoom()) {
-
+			// empty
 		} else {
 			let err;
 			let target = Game.getObjectById(creep.memory.target);
@@ -88,8 +88,9 @@ module.exports = {
 				err = creep.build(roadSites[0]);
 			}  else if (creep.pos.roomName != creep.memory.bossRoom) {
 				if (creep.makeSureInBossRoom) {
+					//empty
 				} else {
-				    creep.recycle();
+					creep.recycle();
 				}
 			}
 
@@ -98,8 +99,8 @@ module.exports = {
 					target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER
 						&& s.energy < s.energyCapacity});
 					if (!target) {
-				        this.doneDelivering(creep);
-				    } else {
+						this.doneDelivering(creep);
+					} else {
 						creep.memory.target = target.id;
 					}
 				}
@@ -111,8 +112,8 @@ module.exports = {
 				if (!target || (target.energy && target.energy == target.energyCapacity)) {
 					target = creep.pos.findClosestByRange(FIND_MY_STRUCTURES, {filter: s=> (s.structureType == STRUCTURE_SPAWN || s.structureType == STRUCTURE_EXTENSION) && s.energy < s.energyCapacity})
 					if (!target) {
-				        this.doneDelivering(creep);
-				    } else {
+						this.doneDelivering(creep);
+					} else {
 						creep.memory.target = target.id;
 					}
 				}
@@ -131,11 +132,11 @@ module.exports = {
 						creep.memory.target = target.id;
 					}
 				}
-	            if (target) {
-	                err = creep.transfer(target, RESOURCE_ENERGY);
-	                if (err == ERR_NOT_IN_RANGE) {
-	                    creep.moveTo(target);
-	                } else if (err == OK) {
+				if (target) {
+					err = creep.transfer(target, RESOURCE_ENERGY);
+					if (err == ERR_NOT_IN_RANGE) {
+						creep.moveTo(target);
+					} else if (err == OK) {
 						this.doneDelivering(creep);
 						creep.room.controller.memory.incoming = creep.room.controller.memory.incoming - creep.carryCapacity || 0;
 						//log(`${creep.room.controller.memory.incoming} ${creep.name} ${creep.room} Minus ${-creep.carryCapacity || 0}`)
@@ -144,7 +145,7 @@ module.exports = {
 					} else if (err != ERR_FULL) {
 						log(`${creep.name}: weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
 					}
-	            }
+				}
 			} else if (creep.memory.task == 'deliverToTerminal') {
 				target = creep.room.terminal;
 				err = creep.transfer(target, _.findKey(creep.carry));
@@ -153,7 +154,7 @@ module.exports = {
 					delete creep.memory.targetResource;
 				}
 			} else if (creep.memory.task == 'storage' && ((creep.room.storage && creep.room.storage.isActive()) || creep.room.container)) {
-			    target = creep.room.storage ? creep.room.storage : creep.room.container;
+				target = creep.room.storage ? creep.room.storage : creep.room.container;
 				err = creep.transfer(target, RESOURCE_ENERGY);
 				if (err == OK || err == ERR_FULL) {
 					this.doneDelivering(creep);
@@ -185,14 +186,14 @@ module.exports = {
 		}
 	},
 	repairRoads: function(creep) {
-	   	if (creep.carry.energy > 0) {
-        	let road = creep.pos.lookFor(LOOK_STRUCTURES);
-        	if (road.length>0) {
-        		if (road[0].hits<road[0].hitsMax) {
-        			creep.repair(road[0]);
-        		}
-        	}
-        }
+		if (creep.carry.energy > 0) {
+			let road = creep.pos.lookFor(LOOK_STRUCTURES);
+			if (road.length>0) {
+				if (road[0].hits<road[0].hitsMax) {
+					creep.repair(road[0]);
+				}
+			}
+		}
 	},
 	doneDelivering: function(creep) {
 		creep.memory.gathering = true;
@@ -367,8 +368,8 @@ module.exports = {
 				}
 
 				if (creep.memory.gathering && err != ERR_NOT_IN_RANGE) {
-				   	if (source.container) {
-				   		target = source.container;
+					if (source.container) {
+						target = source.container;
 						if (creep.carryCapacity - creep.carry.energy <= target.store[RESOURCE_ENERGY] + withdrawAmount) {
 							if (withdrawAmount) {
 								err = creep.withdraw(target, RESOURCE_ENERGY, withdrawAmount);
@@ -376,10 +377,10 @@ module.exports = {
 								err = creep.withdraw(target, RESOURCE_ENERGY);
 							}
 						}
-				   		if (err == OK) {
-				   			creep.memory.gathering = false;
-				   		}
-				   	}
+						if (err == OK) {
+							creep.memory.gathering = false;
+						}
+					}
 				}
 				if (!target) {
 					creep.moveTo(source, {range:2});

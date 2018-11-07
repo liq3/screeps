@@ -4,17 +4,17 @@ module.exports = {
 
 		if (creep.memory.gathering && creep.carry.energy < creep.carryCapacity) {
 			creep.gatherEnergy(creep);
-	    } else if (creep.memory.gathering && creep.carry.energy === creep.carryCapacity) {
-	        creep.memory.gathering = false;
+		} else if (creep.memory.gathering && creep.carry.energy === creep.carryCapacity) {
+			creep.memory.gathering = false;
 			delete creep.memory.energyId;
-	    } else if (!creep.memory.gathering && creep.carry.energy === 0) {
-	        creep.memory.gathering = true;
-	    } else {
-	        var target = Game.getObjectById(creep.memory.targetId);
+		} else if (!creep.memory.gathering && creep.carry.energy === 0) {
+			creep.memory.gathering = true;
+		} else {
+			var target = Game.getObjectById(creep.memory.targetId);
 			if (target instanceof Structure && target.hits === target.hitsMax) {
 				creep.memory.targetId = null;
 			}
-	        if(!target || Game.time - creep.memory.jobStartTime > 100) {
+			if(!target || Game.time - creep.memory.jobStartTime > 100) {
 				let possible = {best:1000000, id:null};
 				for (let r of Game.rooms[creep.memory.bossRoom].getRoomNames()) {
 					if (!Game.rooms[r]) {
@@ -31,11 +31,11 @@ module.exports = {
 								}
 							}
 							if ((itr.structureType === STRUCTURE_ROAD || itr.structureType === STRUCTURE_CONTAINER)) {
-							    if (itr.hits > (itr.hitsMax/2)) {
-								    score += 2000;
-							    } else {
-							        score -= 100;
-							    }
+								if (itr.hits > (itr.hitsMax/2)) {
+									score += 2000;
+								} else {
+									score -= 100;
+								}
 							}
 							if (score < possible.best) {
 								possible.best = score;
@@ -86,11 +86,11 @@ module.exports = {
 			if (err === ERR_NOT_IN_RANGE) {
 				creep.moveTo(target);
 			} else if (err != 0) {
-			    //log(err + " " + target);
+				//log(err + " " + target);
 			}
-	    }
+		}
 	},
 	getScore: function(target, creep) {
-	    return PathFinder.search(creep.pos, {pos:target.pos, range:3}, {swampCost:10, plainCost:2, roomCallback:Empire.costMatrixCallback}).cost;
+		return PathFinder.search(creep.pos, {pos:target.pos, range:3}, {swampCost:10, plainCost:2, roomCallback:Empire.costMatrixCallback}).cost;
 	}
 };
