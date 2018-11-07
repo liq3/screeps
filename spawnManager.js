@@ -13,7 +13,7 @@ module.exports = {
 			return
 		}
 
-		if (!room.memory.spawnCensus) {
+		if (!room.memory.spawnCensus || !room.memory.spawnCensus.length) {
 			room.memory.spawnCensus = this.createSpawnCensus(room);
 		}
 
@@ -31,7 +31,7 @@ module.exports = {
 		for (let r of room.getRoomNames()) {
 			if (Game.rooms[r] === undefined
 					&& _.filter(Game.creeps, c => c.memory.role === 'scout' && c.memory.targetPos.roomName === r).length === 0) {
-				spawnCensus.shift({role:'scout', target:r, priority:1});
+				spawnCensus.unshift({role:'scout', target:r, priority:1});
 				break;
 			}
 		}
@@ -117,7 +117,7 @@ module.exports = {
 	},
 
 	createSpawnCensus: function(room) {
-		let spawnCensus = [{role:'hauler', amount:2, design:'small'}];
+		let spawnCensus = [{role:'hauler', amount:2, design:'small', priority:12}];
 		var RCL = room.controller.level;
 		let numberHarvesters = this.sumCreeps('harvester', room);
 		let numberSpawnHelpers = this.sumCreeps('spawnHelper', room);
@@ -408,7 +408,7 @@ module.exports = {
 					parts = parts.concat([ATTACK,MOVE]);
 				}
 			} else if (data.job === 'attackRanged' || data.job === 'guard') {
-				let numberParts = Math.min(16, Math.floor((spawn.room.energyCapacityAvailable - 300) / 260));
+				let numberParts = Math.min(12, Math.floor((spawn.room.energyCapacityAvailable - 300) / 260));
 				parts = Array(numberParts).fill(TOUGH);
 				parts = parts.concat(Array(numberParts*2+1).fill(MOVE));
 				parts = parts.concat(Array(numberParts-1).fill(RANGED_ATTACK));
