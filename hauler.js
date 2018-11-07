@@ -375,7 +375,7 @@ module.exports = {
 		if (!creep.memory.task && creep.room.storage && creep.room.terminal) {
 			for (let res in creep.room.terminal.store) {
 				//log(res, creep.room.memory.desiredTerminalResources[res], creep.room.terminal.store[res], creep.room.storage.store[res])
-				if (creep.room.terminal.store[res] > creep.room.memory.desiredTerminalResources[res]) {
+				if (!creep.room.memory.desiredTerminalResources || creep.room.terminal.store[res] > creep.room.memory.desiredTerminalResources[res]) {
 					creep.memory.task = 'takeFromTerminal';
 					creep.memory.lastTaskId = creep.room.storage.id;
 					break;
