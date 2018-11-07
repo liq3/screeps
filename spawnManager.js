@@ -338,13 +338,8 @@ module.exports = {
 		}
 
 		let desiredPraisers = 0;
-		if (((room.storage && numberPraisers < Math.ceil((room.storage.store[RESOURCE_ENERGY]-50000) / (20 * room.energyCapacityAvailable)))
- 			   || room.storage === undefined)
- 			   && room.controller.pos.findInRange(FIND_STRUCTURES, 2, {filter: {structureType:STRUCTURE_CONTAINER}}).length
- 			   && numberPraisers < 3) {
-		}
 		if (room.storage && room.storage.store.energy > Empire.MIN_STORAGE_ENERGY) {
-			desiredPraisers = Math.min(3, Math.ceiling((room.storage.store.energy - Empire.MIN_STORAGE_ENERGY) \ 40000));
+			desiredPraisers = Math.min(3, Math.ceiling((room.storage.store.energy - Empire.MIN_STORAGE_ENERGY) / 40000));
 		} else if (!room.storage && room.container) {
 			desiredPraisers = 3;
 		}
