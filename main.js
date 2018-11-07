@@ -21,8 +21,6 @@ for (let i of creepRoles) {
 	creepFunctions[i] = require(i);
 }
 
-var debug = false;
-
 let mainLoop = function() {
 	Empire.deadCreeps = []
 	for(let i in Memory.creeps) {
