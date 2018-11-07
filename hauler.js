@@ -58,6 +58,35 @@ module.exports = {
 				} else {
 					creep.memory.gathering = false
 				}
+			} else if (creep.memory.task === 'takeFromTerminal') {
+				let resource;
+				if (!creep.memory.targetResource) {
+					for (let res in creep.room.terminal.store) {
+						if (creep.room.terminal.store[res] > creep.room.memory.desiredTerminalResources[res]) {
+							resource = res;
+							creep.memory.targetResource = res
+							break;
+						}
+					}
+				} else {
+					resource = creep.memory.targetResource
+				}
+				if (!resource) {
+					this.doneDelivering(creep)
+					return;
+				}
+
+				let amount = creep.room.terminal.store[res] - creep.room.memory.desiredTerminalResources[res]
+				let err = creep.withdraw(creep.room.storage, resource, amount ? amount : undefined);
+				if (err === ERR_NOT_IN_RANGE) {
+					creep.moveTo(creep.room.storage);
+				} else if (err === ERR_NOT_ENOUGH_RESOURCES) {
+					delete creep.memory.targetResource;
+				} else if (err != OK) {
+					log(`${creep} ${creep.room.name}: err withdrawing ${resource} from storage ${err}`)
+				} else {
+					creep.memory.gathering = false
+				}
 			} else if (creep.memory.task != 'storage') {
 				if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
 					let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
@@ -153,6 +182,13 @@ module.exports = {
 					this.doneDelivering(creep);
 					delete creep.memory.targetResource;
 				}
+			} else if (creep.memory.task == 'takeFromTerminal') {
+				target = creep.room.storage;
+				err = creep.transfer(target, _.findKey(creep.carry));
+				if (err == OK) {
+					this.doneDelivering(creep);
+					delete creep.memory.targetResource;
+				}
 			} else if (creep.memory.task == 'storage' && ((creep.room.storage && creep.room.storage.isActive()) || creep.room.container)) {
 				target = creep.room.storage ? creep.room.storage : creep.room.container;
 				err = creep.transfer(target, RESOURCE_ENERGY);
@@ -207,6 +243,7 @@ module.exports = {
 		this.decideSpawn(creep);
 		this.decideMinerals(creep);
 		this.decideStorage(creep);
+		this.decideTakeTerminal(creep);
 		this.decideTerminal(creep);
 		this.decidePickup(creep);
 		this.decideDeliverPraise(creep);
@@ -323,6 +360,19 @@ module.exports = {
 						creep.memory.task = 'pickup';
 						break;
 					}
+				}
+			}
+		}
+	},
+
+	decideTakeTerminal: function(creep) {
+		if (!creep.memory.task && creep.room.storage && creep.room.terminal) {
+			for (let res in creep.room.terminal.store) {
+				//log(res, creep.room.memory.desiredTerminalResources[res], creep.room.terminal.store[res], creep.room.storage.store[res])
+				if (creep.room.terminal.store[res] > creep.room.memory.desiredTerminalResources[res]) {
+					creep.memory.task = 'takeFromTerminal';
+					creep.memory.lastTaskId = creep.room.storage.id;
+					break;
 				}
 			}
 		}
