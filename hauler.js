@@ -125,8 +125,13 @@ module.exports = {
 
 			if (creep.memory.task == 'tower') {
 				if (!target || (target.energy && target.energy == target.energyCapacity))  {
-					target = creep.pos.findClosestByPath(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER
-						&& s.energy < s.energyCapacity});
+					let targets = creep.room.find(FIND_MY_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_TOWER && s.energy < s.energyCapacity});
+					if (targets.length > 1) {
+						targets.sort((a,b) => a.energy - b.energy);
+						target = targets[0];
+					} else if (targets.length === 1) {
+						target = targets[0];
+					}
 					if (!target) {
 						this.doneDelivering(creep);
 					} else {
