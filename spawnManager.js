@@ -339,7 +339,7 @@ module.exports = {
 
 		let desiredPraisers = 0;
 		if (room.storage && room.storage.store.energy > Empire.MIN_STORAGE_ENERGY) {
-			desiredPraisers = Math.min(3, Math.ceiling((room.storage.store.energy - Empire.MIN_STORAGE_ENERGY) / 40000));
+			desiredPraisers = Math.min(3, Math.ceil((room.storage.store.energy - Empire.MIN_STORAGE_ENERGY) / 40000));
 		} else if (!room.storage && room.container) {
 			desiredPraisers = 3;
 		}
