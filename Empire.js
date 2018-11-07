@@ -1,6 +1,6 @@
 /* eslint no-console:off*/
 
-REGEX_ROOM = /[WE](\d{1,2})[NS](\d{1,2})/g
+REGEX_ROOM = /[^\/\>][WE](\d{1,2})[NS](\d{1,2})/g
 
 global.log = function(str) {
 	if (typeof(str) !== 'string') {
