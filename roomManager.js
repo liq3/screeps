@@ -59,7 +59,7 @@ module.exports = {
 		}
 
 		if (Game.cpu.bucket > 8000 && room.terminal && !room.terminal.cooldown) {
-			for (const resource in [RESOURCE_HYDROGEN, RESOURCE_OXYGEN]) {
+			for (const resource of [RESOURCE_HYDROGEN, RESOURCE_OXYGEN]) {
 				if (room.terminal.store[resource] > 1000 && room.terminal.store[RESOURCE_ENERGY] > 1000) {
 					let orders = Game.market.getAllOrders({type:ORDER_BUY, resourceType:resource, price:1})
 					orders.sort(o => Game.market.calcTransactionCost(1000, room.name, o.roomName));
