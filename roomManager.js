@@ -69,7 +69,7 @@ module.exports = {
 						let cost = Game.market.calcTransactionCost(amount, room.name, order.roomName)
 						if (cost < room.terminal.store.energy && amount > 0) {
 							let err = Game.market.deal(order.id, amount, room.name)
-							log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${order.amount*order.price}`);
+							log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${amount*order.price}`);
 							maxResources -= amount
 						}
 					}
