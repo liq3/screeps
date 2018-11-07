@@ -167,8 +167,8 @@ module.exports = {
 		}
 
 		if (room.find(FIND_MY_STRUCTURES, {filter:{structureType:STRUCTURE_EXTRACTOR}}).length) {
-			let mineral = room.find(FIND_MINERALS)[0];
-			let mineralContainer = mineral.pos.findInRange(FIND_STRUCTURES, 1, {filter: {structureType:STRUCTURE_CONTAINER}})[0]
+			let mineral = room.mineral;
+			let mineralContainer = mineral.container
 			if (mineralContainer && mineral.mineralAmount > 0) {
 				let pathCost = Empire.getPathCost(firstSpawn.id, mineral.id)
 
