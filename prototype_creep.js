@@ -98,9 +98,3 @@ Creep.prototype.recycle = function() {
 	}
 	this.memory.role = 'recycle'
 }
-
-Object.defineProperty(Creep, 'url', {
-	get: function() {
-		return `<a href="#!/room/${Game.shard.name}/${this.room.name}">${this.room.name}</a>`
-	}
-});

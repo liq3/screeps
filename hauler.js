@@ -54,7 +54,7 @@ module.exports = {
 				} else if (err === ERR_NOT_ENOUGH_RESOURCES) {
 					delete creep.memory.targetResource;
 				} else if (err != OK) {
-					log(`${creep.url} ${creep.room.name}: err withdrawing ${resource} from storage ${err}`)
+					log(`${creep} ${creep.room.name}: err withdrawing ${resource} from storage ${err}`)
 				} else {
 					creep.memory.gathering = false
 				}
@@ -139,11 +139,11 @@ module.exports = {
 					} else if (err == OK) {
 						this.doneDelivering(creep);
 						creep.room.controller.memory.incoming = creep.room.controller.memory.incoming - creep.carryCapacity || 0;
-						//log(`${creep.room.controller.memory.incoming} ${creep.url} ${creep.room} Minus ${-creep.carryCapacity || 0}`)
+						//log(`${creep.room.controller.memory.incoming} ${creep} ${creep.room} Minus ${-creep.carryCapacity || 0}`)
 					} else if (err == ERR_INVALID_TARGET) {
 						delete creep.memory.target;
 					} else if (err != ERR_FULL) {
-						log(`${creep.url}: weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
+						log(`${creep}: weird error while delivering energy to the praise box ${err} ${target} ${target.id}`)
 					}
 				}
 			} else if (creep.memory.task == 'deliverToTerminal') {
@@ -286,7 +286,7 @@ module.exports = {
 					creep.memory.task = 'upgrade';
 					creep.memory.lastTaskId = upgradeContainer.id;
 					creep.room.controller.memory.incoming = creep.room.controller.memory.incoming + creep.carryCapacity || creep.carryCapacity;
-					//log(`${creep.room.controller.memory.incoming} ${creep.url} ${creep.room} Add ${creep.carryCapacity || creep.carryCapacity}`)
+					//log(`${creep.room.controller.memory.incoming} ${creep} ${creep.room} Add ${creep.carryCapacity || creep.carryCapacity}`)
 				}
 			}
 		}
@@ -440,7 +440,7 @@ module.exports = {
 	death: function(creep) {
 		if (creep.memory.task == 'upgrade') {
 			Game.rooms[creep.memory.bossRoom].controller.memory.incoming -= creep.carryCapacity;
-			//log(`${creep.room.controller.memory.incoming} ${creep.url} ${creep.room} Minus ${-creep.carryCapacity || 0}`)
+			//log(`${creep.room.controller.memory.incoming} ${creep} ${creep.room} Minus ${-creep.carryCapacity || 0}`)
 		}
 	}
 };

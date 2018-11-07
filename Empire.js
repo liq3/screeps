@@ -1,12 +1,14 @@
 /* eslint no-console:off*/
 
-REGEX_ROOM = /[^\/\>][WE](\d{1,2})[NS](\d{1,2})/g
+REGEX_ROOM = /[WE](\d{1,2})[NS](\d{1,2})/g
+REGEX_CREEP = /\[creep (.+)]/g
 
 global.log = function(str) {
 	if (typeof(str) !== 'string') {
 		str = ''+str
 	}
-	str.replace(REGEX_ROOM, `<a href="#!/room/${Game.shard.name}/$&">$&</a>`)
+	str = str.replace(REGEX_ROOM, `<a href="#!/room/${Game.shard.name}/$&">$&</a>`)
+	str = str.replace(REGEX_CREEP, (match, p1) => `<a href="#!/room/${Game.shard.name}/${Game.creeps[p1].room.name}">${p1}</a>`)
 	console.log(str)
 }
 

@@ -10,7 +10,7 @@ module.exports = {
 					if (err == ERR_NOT_ENOUGH_RESOURCES) {
 						creep.recycle();
 					} else if (err != OK) {
-						log(`${creep.url} Error harvesting mineral ${err}`);
+						log(`${creep} Error harvesting mineral ${err}`);
 					}
 				}
 			} else if (Game.time % 6 === 1) {
@@ -18,7 +18,7 @@ module.exports = {
 				if (container && _.sum(container.store) + _.sum(creep.carry) <= container.storeCapacity) {
 					let err = creep.transfer(container, mineral.mineralType)
 					if (err != OK) {
-						log(`${creep.url} Error transferring minerals to container ${err}`);
+						log(`${creep} Error transferring minerals to container ${err}`);
 					}
 				}
 			}
