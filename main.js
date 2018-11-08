@@ -21,6 +21,19 @@ for (let i of creepRoles) {
 	creepFunctions[i] = require(i);
 }
 
+global.lastMemoryTick = undefined;
+function tryInitSameMemory() {
+    if (lastMemoryTick && global.LastMemory && Game.time == (lastMemoryTick + 1)) {
+        delete global.Memory
+        global.Memory = global.LastMemory
+        RawMemory._parsed = global.LastMemory
+    } else {
+        Memory;
+        global.LastMemory = RawMemory._parsed
+    }
+    lastMemoryTick = Game.time
+}
+
 Memory.globalTimes.push(Memory.globalTime)
 Memory.globalTime = 0
 
@@ -185,7 +198,7 @@ let mainLoop = function() {
 	}
 }
 
-module.exports.loop = mainLoop
+
 
 if (useProfiler) {
 	const profiler = require('screeps-profiler');
@@ -196,5 +209,13 @@ if (useProfiler) {
 	profiler.registerObject(spawnManager, 'spawnManager')
 	profiler.registerObject(Empire, 'Empire')
 	//PathFinder.search = profiler.registerFN(PathFinder.search, 'PathFinder.search')
-	module.exports.loop = () => profiler.wrap(mainLoop);
+	module.exports.loop = () => {
+		tryInitSameMemory()
+		profiler.wrap(mainLoop);
+	}
+} else {
+	module.exports.loop = () => {
+		tryInitSameMemory();
+		mainLoop();
+	}
 }
