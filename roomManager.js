@@ -78,7 +78,7 @@ module.exports = {
 						}
 					}
 				} else if ((room.terminal.store[resource] || 0) + (room.storage.store[resource] || 0) < minRes
-							&& room.memory.buy && room.memory.buy[resource].amount > 0) {
+							&& room.memory.buy && room.memory.buy[resource] && room.memory.buy[resource].amount > 0) {
 					let maxResources = Math.min(minRes - ((room.terminal.store[resource] || 0) + (room.storage.store[resource] || 0)), room.memory.buy[resource].amount)
 					if (maxResources <= 0) {
 						continue;
