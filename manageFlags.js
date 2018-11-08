@@ -13,6 +13,7 @@ module.exports = {
         if (!global.flagRoads || !flag.memory.notFirst) {
             global.flagRoads = Empire.getRemoteRoadPlans(room)
             flag.memory.notFirst = true
+            log(`Calculating remote roads for ${room.name} and it's slaves.`)
         }
         _.forEach(global.flagRoads, r=>Game.rooms[r.roomName].visual.structure(r.x, r.y, STRUCTURE_ROAD))
         for (let r of room.getRoomNames()) {
