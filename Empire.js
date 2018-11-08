@@ -61,7 +61,7 @@ Empire.costMatrixCallback = function(roomName, costMatrix, options) {
 			structures = Game.rooms[roomName].find(FIND_STRUCTURES)
 		}
 		if (options.structures) {
-			structures = structures.concat(options.structures).filter(s=>s.pos.roomName === roomName)
+			structures = structures.concat(options.structures.filter(s=>s.pos.roomName === roomName));
 		}
 		for (let structure of structures) {
 			if (costMatrix.get(structure.pos.x, structure.pos.y))
