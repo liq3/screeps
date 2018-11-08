@@ -4,7 +4,7 @@ module.exports = {
     run: function() {
         for (let f in Game.flags) {
             let flag = Game.flags[f]
-            if (flag.name === displayRemoteRoads) {
+            if (flag.name === 'displayRemoteRoads') {
                 this.remoteRoadFlag()
             } else if (flag.name.match(/displayCostMatrix/)) {
                 this.costMatrix(flag)
