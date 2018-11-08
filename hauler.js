@@ -61,7 +61,7 @@ module.exports = {
 				let resource;
 				if (!creep.memory.targetResource) {
 					for (let res in creep.room.terminal.store) {
-						if (this.decideTerminalTakeSpecificRes(creep, res)) {
+						if (this.decideTakeTerminalSpecificRes(creep, res)) {
 							resource = res;
 							creep.memory.targetResource = res
 							break;
@@ -386,7 +386,7 @@ module.exports = {
 			&& !creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.task && c.memory.task === 'takeFromTerminal'}).length) {
 			for (let res in creep.room.terminal.store) {
 				//log(res, creep.room.memory.desiredTerminalResources[res], creep.room.terminal.store[res], creep.room.storage.store[res])
-				if (this.decideTerminalTakeSpecificRes(creep, res)) {
+				if (this.decideTakeTerminalSpecificRes(creep, res)) {
 					creep.memory.task = 'takeFromTerminal';
 					creep.memory.lastTaskId = creep.room.storage.id;
 					break;
