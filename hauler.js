@@ -420,18 +420,18 @@ module.exports = {
 
 	decideLabsMinerals: function(creep) {
 		if (!creep.memory.task && creep.room.storage) {
-			let flag = creep.room.find(FIND_FLAGS).filter(f => f.test(/lab \w+ \w+/))[0]
+			let flag = creep.room.find(FIND_FLAGS).filter(f => f.name.match(/lab \w+ \w+/))[0]
 			if (flag) {
-				let [reg, m1, m2] = flag.name.match(/lab \w+ \w+/)
-				let lab1 = flag.pos.lookFor(FIND_MY_STRUCTURES).filter(s=>s.structureType===STRUCTURE_LAB)[0]
-				let lab2 = creep.room.lookForAt(FIND_MY_STRUCTURES, flag.pos.x+1, flag.pos.y+1).filter(s=>s.structureType===STRUCTURE_LAB)[0]
-				if (lab1.mineralAmount < 500 && room.storage.store[m1] > 0) {
+				let [reg, m1, m2] = flag.name.match(/lab (\w+) (\w+)/)
+				let lab1 = flag.pos.lookFor(LOOK_STRUCTURES).filter(s=>s.structureType===STRUCTURE_LAB)[0]
+				let lab2 = creep.room.lookForAt(LOOK_STRUCTURES, flag.pos.x+1, flag.pos.y+1).filter(s=>s.structureType===STRUCTURE_LAB)[0]
+				if (lab1.mineralAmount < 500 && creep.room.storage.store[m1] > 0) {
 					creep.memory.labTarget = lab1.id;
 					creep.memory.task = 'deliverLab';
 					creep.memory.labResource = m1
 					return;
 				}
-				if (lab2.mineralAmount < 500 && room.storage.store[m2] > 0) {
+				if (lab2.mineralAmount < 500 && creep.room.storage.store[m2] > 0) {
 					creep.memory.labTarget = lab2.id;
 					creep.memory.task = 'deliverLab';
 					creep.memory.labResource = m2
