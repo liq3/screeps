@@ -92,6 +92,7 @@ module.exports = {
 							let err = Game.market.deal(order.id, amount, room.name)
 							log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${amount*order.price}`);
 							maxResources -= amount
+							room.memory.buy[resource].amount -= amount
 						}
 					}
 				}
