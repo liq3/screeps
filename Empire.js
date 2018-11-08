@@ -140,7 +140,7 @@ Empire.getRemoteRoadPlans = function(room) {
 			if (Game.rooms[remoteName]) {
 				for (let source of Game.rooms[remoteName].find(FIND_SOURCES)) {
 					let path = PathFinder.search(room.find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_SPAWN}})[0].pos,
-						{pos:source.pos, range:1}, {
+						{pos:source.container.pos, range:1}, {
 							roomCallback:Empire.getCostMatrixCallback({
 								structures: roads.map(r=>{
 									r = {pos:r};
