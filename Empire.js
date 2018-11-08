@@ -36,6 +36,13 @@ Empire.costMatrixCallback = function(roomName, costMatrix, options) {
 		return false;
 	}
 
+	if (!options) {
+		options = {
+			ignoreStructures:false,
+			roadCost:1
+		};
+	}
+
 	if (!costMatrix) {
 		costMatrix = new PathFinder.CostMatrix;
 	}
@@ -48,7 +55,7 @@ Empire.costMatrixCallback = function(roomName, costMatrix, options) {
 			for (let structure of structures) {
 				if (structure.structureType === STRUCTURE_ROAD) {
 					if (costMatrix.get(structure.pos.x, structure.pos.y) === 0) {
-						costMatrix.set(structure.pos.x, structure.pos.y, options.roadCost || 1);
+						costMatrix.set(structure.pos.x, structure.pos.y, options.roadCost);
 					}
 				} else if (!(structure.structureType === STRUCTURE_RAMPART || structure.structureType === STRUCTURE_CONTAINER)) {
 					costMatrix.set(structure.pos.x, structure.pos.y, 255);
