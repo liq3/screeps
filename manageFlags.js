@@ -16,7 +16,7 @@ module.exports = {
         _.forEach(global.flagRoads, r=>Game.rooms[r.roomName].visual.structure(r.x, r.y, STRUCTURE_ROAD))
         for (let r of room.getRoomNames()) {
             if (Game.rooms[r]) {
-                Game.rooms[r].visual.connectRoads
+                Game.rooms[r].visual.connectRoads()
             }
         }
     }

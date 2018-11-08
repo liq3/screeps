@@ -27,7 +27,11 @@ Empire.getOwnedRooms = function() {
 	return rooms
 }
 
-Empire.costMatrixCallback = function(roomName, costMatrix) {
+Empire.getCostMatrixCallback = function(options) {
+	return (roomName, costMatrix) => {Empire.costMatrixCallback(roomName, costMatrix, options)};
+}
+
+Empire.costMatrixCallback = function(roomName, costMatrix, options) {
 	if (Memory.rooms[roomName] && Memory.rooms[roomName].hostile) {
 		return false;
 	}
@@ -36,13 +40,19 @@ Empire.costMatrixCallback = function(roomName, costMatrix) {
 		costMatrix = new PathFinder.CostMatrix;
 	}
 	if (Game.rooms[roomName]) {
-		for (let structure of Game.rooms[roomName].find(FIND_STRUCTURES)) {
-			if (structure.structureType === STRUCTURE_ROAD) {
-				if (costMatrix.get(structure.pos.x, structure.pos.y) === 0) {
-					costMatrix.set(structure.pos.x, structure.pos.y, 1);
+		if (!options.ignoreStructures) {
+			let structures = Game.rooms[roomName].find(FIND_STRUCTURES)
+			if (options.structures) {
+				structures = structures.concat(options.structures)
+			}
+			for (let structure of structures) {
+				if (structure.structureType === STRUCTURE_ROAD) {
+					if (costMatrix.get(structure.pos.x, structure.pos.y) === 0) {
+						costMatrix.set(structure.pos.x, structure.pos.y, options.roadCost || 1);
+					}
+				} else if (!(structure.structureType === STRUCTURE_RAMPART || structure.structureType === STRUCTURE_CONTAINER)) {
+					costMatrix.set(structure.pos.x, structure.pos.y, 255);
 				}
-			} else if (!(structure.structureType === STRUCTURE_RAMPART || structure.structureType === STRUCTURE_CONTAINER)) {
-				costMatrix.set(structure.pos.x, structure.pos.y, 255);
 			}
 		}
 
@@ -111,7 +121,14 @@ Empire.getRemoteRoadPlans = function(room) {
 			if (Game.rooms[remoteName]) {
 				for (let source of Game.rooms[remoteName].find(FIND_SOURCES)) {
 					let path = PathFinder.search(room.find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_SPAWN}})[0].pos,
-						{pos:source.pos, range:2}, {roomCallback:Empire.costMatrixCallback, plainsCost:2, swampCost:2})
+						{pos:source.pos, range:2}, {
+							roomCallback:Empire.getCostMatrixCallback({
+								structures: roads.map(r=>{
+									r.structureType = STRUCTURE_ROAD;
+									return r;
+								})
+							}),
+						 plainsCost:2, swampCost:2})
 					roads = roads.concat(path.path);
 				}
 			} else if (Memory.rooms[remoteName] && Memory.rooms[remoteName].sources) {
