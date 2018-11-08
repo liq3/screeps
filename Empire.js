@@ -64,7 +64,6 @@ Empire.costMatrixCallback = function(roomName, costMatrix, options) {
 			structures = structures.concat(options.structures.filter(s=>s.pos.roomName === roomName));
 		}
 		for (let structure of structures) {
-			if (costMatrix.get(structure.pos.x, structure.pos.y))
 			if (structure.structureType === STRUCTURE_ROAD) {
 				if (costMatrix.get(structure.pos.x, structure.pos.y) === 0) {
 					costMatrix.set(structure.pos.x, structure.pos.y, options.roadCost);

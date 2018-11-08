@@ -26,6 +26,16 @@ module.exports = {
                 Game.rooms[r].visual.connectRoads()
             }
         }
+        if (Game.flags.confirm && Game.flags.confirm.pos.roomName == Game.flags.displayRemoteRoads.pos.roomName) {
+            for (let pos of global.flagRoads) {
+                if (!Memory.rooms[pos.roomName].plannedRoads) {
+                    Memory.rooms[pos.roomName].plannedRoads = []
+                }
+                Memory.rooms[pos.roomName].plannedRoads.push({x:pos.x, y:pos.y, type:STRUCTURE_ROAD})
+            }
+            Game.flags.confirm.remove();
+            Game.flags.displayRemoteRoads.remove();
+        }
     },
 
     costMatrix: function(flag) {
