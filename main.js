@@ -52,6 +52,12 @@ let mainLoop = function() {
 		}
 	}
 
+	for(let i in Memory.flags) {
+		if(!Game.flags[i]) {
+			delete Memory.flags[i];
+		}
+	}
+
 	if (Memory.dangerRooms === undefined) {
 		Memory.dangerRooms = []
 	}
