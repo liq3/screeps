@@ -1,4 +1,4 @@
-// spawns, creeps, flags, rooms have .memory
+// spawns, creeps, flags, rooms have .memory 
 
 const useProfiler = true
 
