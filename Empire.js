@@ -28,7 +28,7 @@ Empire.getOwnedRooms = function() {
 }
 
 Empire.getCostMatrixCallback = function(options) {
-	return (roomName, costMatrix) => {Empire.costMatrixCallback(roomName, costMatrix, options)};
+	return (roomName, costMatrix) => {return Empire.costMatrixCallback(roomName, costMatrix, options)};
 }
 
 Empire.costMatrixCallback = function(roomName, costMatrix, options) {
