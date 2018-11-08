@@ -161,7 +161,7 @@ module.exports = {
 
 		if (numberPraisers > 0) {
 			let pathCost = Empire.getPathCost(firstSpawn.id, room.controller.id)
-			for (let praiser of _.filter(Game.creeps, {filter: c => c.memory.role === 'praiser'})) {
+			for (let praiser of room.find(FIND_MY_CREEPS, {filter: c => c.memory.role === 'praiser'})) {
 				spawnCensus.push({role:'transportCapacity', priority:50, amount:2 * pathCost * praiser.getActiveBodyparts(WORK)});
 			}
 		}
