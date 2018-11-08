@@ -181,7 +181,7 @@ module.exports = {
 						}
 					}
 				}
-				spawnCensus.push({role:'miner', amount:spots, priority:40})
+				spawnCensus.push({role:'miner', amount:Math.min(spots, 3), priority:40})
 
 				let miners = _.filter(Game.creeps, {filter: c => c.memory.role === 'miner'})
 				for (let miner of miners) {

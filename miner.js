@@ -16,7 +16,9 @@ module.exports = {
 				let container = mineral.container
 				if (container && _.sum(container.store) + _.sum(creep.carry) <= container.storeCapacity) {
 					let err = creep.transfer(container, mineral.mineralType)
-					if (err != OK) {
+					if (err == ERR_NOT_IN_RANGE) {
+                        creep.moveTo(container)
+                    } else if (err != OK) {
 						log(`${creep} Error transferring minerals to container ${err}`);
 					}
 				}
