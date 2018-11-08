@@ -51,7 +51,7 @@ global.myUtils.haulingSystemCheck = function() {
 		if (!room.controller.my) {
 			continue;
 		}
-		let haulers = _.sum(_.filter(Game.creeps, c=>c.memory.role === 'hauler' && c.memory.task === 'upgrade'), 'carryCapacity')
+		let haulers = _.sum(_.filter(Game.creeps, c=>c.memory.role === 'hauler' && c.memory.task === 'upgrade' && c.memory.bossRoom === room.name), 'carryCapacity')
 		let rate = _.sum(room.find(FIND_MY_CREEPS, {filter:c=>c.memory.role === 'praiser'}), c=>c.getActiveBodyparts(WORK))
 		log(`${room.name} Incoming:${haulers}/${room.controller.memory.incoming} Rate:${rate}/${room.controller.memory.rate}`)
 	}
