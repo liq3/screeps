@@ -46,23 +46,27 @@ Empire.costMatrixCallback = function(roomName, costMatrix, options) {
 	if (!costMatrix) {
 		costMatrix = new PathFinder.CostMatrix;
 	}
-	if (Game.rooms[roomName]) {
-		if (!options.ignoreStructures) {
-			let structures = Game.rooms[roomName].find(FIND_STRUCTURES)
-			if (options.structures) {
-				structures = structures.concat(options.structures)
-			}
-			for (let structure of structures) {
-				if (structure.structureType === STRUCTURE_ROAD) {
-					if (costMatrix.get(structure.pos.x, structure.pos.y) === 0) {
-						costMatrix.set(structure.pos.x, structure.pos.y, options.roadCost);
-					}
-				} else if (!(structure.structureType === STRUCTURE_RAMPART || structure.structureType === STRUCTURE_CONTAINER)) {
-					costMatrix.set(structure.pos.x, structure.pos.y, 255);
+
+	if (!options.ignoreStructures) {
+		let structures = [];
+		if (Game.rooms[noomName]) {
+			structures = Game.rooms[roomName].find(FIND_STRUCTURES)
+		}
+		if (options.structures) {
+			structures = structures.concat(options.structures)
+		}
+		for (let structure of structures) {
+			if (structure.structureType === STRUCTURE_ROAD) {
+				if (costMatrix.get(structure.pos.x, structure.pos.y) === 0) {
+					costMatrix.set(structure.pos.x, structure.pos.y, options.roadCost);
 				}
+			} else if (!(structure.structureType === STRUCTURE_RAMPART || structure.structureType === STRUCTURE_CONTAINER)) {
+				costMatrix.set(structure.pos.x, structure.pos.y, 255);
 			}
 		}
+	}
 
+	if (Game.rooms[roomName]) {
 		let keepers = Game.rooms[roomName].find(FIND_HOSTILE_CREEPS, {filter: {owner:'Source Keeper'}})
 		for (let keeper of keepers) {
 			for (let x = keeper.pos.x-3; x < keeper.pos.x+4; x++) {
@@ -136,13 +140,13 @@ Empire.getRemoteRoadPlans = function(room) {
 									return r;
 								})
 							}),
-						 plainsCost:2, swampCost:2})
+						 plainCost:2, swampCost:2})
 					roads = roads.concat(path.path);
 				}
 			} else if (Memory.rooms[remoteName] && Memory.rooms[remoteName].sources) {
 				for (let source of Memory.rooms[remoteName].sources) {
 					let path = PathFinder.search(room.find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_SPAWN}})[0].pos,
-						{pos:new RoomPosition(...Object.values(source.pos)), range:2}, {roomCallback:Empire.costMatrixCallback, plainsCost:2, swampCost:2})
+						{pos:new RoomPosition(...Object.values(source.pos)), range:2}, {roomCallback:Empire.costMatrixCallback, plainCost:2, swampCost:2})
 					roads = roads.concat(path.path);
 				}
 			}

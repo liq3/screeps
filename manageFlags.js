@@ -10,8 +10,9 @@ module.exports = {
     remoteRoadFlag: function() {
         let flag = Game.flags.displayRemoteRoads
         let room = flag.room
-        if (!global.flagRoads) {
+        if (!global.flagRoads || !flag.memory.notFirst) {
             global.flagRoads = Empire.getRemoteRoadPlans(room)
+            flag.memory.notFirst = true
         }
         _.forEach(global.flagRoads, r=>Game.rooms[r.roomName].visual.structure(r.x, r.y, STRUCTURE_ROAD))
         for (let r of room.getRoomNames()) {
