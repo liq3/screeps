@@ -76,8 +76,8 @@ module.exports = {
 				}
 
 				let amount = Math.min(creep.room.terminal.store[resource], Math.min(creep.carryCapacity,
-					Math.max(creep.room.terminal.store[resource] - creep.room.memory.desiredTerminalResources[resource],
-						(creep.room.memory.minResources && creep.room.memory.minResources[resource] || 0) - 	creep.room.terminal.store[resource])));
+					Math.max(creep.room.terminal.store[resource] - (creep.room.memory.desiredTerminalResources[resource] || 0),
+						(creep.room.memory.minResources && creep.room.memory.minResources[resource] || 0) - creep.room.terminal.store[resource])));
 				if (amount > 0) {
 					let err = creep.withdraw(creep.room.terminal, resource, amount ? amount : undefined);
 					if (err === ERR_NOT_IN_RANGE) {
@@ -91,6 +91,15 @@ module.exports = {
 					}
 				} else {
 					delete creep.memory.targetResource;
+				}
+			} else if (creep.memory.task === 'deliverLab') {
+				let err = creep.withdraw(creep.room.storage, creep.memory.labResource)
+				if (err === ERR_NOT_IN_RANGE) {
+					creep.moveTo(creep.room.storage)
+				} else if (err === OK) {
+					creep.memory.gathering = false;
+				} else if (err != OK) {
+					log(`${creep} ${creep.room.name}: err withdrawing ${creep.memory.labResource} from storage ${err}`)
 				}
 			} else if (creep.memory.task != 'storage') {
 				if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
@@ -217,6 +226,12 @@ module.exports = {
 				if (err == OK) {
 					this.doneDelivering(creep);
 				}
+			} else if (creep.memory.task === 'deliverLab') {
+				target = Game.getObjectById(creep.memory.labTarget)
+				err = creep.transfer(target, creep.memory.labResource)
+				if (err == OK) {
+					this.doneDelivering(creep);
+				}
 			} else {
 				this.doneDelivering(creep);
 				this.getNewTask(creep);
@@ -255,6 +270,8 @@ module.exports = {
 		this.decideStorage(creep);
 		this.decideTakeTerminal(creep);
 		this.decideTerminal(creep);
+		this.decideLabsMinerals(creep);
+		this.decideLabsEnergy(creep);
 		this.decidePickup(creep);
 		this.decideDeliverPraise(creep);
 
@@ -401,10 +418,31 @@ module.exports = {
 			|| (creep.room.terminal.store[res] && creep.room.memory.minResources && creep.room.memory.minResources[res] > (creep.room.storage[res] || 0))
 	},
 
-	decideLabs: function(creep) {
-		if (!creep.memory.task && creep.room) {
-
+	decideLabsMinerals: function(creep) {
+		if (!creep.memory.task && creep.room.storage) {
+			let flag = room.find(FIND_FLAGS).filter(f => f.test(/lab \w+ \w+/))[0]
+			if (flag) {
+				let [reg, m1, m2] = flag.name.match(/lab \w+ \w+/)
+				let lab1 = flag.pos.lookFor(FIND_MY_STRUCTURES).filter(s=>s.structureType===STRUCTURE_LAB)[0]
+				let lab2 = room.lookForAt(FIND_MY_STRUCTURES, flag.pos.x+1, flag.pos.y+1).filter(s=>s.structureType===STRUCTURE_LAB)[0]
+				if (lab1.mineralAmount < 500 && room.storage.store[m1] > 0) {
+					creep.memory.labTarget = lab1.id;
+					creep.memory.task = 'deliverLab';
+					creep.memory.labResource = m1
+					return;
+				}
+				if (lab2.mineralAmount < 500 && room.storage.store[m2] > 0) {
+					creep.memory.labTarget = lab2.id;
+					creep.memory.task = 'deliverLab';
+					creep.memory.labResource = m2
+					return;
+				}
+			}
 		}
+	},
+
+	decideLabEnergy: function(creep) {
+
 	},
 
 	getDistance: function(creep, target) {
