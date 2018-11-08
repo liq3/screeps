@@ -420,11 +420,11 @@ module.exports = {
 
 	decideLabsMinerals: function(creep) {
 		if (!creep.memory.task && creep.room.storage) {
-			let flag = room.find(FIND_FLAGS).filter(f => f.test(/lab \w+ \w+/))[0]
+			let flag = creep.room.find(FIND_FLAGS).filter(f => f.test(/lab \w+ \w+/))[0]
 			if (flag) {
 				let [reg, m1, m2] = flag.name.match(/lab \w+ \w+/)
 				let lab1 = flag.pos.lookFor(FIND_MY_STRUCTURES).filter(s=>s.structureType===STRUCTURE_LAB)[0]
-				let lab2 = room.lookForAt(FIND_MY_STRUCTURES, flag.pos.x+1, flag.pos.y+1).filter(s=>s.structureType===STRUCTURE_LAB)[0]
+				let lab2 = creep.room.lookForAt(FIND_MY_STRUCTURES, flag.pos.x+1, flag.pos.y+1).filter(s=>s.structureType===STRUCTURE_LAB)[0]
 				if (lab1.mineralAmount < 500 && room.storage.store[m1] > 0) {
 					creep.memory.labTarget = lab1.id;
 					creep.memory.task = 'deliverLab';
