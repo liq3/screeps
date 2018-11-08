@@ -12,6 +12,7 @@ require('Empire')
 require('myUtils')
 const spawnManager = require('spawnManager');
 const roomManager = require('roomManager');
+const manageFlags = require('manageFlags');
 
 let creepRoles = ['builder','claimer','combat','hauler','decoy','geologist','harvester',
 	'miner','praiser','scout','spawnHelper'];
@@ -187,6 +188,10 @@ let mainLoop = function() {
 				}
 			}
 		}
+	}
+
+	if (Memory.cpu.bucket > 8000) {
+		manageFlags.run()
 	}
 
 	if (Memory.cpuTimes === undefined) {

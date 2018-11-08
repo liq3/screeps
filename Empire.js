@@ -103,3 +103,25 @@ Empire.getPathCost = function(a,b) {
 	}
 	return path.cost;
 }
+
+Empire.getRemoteRoadPlans = function(room) {
+	let roads = []
+	if (room.controller.my && Memory.rooms[room.name].remoteMining) {
+		for (let remoteName of Memory.rooms[room.name].remoteMining) {
+			if (Game.rooms[remoteName]) {
+				for (let source of Game.rooms[remoteName].find(FIND_SOURCES)) {
+					let path = PathFinder.search(room.find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_SPAWN}})[0].pos,
+						{pos:source.pos, range:2}, {roomCallback:Empire.costMatrixCallback, plainsCost:2, swampCost:2})
+					roads.concat(path.path);
+				}
+			} else if (Memory.rooms[remoteName] && Memory.rooms[remoteName].sources) {
+				for (let source of Memory.rooms[remoteName].sources) {
+					let path = PathFinder.search(room.find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_SPAWN}})[0].pos,
+						{pos:new RoomPosition(...Object.values(source.pos)), range:2}, {roomCallback:Empire.costMatrixCallback, plainsCost:2, swampCost:2})
+					roads.concat(path.path);
+				}
+			}
+		}
+	}
+	return roads
+}
