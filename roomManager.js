@@ -58,6 +58,19 @@ module.exports = {
 			}
 		}
 
+		let labFlag = room.find(FIND_FLAGS).filter(f => f.name.match(/lab \w+ \w+/))[0]
+		if (labFlag) {
+			let [reg, m1, m2] = labFlag.name.match(/lab (\w+) (\w+)/)
+			let lab1 = labFlag.pos.lookFor(LOOK_STRUCTURES).filter(s=>s.structureType===STRUCTURE_LAB)[0]
+			let lab2 = room.lookForAt(LOOK_STRUCTURES, labFlag.pos.x+1, labFlag.pos.y+1).filter(s=>s.structureType===STRUCTURE_LAB)[0]
+			let otherLabs = room.find(FIND_MY_STRUCTURES, {filter: s=>s.structureType === STRUCTURE_LAB && s !== lab1 && s1 !== lab2})
+			for (let lab of otherLabs) {
+				if (!lab.cooldown) {
+					lab.runReaction(lab1, lab2)
+				}
+			}
+		}
+
 		if (Game.cpu.bucket > 8000 && room.terminal && !room.terminal.cooldown) {
 			for (const resource of [RESOURCE_HYDROGEN, RESOURCE_OXYGEN]) {
 				let minRes = room.memory.minResources && room.memory.minResources[resource] || 0
