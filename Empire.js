@@ -49,7 +49,7 @@ Empire.costMatrixCallback = function(roomName, costMatrix, options) {
 
 	if (!options.ignoreStructures) {
 		let structures = [];
-		if (Game.rooms[noomName]) {
+		if (Game.rooms[roomName]) {
 			structures = Game.rooms[roomName].find(FIND_STRUCTURES)
 		}
 		if (options.structures) {
