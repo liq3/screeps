@@ -33,8 +33,7 @@ module.exports = {
 				let resource;
 				if (!creep.memory.targetResource) {
 					for (let res in creep.room.memory.desiredTerminalResources) {
-						if (creep.room.storage.store[res] > 0 && (res !== RESOURCE_ENERGY || creep.room.storage.store.energy > Empire.MIN_STORAGE_ENERGY)
-							&& (!creep.room.terminal.store[res] || creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res])) {
+						if (this.decideTerminalSpecificResource(creep, res)) {
 							resource = res;
 							creep.memory.targetResource = res
 							break;
@@ -62,8 +61,7 @@ module.exports = {
 				let resource;
 				if (!creep.memory.targetResource) {
 					for (let res in creep.room.terminal.store) {
-						if ((!creep.room.memory.desiredTerminalResources && creep.room.terminal.store[res])
-							|| (creep.room.memory.desiredTerminalResources && creep.room.terminal.store[res] > creep.room.memory.desiredTerminalResources[res])) {
+						if (this.decideTerminalTakeSpecificRes(creep, res)) {
 							resource = res;
 							creep.memory.targetResource = res
 							break;
@@ -77,7 +75,9 @@ module.exports = {
 					return;
 				}
 
-				let amount = Math.min(creep.carryCapacity,creep.room.terminal.store[resource] - creep.room.memory.desiredTerminalResources[resource])
+				let amount = Math.min(creep.carryCapacity,
+					Math.max(creep.room.terminal.store[resource] - creep.room.memory.desiredTerminalResources[resource],
+						creep.room.terminal.store[resource] - (creep.room.memory.minResources && creep.room.memory.minResources[resource] || 0)));
 				if (amount > 0) {
 					let err = creep.withdraw(creep.room.terminal, resource, amount ? amount : undefined);
 					if (err === ERR_NOT_IN_RANGE) {
@@ -351,14 +351,19 @@ module.exports = {
 		if (!creep.memory.task && creep.room.storage && creep.room.terminal && creep.room.memory.desiredTerminalResources) {
 			for (let res in creep.room.memory.desiredTerminalResources) {
 				//log(res, creep.room.memory.desiredTerminalResources[res], creep.room.terminal.store[res], creep.room.storage.store[res])
-				if (creep.room.storage.store[res] > 0 && (res !== RESOURCE_ENERGY || creep.room.storage.store.energy > Empire.MIN_STORAGE_ENERGY)
-					&& (!creep.room.terminal.store[res] || creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res])) {
+				if (this.decideTerminalSpecificResource(creep, res)) {
 					creep.memory.task = 'deliverToTerminal';
 					creep.memory.lastTaskId = creep.room.terminal.id;
 					break;
 				}
 			}
 		}
+	},
+
+	decideTerminalSpecificResource: function(creep, res) {
+		return creep.room.storage.store[res] > (creep.room.memory.minResources && creep.room.memory.minResoucres[res] || 0)
+			&& (res !== RESOURCE_ENERGY || creep.room.storage.store.energy > Empire.MIN_STORAGE_ENERGY)
+			&& (!creep.room.terminal.store[res] || creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res])
 	},
 
 	decidePickup: function(creep) {
@@ -381,13 +386,24 @@ module.exports = {
 			&& !creep.room.find(FIND_MY_CREEPS, {filter: c=>c.memory.task && c.memory.task === 'takeFromTerminal'}).length) {
 			for (let res in creep.room.terminal.store) {
 				//log(res, creep.room.memory.desiredTerminalResources[res], creep.room.terminal.store[res], creep.room.storage.store[res])
-				if ((!creep.room.memory.desiredTerminalResources && creep.room.terminal.store[res])
-					|| (creep.room.memory.desiredTerminalResources && creep.room.terminal.store[res] > creep.room.memory.desiredTerminalResources[res])) {
+				if (this.decideTerminalTakeSpecificRes(creep, res)) {
 					creep.memory.task = 'takeFromTerminal';
 					creep.memory.lastTaskId = creep.room.storage.id;
 					break;
 				}
 			}
+		}
+	},
+
+	decideTakeTerminalSpecificRes: function(creep, res) {
+		return (!creep.room.memory.desiredTerminalResources && creep.room.terminal.store[res])
+			|| (creep.room.memory.desiredTerminalResources && creep.room.terminal.store[res] > creep.room.memory.desiredTerminalResources[res])
+			|| (creep.room.terminal.store[res] && creep.room.memory.minResources && creep.room.memory.minResources[res] > creep.room.storage[res])
+	},
+
+	decideLabs: function(creep) {
+		if (!creep.memory.task && creep.room) {
+
 		}
 	},
 
