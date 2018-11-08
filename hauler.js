@@ -75,9 +75,9 @@ module.exports = {
 					return;
 				}
 
-				let amount = Math.min(creep.carryCapacity,
+				let amount = Math.min(creep.room.terminal.store[resource], Math.min(creep.carryCapacity,
 					Math.max(creep.room.terminal.store[resource] - creep.room.memory.desiredTerminalResources[resource],
-						creep.room.terminal.store[resource] - (creep.room.memory.minResources && creep.room.memory.minResources[resource] || 0)));
+						(creep.room.memory.minResources && creep.room.memory.minResources[resource] || 0) - 	creep.room.terminal.store[resource])));
 				if (amount > 0) {
 					let err = creep.withdraw(creep.room.terminal, resource, amount ? amount : undefined);
 					if (err === ERR_NOT_IN_RANGE) {
@@ -361,7 +361,7 @@ module.exports = {
 	},
 
 	decideTerminalSpecificResource: function(creep, res) {
-		return creep.room.storage.store[res] > (creep.room.memory.minResources && creep.room.memory.minResoucres[res] || 0)
+		return creep.room.storage.store[res] > (creep.room.memory.minResources && creep.room.memory.minResources[res] || 0)
 			&& (res !== RESOURCE_ENERGY || creep.room.storage.store.energy > Empire.MIN_STORAGE_ENERGY)
 			&& (!creep.room.terminal.store[res] || creep.room.memory.desiredTerminalResources[res] > creep.room.terminal.store[res])
 	},
@@ -398,7 +398,7 @@ module.exports = {
 	decideTakeTerminalSpecificRes: function(creep, res) {
 		return (!creep.room.memory.desiredTerminalResources && creep.room.terminal.store[res])
 			|| (creep.room.memory.desiredTerminalResources && creep.room.terminal.store[res] > creep.room.memory.desiredTerminalResources[res])
-			|| (creep.room.terminal.store[res] && creep.room.memory.minResources && creep.room.memory.minResources[res] > creep.room.storage[res])
+			|| (creep.room.terminal.store[res] && creep.room.memory.minResources && creep.room.memory.minResources[res] > (creep.room.storage[res] || 0))
 	},
 
 	decideLabs: function(creep) {
