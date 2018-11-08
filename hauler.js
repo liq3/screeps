@@ -441,7 +441,7 @@ module.exports = {
 		}
 	},
 
-	decideLabEnergy: function(creep) {
+	decideLabsEnergy: function(creep) {
 
 	},
 
