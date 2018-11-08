@@ -78,15 +78,19 @@ module.exports = {
 				}
 
 				let amount = Math.min(creep.carryCapacity,creep.room.terminal.store[resource] - creep.room.memory.desiredTerminalResources[resource])
-				let err = creep.withdraw(creep.room.terminal, resource, amount ? amount : undefined);
-				if (err === ERR_NOT_IN_RANGE) {
-					creep.moveTo(creep.room.terminal);
-				} else if (err === ERR_NOT_ENOUGH_RESOURCES) {
-					delete creep.memory.targetResource;
-				} else if (err != OK) {
-					log(`${creep} ${creep.room.name}: err withdrawing ${amount} ${resource} from terminal ${err}`)
+				if (amount > 0) {
+					let err = creep.withdraw(creep.room.terminal, resource, amount ? amount : undefined);
+					if (err === ERR_NOT_IN_RANGE) {
+						creep.moveTo(creep.room.terminal);
+					} else if (err === ERR_NOT_ENOUGH_RESOURCES) {
+						delete creep.memory.targetResource;
+					} else if (err != OK) {
+						log(`${creep} ${creep.room.name}: err withdrawing ${amount} ${resource} from terminal ${err}`)
+					} else {
+						creep.memory.gathering = false
+					}
 				} else {
-					creep.memory.gathering = false
+					delete creep.memory.targetResource;
 				}
 			} else if (creep.memory.task != 'storage') {
 				if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
