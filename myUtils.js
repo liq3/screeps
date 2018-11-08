@@ -15,9 +15,9 @@ global.myUtils.deleteSpawnCensus = function() {
 }
 
 global.myUtils.getHaulingCensus = function() {
-	for (const room of Empire.getOwnedRooms) {
+	for (const room of Empire.getOwnedRooms()) {
 		if (!room.storage) {
-			log(`No storage in ${room.name}, skipping.`)
+			//log(`No storage in ${room.name}, skipping.`)
 			continue;
 		}
 		let sourceHauling = 0;
@@ -28,7 +28,7 @@ global.myUtils.getHaulingCensus = function() {
 				for (let source of Game.rooms[r].find(FIND_SOURCES)) {
 					if (source.container && _.filter(Game.creeps, c=>c.memory.role === 'harvester' && c.memory.sourceId === source.id).length) {
 						let pathCost = Empire.getPathCost(room.storage.id, source.id)
-						desiredSourceHauling += Math.ceil(2 * pathCost * source.energyCapacity / ENERGY_REGEN_TIME);
+						sourceHauling += Math.ceil(2 * pathCost * source.energyCapacity / ENERGY_REGEN_TIME);
 					}
 				}
 				let pathCost = Empire.getPathCost(room.storage.id, room.controller.id)
@@ -40,9 +40,9 @@ global.myUtils.getHaulingCensus = function() {
 					mineralHauling += 2 * pathCost * miner.getActiveBodyparts(WORK) / 5;
 				}
 			}
-			let hauling = _.sum(_.filter(Game.creeps, c=>c.memory.role === 'hauler' && c.memory.bossRoom === room.name), c=>c.carryCapacity)
-			log(`${room.name} Source:${sourceHauling} Praise:${praiseHauling} Mineral:${mineralHauling} Total:${sourceHauling+mineralHauling+praiseHauling}/${hauling}`)
 		}
+		let hauling = _.sum(_.filter(Game.creeps, c=>c.memory.role === 'hauler' && c.memory.bossRoom === room.name), c=>c.carryCapacity)
+		log(`${room.name} Source:${sourceHauling} Praise:${praiseHauling} Mineral:${mineralHauling} Total:${sourceHauling+mineralHauling+praiseHauling}/${hauling}`)
 	}
 }
 
