@@ -36,11 +36,19 @@ Empire.costMatrixCallback = function(roomName, costMatrix, options) {
 		return false;
 	}
 
+	let optionDefaults = {
+		ignoreStructures:false,
+		roadCost:1
+	};
+
 	if (!options) {
-		options = {
-			ignoreStructures:false,
-			roadCost:1
-		};
+		options = optionDefaults
+	}
+
+	for (let option in optionDefaults) {
+		if (options[option] === undefined) {
+			options[option] = optionDefaults[option]
+		}
 	}
 
 	if (!costMatrix) {
