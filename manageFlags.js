@@ -2,8 +2,13 @@
 
 module.exports = {
     run: function() {
-        if (Game.flags.displayRemoteRoads) {
-            this.remoteRoadFlag()
+        for (let f in Game.flags) {
+            let flag = Game.flags[f]
+            if (flag.name === displayRemoteRoads) {
+                this.remoteRoadFlag()
+            } else if (flag.name.match(/displayCostMatrix/)) {
+                this.costMatrix(flag)
+            }
         }
     },
 
@@ -19,6 +24,17 @@ module.exports = {
         for (let r of room.getRoomNames()) {
             if (Game.rooms[r]) {
                 Game.rooms[r].visual.connectRoads()
+            }
+        }
+    },
+
+    costMatrix: function(flag) {
+        let costMatrix = Empire.costMatrixCallback(flag.room.name)
+        for (let x = 0; x < 50; x++) {
+            for (let y = 0; y < 50; y++) {
+                if (costMatrix.get(x,y) !== 0) {
+                    flag.room.visual.text(''+costMatrix.get(x,y),x,y)
+                }
             }
         }
     }
