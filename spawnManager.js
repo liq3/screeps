@@ -183,7 +183,7 @@ module.exports = {
 				}
 				spawnCensus.push({role:'miner', amount:Math.min(spots, 3), priority:40})
 
-				let miners = _.filter(Game.creeps, {filter: c => c.memory.role === 'miner'})
+				let miners = room.find(FIND_MY_CREEPS, {filter: c => c.memory.role === 'miner'});
 				for (let miner of miners) {
 					spawnCensus.push({role:'transportCapacity', priority:41, amount:2 * pathCost * miner.getActiveBodyparts(WORK) / 5});
 				}
