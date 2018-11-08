@@ -62,12 +62,29 @@ module.exports = {
 			for (const resource of [RESOURCE_HYDROGEN, RESOURCE_OXYGEN]) {
 				let minRes = room.memory.minResources && room.memory.minResources[resource] || 0
 				if (room.terminal.store[resource] > 1000 + minRes && room.terminal.store[RESOURCE_ENERGY] > 1000) {
-					let orders = Game.market.getAllOrders({type:ORDER_BUY, resourceType:resource, price:1})
-					orders.sort(o => Game.market.calcTransactionCost(1000, room.name, o.roomName));
 					let maxResources = room.terminal.store[resource] - minRes
 					if (maxResources <= 0) {
 						continue;
 					}
+					let orders = Game.market.getAllOrders({type:ORDER_BUY, resourceType:resource, price:1})
+					orders.sort((a,b) => Game.market.calcTransactionCost(1000, room.name, a.roomName) - Game.market.calcTransactionCost(1000, room.name, b.roomName));
+					for (let order of orders) {
+						let amount = _.min([maxResources, order.amount])
+						let cost = Game.market.calcTransactionCost(amount, room.name, order.roomName)
+						if (cost < room.terminal.store.energy && amount > 0) {
+							let err = Game.market.deal(order.id, amount, room.name)
+							log(`Deal: ${err}. ${amount} ${order.resourceType} for ${order.price} total ${amount*order.price}`);
+							maxResources -= amount
+						}
+					}
+				} else if ((room.terminal.store[resource] || 0) + (room.storage.store[resource] || 0) < minRes
+							&& room.memory.buy && room.memory.buy[resource].amount > 0) {
+					let maxResources = Math.min(minRes - ((room.terminal.store[resource] || 0) + (room.storage.store[resource] || 0)), room.memory.buy[resource].amount)
+					if (maxResources <= 0) {
+						continue;
+					}
+					let orders = Game.market.getAllOrders(o => o.type === ORDER_SELL && o.resourceType === resource && o.price < room.memory.buy[resource].price)
+					orders.sort((a,b) => Game.market.calcTransactionCost(1000, room.name, a.roomName) - Game.market.calcTransactionCost(1000, room.name, b.roomName));
 					for (let order of orders) {
 						let amount = _.min([maxResources, order.amount])
 						let cost = Game.market.calcTransactionCost(amount, room.name, order.roomName)
