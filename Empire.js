@@ -131,6 +131,7 @@ Empire.getRemoteRoadPlans = function(room) {
 						{pos:source.pos, range:2}, {
 							roomCallback:Empire.getCostMatrixCallback({
 								structures: roads.map(r=>{
+									r = {pos:r};
 									r.structureType = STRUCTURE_ROAD;
 									return r;
 								})
