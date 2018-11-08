@@ -154,7 +154,7 @@ module.exports = {
 				}
 				if (target) {
 					err = creep.transfer(target, RESOURCE_ENERGY);
-					if (err == OK && creep.carry.energy == 0) {
+					if (creep.carry.energy == 0) {
 						this.doneDelivering(creep);
 					}
 				}
