@@ -11,7 +11,7 @@ module.exports = {
         let flag = Game.flags.displayRemoteRoads
         let room = flag.room
         if (!global.flagRoads) {
-            gloabl.flagRoads = Empire.getRemoteRoadPlans(room)
+            global.flagRoads = Empire.getRemoteRoadPlans(room)
         }
         _.forEach(global.flagRoads, r=>Game.rooms[r.roomName].visual.structure(r.x, r.y, STRUCTURE_ROAD))
         room.visual.connectRoads

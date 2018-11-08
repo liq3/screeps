@@ -1,4 +1,4 @@
-// spawns, creeps, flags, rooms have .memory 
+// spawns, creeps, flags, rooms have .memory
 
 const useProfiler = true
 
@@ -190,7 +190,7 @@ let mainLoop = function() {
 		}
 	}
 
-	if (Memory.cpu.bucket > 8000) {
+	if (Game.cpu.bucket > 8000) {
 		manageFlags.run()
 	}
 
