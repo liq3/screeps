@@ -35,10 +35,37 @@ function tryInitSameMemory() {
     lastMemoryTick = Game.time
 }
 
+
+function profileJSON() {
+	['regexTime', 'jsonTime', 'jsonLoopTime'].foreach(k => {if (!Memory[k]) {Memory[k]=[]}});
+	let time1 = Game.cpu.getUsed();
+	let log = Game.rooms.W24N32.getEventLog(true);
+	let reg1 = /"event":5,"objectId":"(\w+)"/g
+	let match;
+	while ((match = reg1.exec(log)) !== null) {
+		if (match[1] === 'hello') {
+			console.log('blah')
+		}
+	}
+	let time2 = Game.cpu.getUsed();
+	log = Game.rooms.W24N32.getEventLog();
+	let time3 = Game.cpu.getUsed();
+	for (let entry of log) {
+		if (entry.event === EVENT_HARVEST && event.object === 'hello') {
+			console.log('foo')
+		}
+	}
+	let time4 = Game.cpu.getUsed();
+	Memory.regexTime.push(time2-time1);
+	Memory.jsonTime.push(time3-time2);
+	Memory.jsonLoopTime.push(time4-time2);
+}
+
 Memory.globalTimes.push(Memory.globalTime)
 Memory.globalTime = 0
 
 let mainLoop = function() {
+	profileJSON();
 	Memory.globalTime++;
 	Empire.deadCreeps = []
 	for(let i in Memory.creeps) {
