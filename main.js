@@ -37,7 +37,7 @@ function tryInitSameMemory() {
 
 
 function profileJSON() {
-	['regexTime', 'jsonTime', 'jsonLoopTime'].foreach(k => {if (!Memory[k]) {Memory[k]=[]}});
+	['regexTime', 'jsonTime', 'jsonLoopTime'].forEach(k => {if (!Memory[k]) {Memory[k]=[]}});
 	let time1 = Game.cpu.getUsed();
 	let log = Game.rooms.W24N32.getEventLog(true);
 	let reg1 = /"event":5,"objectId":"(\w+)"/g
@@ -51,7 +51,7 @@ function profileJSON() {
 	log = Game.rooms.W24N32.getEventLog();
 	let time3 = Game.cpu.getUsed();
 	for (let entry of log) {
-		if (entry.event === EVENT_HARVEST && event.object === 'hello') {
+		if (entry.event === EVENT_HARVEST && entry.object === 'hello') {
 			console.log('foo')
 		}
 	}
@@ -59,6 +59,12 @@ function profileJSON() {
 	Memory.regexTime.push(time2-time1);
 	Memory.jsonTime.push(time3-time2);
 	Memory.jsonLoopTime.push(time4-time2);
+}
+
+function getJsonAvg() {
+	['regexTime', 'jsonTime', 'jsonLoopTime'].forEach(k => {
+		console.log(`${k}: ${Memory[k].reduce((a,v) => {a+v}, 0)/Memory[k].length}/${Memory[k].length}`
+	})
 }
 
 Memory.globalTimes.push(Memory.globalTime)
