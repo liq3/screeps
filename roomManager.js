@@ -63,7 +63,7 @@ module.exports = {
 			let [reg, m1, m2] = labFlag.name.match(/lab (\w+) (\w+)/)
 			let lab1 = labFlag.pos.lookFor(LOOK_STRUCTURES).filter(s=>s.structureType===STRUCTURE_LAB)[0]
 			let lab2 = room.lookForAt(LOOK_STRUCTURES, labFlag.pos.x+1, labFlag.pos.y+1).filter(s=>s.structureType===STRUCTURE_LAB)[0]
-			let otherLabs = room.find(FIND_MY_STRUCTURES, {filter: s=>s.structureType === STRUCTURE_LAB && s !== lab1 && s1 !== lab2})
+			let otherLabs = room.find(FIND_MY_STRUCTURES, {filter: s=>s.structureType === STRUCTURE_LAB && s !== lab1 && s !== lab2})
 			for (let lab of otherLabs) {
 				if (!lab.cooldown) {
 					lab.runReaction(lab1, lab2)
