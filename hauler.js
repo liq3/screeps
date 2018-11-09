@@ -241,7 +241,7 @@ module.exports = {
 			}
 		}
 		this.repairRoads(creep)
-		if (Memory.visuals.displayTasks) {
+		if (Game.flags.displayTasks) {
 			let text = creep.memory.task || 'idle';
 			creep.room.visual.text(text, creep.pos);
 		}
@@ -443,6 +443,12 @@ module.exports = {
 
 	decideLabsEnergy: function(creep) {
 
+	},
+
+	deciteTakeLabMinerals: function(creep) {
+		if (!creep.memory.task && creep.room.storage) {
+			let lab = creep.pos.findClosestByRange()[0]
+		}
 	},
 
 	getDistance: function(creep, target) {
