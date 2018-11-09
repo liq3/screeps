@@ -45,3 +45,16 @@ Object.defineProperty(Room.prototype, 'mineral', {
 Room.prototype.getRoomNames = function() {
 	return this.memory.remoteMining ? this.memory.remoteMining.concat(this.name) : [this.name]
 }
+
+Room.prototype.getLabs = function() {
+	let flag = creep.room.find(FIND_FLAGS).filter(f => f.name.match(/lab/))[0]
+	if (flag) {
+		let lab1 = flag.pos.lookFor(LOOK_STRUCTURES).filter(s=>s.structureType===STRUCTURE_LAB)[0]
+		let lab2 = room.lookForAt(LOOK_STRUCTURES, flag.pos.x+1, flag.pos.y+1).filter(s=>s.structureType===STRUCTURE_LAB)[0]
+		let middleLabs = [lab1, lab2]
+		let otherLabs = room.find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_LAB}}).map(s => !s in middleLabs)
+		return middleLabs.concat(otherLabs)
+	} else {
+		return;
+	}
+}
