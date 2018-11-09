@@ -284,6 +284,7 @@ module.exports = {
 		this.decideTerminal(creep);
 		this.decideLabsMinerals(creep);
 		this.decideLabsEnergy(creep);
+		this.decideTakeLabMinerals(creep);
 		this.decidePickup(creep);
 		this.decideDeliverPraise(creep);
 
@@ -459,12 +460,15 @@ module.exports = {
 
 	decideTakeLabMinerals: function(creep) {
 		if (!creep.memory.task && creep.room.storage) {
-			let lab = creep.pos.findClosestByRange(creep.room.getLabs(), {filter: s=>s.mineralAmount > creep.carryCapacity})[0]
-			if (lab) {
-				creep.memory.target = lab.id;
-				creep.memory.gathering = true;
-				creep.memory.task = 'takeLabMinerals'
-			}
+		    let labs = creep.room.getLabs()
+    		if (labs) {
+		        let lab = creep.pos.findClosestByRange(labs.slice(2), {filter: s=>s.mineralAmount > creep.carryCapacity})
+    			if (lab) {
+    				creep.memory.target = lab.id;
+    				creep.memory.gathering = true;
+    				creep.memory.task = 'takeLabMinerals'
+    			}
+		    }
 		}
 	},
 
