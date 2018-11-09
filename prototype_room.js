@@ -47,12 +47,12 @@ Room.prototype.getRoomNames = function() {
 }
 
 Room.prototype.getLabs = function() {
-	let flag = creep.room.find(FIND_FLAGS).filter(f => f.name.match(/lab/))[0]
+	let flag = this.find(FIND_FLAGS).filter(f => f.name.match(/lab/))[0]
 	if (flag) {
 		let lab1 = flag.pos.lookFor(LOOK_STRUCTURES).filter(s=>s.structureType===STRUCTURE_LAB)[0]
-		let lab2 = room.lookForAt(LOOK_STRUCTURES, flag.pos.x+1, flag.pos.y+1).filter(s=>s.structureType===STRUCTURE_LAB)[0]
+		let lab2 = this.lookForAt(LOOK_STRUCTURES, flag.pos.x+1, flag.pos.y+1).filter(s=>s.structureType===STRUCTURE_LAB)[0]
 		let middleLabs = [lab1, lab2]
-		let otherLabs = room.find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_LAB}}).map(s => !s in middleLabs)
+		let otherLabs = this.find(FIND_MY_STRUCTURES, {filter: {structureType:STRUCTURE_LAB}}).filter(s => !middleLabs.includes(s))
 		return middleLabs.concat(otherLabs)
 	} else {
 		return;
