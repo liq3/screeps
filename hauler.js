@@ -101,6 +101,18 @@ module.exports = {
 				} else if (err != OK) {
 					log(`${creep} ${creep.room.name}: err withdrawing ${creep.memory.labResource} from storage ${err}`)
 				}
+			} else if (creep.memory.task === 'takeLabMinerals') {
+				let target = Game.getObjectById(creep.memory.target)
+				if (!target) {
+					this.doneDelivering(creep);
+				} else {
+					let err = creep.withdraw(target, target.mineralType)
+					if (err == OK) {
+						creep.memory.gathering = false
+					} else if (err == ERR_NOT_IN_RANGE) {
+						creep.moveTo(target)
+					}
+				}
 			} else if (creep.memory.task != 'storage') {
 				if (creep.room.storage && creep.room.storage.store.energy > creep.carryCapacity) {
 					let err = creep.withdraw(creep.room.storage, RESOURCE_ENERGY);
@@ -220,7 +232,7 @@ module.exports = {
 				if (err == OK && creep.carry.energy == 0) {
 					this.doneDelivering(creep);
 				}
-			} else if (creep.memory.task == 'collectMinerals') {
+			} else if (creep.memory.task == 'collectMinerals' || creep.memory.task === 'takeLabMinerals') {
 				target = creep.room.storage;
 				err = creep.transfer(target, _.findKey(creep.carry))
 				if (err == OK) {
@@ -243,7 +255,7 @@ module.exports = {
 		this.repairRoads(creep)
 		if (Game.flags.displayTasks) {
 			let text = creep.memory.task || 'idle';
-			creep.room.visual.text(text, creep.pos);
+			creep.room.visual.text(text, creep.pos, {font:0.5});
 		}
 	},
 	repairRoads: function(creep) {
@@ -445,9 +457,14 @@ module.exports = {
 
 	},
 
-	deciteTakeLabMinerals: function(creep) {
+	decideTakeLabMinerals: function(creep) {
 		if (!creep.memory.task && creep.room.storage) {
-			let lab = creep.pos.findClosestByRange()[0]
+			let lab = creep.pos.findClosestByRange(creep.room.getLabs(), {filter: s=>s.mineralAmount > creep.carryCapacity})[0]
+			if (lab) {
+				creep.memory.target = lab.id;
+				creep.memory.gathering = true;
+				creep.memory.task = 'takeLabMinerals'
+			}
 		}
 	},
 
